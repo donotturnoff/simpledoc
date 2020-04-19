@@ -63,9 +63,11 @@ public class SDTPServer {
         while (true) {
             try {
                 Socket c = socket.accept();
-                ServerWorker worker = new ServerWorker(c);
+                logger.log(Level.INFO, "Accepted new connection: " + c);
+                ServerWorker worker = new ServerWorker(this, c);
                 workers.add(worker);
                 (new Thread(worker)).start();
+                logger.log(Level.FINE, "Dispatched new server worker to handle " + c);
             } catch (IOException e) {
                 logger.log(Level.WARNING, "Failed to accept connection", e);
             }
@@ -73,17 +75,17 @@ public class SDTPServer {
         }
     }
 
-    private void haltWorker(ServerWorker worker) {
-        worker.halt();
+    void removeWorker(ServerWorker worker) {
         workers.remove(worker);
     }
 
     private void halt() {
         try {
             for (ServerWorker worker: workers) {
-                haltWorker(worker);
+                worker.halt();
             }
             socket.close();
+            logger.log(Level.INFO, "Halted server");
         } catch (IOException e) {
             logger.log(Level.WARNING, "Failed to gracefully halt server", e);
         }

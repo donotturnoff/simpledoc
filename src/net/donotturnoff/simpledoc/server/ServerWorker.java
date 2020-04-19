@@ -22,11 +22,13 @@ public class ServerWorker implements Runnable {
         }
     }
 
+    private SDTPServer server;
     private Socket c;
     private BufferedReader in;
     private PrintWriter out;
 
-    ServerWorker(Socket c) throws IOException {
+    ServerWorker(SDTPServer server, Socket c) throws IOException {
+        this.server = server;
         this.c = c;
         this.in = new BufferedReader(new InputStreamReader(c.getInputStream()));
         this.out = new PrintWriter(new OutputStreamWriter(c.getOutputStream()));
@@ -42,6 +44,7 @@ public class ServerWorker implements Runnable {
             c.shutdownInput();
             c.shutdownOutput();
             c.close();
+            server.removeWorker(this);
             logger.log(Level.FINE, "Halted server worker");
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Failed to gracefully halt server worker", e);
