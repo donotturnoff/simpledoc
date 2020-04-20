@@ -59,11 +59,11 @@ public class ServerWorker implements Runnable {
             c.shutdownInput();
             c.shutdownOutput();
             c.close();
-            logger.log(Level.FINE, "Halted server worker");
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "Failed to gracefully halt server worker", e);
+            logger.log(Level.WARNING, "Failed to gracefully close connection: " + c, e);
         } finally {
             server.removeWorker(this);
+            logger.log(Level.FINE, "Closed connection: " + c);
         }
     }
 }
