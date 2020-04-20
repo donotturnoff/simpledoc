@@ -1,8 +1,11 @@
 package net.donotturnoff.simpledoc.server;
 
 class RequestHandler {
-    RequestHandler(String request) {
 
+    private String request;
+
+    RequestHandler(String request) {
+        this.request = request;
     }
 
     String handle() {
