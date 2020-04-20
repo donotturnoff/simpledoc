@@ -36,6 +36,19 @@ public class ServerWorker implements Runnable {
 
     @Override
     public void run() {
+        String request = recv();
+        RequestHandler handler = new RequestHandler(request);
+        String response = handler.handle();
+        send(response);
+        halt();
+    }
+
+    private String recv() {
+        StringBuilder sb = new StringBuilder();
+        return sb.toString();
+    }
+
+    private void send(String response) {
 
     }
 
