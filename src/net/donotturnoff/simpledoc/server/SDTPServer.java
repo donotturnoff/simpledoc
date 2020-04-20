@@ -18,7 +18,7 @@ public class SDTPServer {
 
     static {
         try {
-            FileHandler fileHandler = new FileHandler("log%u.txt", true);
+            FileHandler fileHandler = new FileHandler("log.txt", true);
             fileHandler.setFormatter(new SimpleFormatter());
             fileHandler.setLevel(Level.INFO);
             logger.addHandler(fileHandler);

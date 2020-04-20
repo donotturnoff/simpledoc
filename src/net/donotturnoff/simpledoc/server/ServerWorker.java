@@ -7,13 +7,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-public class ServerWorker implements Runnable {
+class ServerWorker implements Runnable {
 
     private static final Logger logger = Logger.getLogger(SDTPServer.class.getName());
 
     static {
         try {
-            FileHandler fileHandler = new FileHandler("log%u.txt", true);
+            FileHandler fileHandler = new FileHandler("log.txt", true);
             fileHandler.setFormatter(new SimpleFormatter());
             fileHandler.setLevel(Level.INFO);
             logger.addHandler(fileHandler);
