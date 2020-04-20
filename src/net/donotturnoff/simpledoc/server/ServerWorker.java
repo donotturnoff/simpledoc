@@ -36,15 +36,25 @@ public class ServerWorker implements Runnable {
 
     @Override
     public void run() {
-        String request = recv();
-        RequestHandler handler = new RequestHandler(request);
-        String response = handler.handle();
-        send(response);
-        halt();
+        try {
+            String request = recv();
+            RequestHandler handler = new RequestHandler(request);
+            String response = handler.handle();
+            send(response);
+        } catch (IOException e) {
+            logger.log(Level.FINE, "Failed to read request from " + c, e);
+        } finally {
+            halt();
+        }
     }
 
-    private String recv() {
+    private String recv() throws IOException {
         StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = in.readLine()) != null && !line.trim().equals("}")) {
+            sb.append(sb);
+        }
+        logger.log(Level.FINER, "Received request");
         return sb.toString();
     }
 
