@@ -44,10 +44,11 @@ public class ServerWorker implements Runnable {
             c.shutdownInput();
             c.shutdownOutput();
             c.close();
-            server.removeWorker(this);
             logger.log(Level.FINE, "Halted server worker");
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Failed to gracefully halt server worker", e);
+        } finally {
+            server.removeWorker(this);
         }
     }
 }
