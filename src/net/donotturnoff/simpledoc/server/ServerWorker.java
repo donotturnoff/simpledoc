@@ -51,7 +51,7 @@ public class ServerWorker implements Runnable {
     private void send(String response) {
         out.write(response);
         out.flush();
-        logger.log(Level.FINE, "Sent response");
+        logger.log(Level.FINER, "Sent response");
     }
 
     void halt() {
