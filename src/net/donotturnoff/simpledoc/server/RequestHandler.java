@@ -1,9 +1,5 @@
 package net.donotturnoff.simpledoc.server;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
-
 class RequestHandler {
 
     Request request;
@@ -25,7 +21,7 @@ class RequestHandler {
                 case HEAD:
                     subHandler = new HeadHandler(request);
                     break;
-                default: throw new RequestHandlingException(501, "Unsupported request method: " + request.getMethod());
+                default: throw new RequestHandlingException(Status.NOT_IMPLEMENTED, "Request method " + request.getMethod() + " not implemented");
             }
         } catch (RequestHandlingException e) {
             subHandler = new ErrorHandler(request, e);
@@ -33,7 +29,7 @@ class RequestHandler {
         return subHandler.handle();
     }
 
-    private Request parse(String requestString) {
+    private Request parse(String requestString) throws RequestHandlingException {
         return new Request();
     }
 }

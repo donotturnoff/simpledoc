@@ -1,29 +1,27 @@
 package net.donotturnoff.simpledoc.server;
 
 class RequestHandlingException extends Exception {
-    private int code;
+    private Status status = Status.INTERNAL_SERVER_ERROR;
 
     RequestHandlingException() {
         super();
-        this.code = 0;
     }
 
-    RequestHandlingException(int code) {
+    RequestHandlingException(Status status) {
         super();
-        this.code = code;
+        this.status = status;
     }
 
     RequestHandlingException(String msg) {
         super(msg);
-        this.code = 0;
     }
 
-    RequestHandlingException(int code, String msg) {
+    RequestHandlingException(Status status, String msg) {
         super(msg);
-        this.code = code;
+        this.status = status;
     }
 
-    public int getCode() {
-        return code;
+    public Status getStatus() {
+        return status;
     }
 }
