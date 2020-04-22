@@ -15,9 +15,9 @@ class RequestHandler {
     }
 
     String handle() {
-        this.request = parse(requestString);
         RequestHandler subHandler;
         try {
+            this.request = parse(requestString);
             switch (request.getMethod()) {
                 case GET:
                     subHandler = new GetHandler(request);
@@ -25,8 +25,8 @@ class RequestHandler {
                 case HEAD:
                     subHandler = new HeadHandler(request);
                     break;
-                default: throw new BadRequestException("Invalid request method: " + request.getMethod());
-            };
+                default: throw new RequestHandlingException(501, "Unsupported request method: " + request.getMethod());
+            }
         } catch (RequestHandlingException e) {
             subHandler = new ErrorHandler(request, e);
         }

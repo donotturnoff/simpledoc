@@ -18,7 +18,7 @@ class RequestHandlingException extends Exception {
         this.code = 0;
     }
 
-    RequestHandlingException(String msg, int code) {
+    RequestHandlingException(int code, String msg) {
         super(msg);
         this.code = code;
     }
