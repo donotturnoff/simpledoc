@@ -52,7 +52,8 @@ class ServerWorker implements Runnable {
         StringBuilder sb = new StringBuilder();
         String line;
         while ((line = in.readLine()) != null && !line.trim().equals("}")) {
-            sb.append(sb);
+            sb.append(line);
+            sb.append("\n");
         }
         logger.log(Level.FINER, "Received request");
         return sb.toString();
