@@ -51,7 +51,7 @@ class ServerWorker implements Runnable {
     private String recv() throws IOException {
         StringBuilder sb = new StringBuilder();
         String line;
-        while ((line = in.readLine()) != null && !line.trim().equals("}")) {
+        while ((line = in.readLine()) != null && !line.isBlank()) {
             sb.append(line);
             sb.append("\n");
         }
