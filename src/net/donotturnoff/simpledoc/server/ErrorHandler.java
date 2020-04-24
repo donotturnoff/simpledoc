@@ -8,4 +8,9 @@ class ErrorHandler extends RequestHandler {
         this.request = request;
         this.exception = e;
     }
+
+    @Override
+    String handle() {
+        return "";
+    }
 }

@@ -5,4 +5,9 @@ class GetHandler extends RequestHandler {
     GetHandler(Request request) {
         this.request = request;
     }
+
+    @Override
+    String handle() {
+        return "";
+    }
 }
