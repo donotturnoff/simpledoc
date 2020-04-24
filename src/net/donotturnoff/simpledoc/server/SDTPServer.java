@@ -66,7 +66,7 @@ public class SDTPServer {
                 logger.log(Level.INFO, "Accepted new connection: " + c);
                 ServerWorker worker = new ServerWorker(this, c);
                 workers.add(worker);
-                (new Thread(worker)).start();
+                (new Thread(worker, c.toString())).start();
                 logger.log(Level.FINE, "Dispatched new server worker to handle " + c);
             } catch (IOException e) {
                 logger.log(Level.WARNING, "Failed to accept connection", e);

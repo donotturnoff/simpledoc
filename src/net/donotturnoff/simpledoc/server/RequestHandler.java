@@ -35,12 +35,14 @@ class RequestHandler {
     }
 
     private Request parse(String requestString) throws RequestHandlingException {
-        if (requestString.length() == 0) {
+        if (requestString.isBlank()) {
             throw new RequestHandlingException("Request cannot be blank");
         }
+
         String[] lines = requestString.split("\\r|\\r?\\n");
+
         String firstLine = lines[0];
-        if (!firstLine.matches("(GET|HEAD)(\\s+)(/\\S*)(\\s+)(SDTP/\\d+\\.\\d+)(\\s*)(\\{?)")) {
+        if (!firstLine.matches("(GET|HEAD)(\\s+)(/\\S*)(\\s+)(SDTP/\\d+\\.\\d+)(\\s*)")) {
             throw new RequestHandlingException("First line of request must be of format [method] [path] [protocol]");
         }
         String[] firstLineParts = firstLine.split("\\s+");
@@ -51,8 +53,10 @@ class RequestHandler {
             throw new RequestHandlingException("Invalid request method used");
         }
         String path = firstLineParts[1];
-        String protocol = firstLineParts[2].replace("{", "");
+        String protocol = firstLineParts[2];
+
         Map<String, String> data = new HashMap<>();
+
         return new Request(method, path, protocol, data);
     }
 }
