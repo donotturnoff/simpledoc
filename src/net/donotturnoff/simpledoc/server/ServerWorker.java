@@ -55,11 +55,16 @@ class ServerWorker implements Runnable {
         while ((line = in.readLine()) != null && !line.isBlank()) {
             if (line.trim().startsWith("length")) {
                 try {
-                    length = Integer.parseInt(line.split("=")[1].trim());
-                    if (length < 0) {
-                        throw new NumberFormatException();
+                    String[] parts = line.split("=");
+                    if (parts.length == 2) {
+                        length = Integer.parseInt(parts[1].trim());
+                        if (length < 0) {
+                            throw new NumberFormatException();
+                        }
+                    } else {
+                        throw new IllegalArgumentException();
                     }
-                } catch (NumberFormatException e) {
+                } catch (IllegalArgumentException e) {
                     length = 0;
                     logger.log(Level.FINER, "Invalid length header (ignoring body; error will be handled later)", e);
                 }
