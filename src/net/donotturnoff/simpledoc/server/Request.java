@@ -7,13 +7,15 @@ class Request {
     private RequestMethod method;
     private String path;
     private String protocol;
-    private Map<String, String> data;
+    private Map<String, String> headers;
+    private String body;
 
-    Request(RequestMethod method, String path, String protocol, Map<String, String> data) {
+    Request(RequestMethod method, String path, String protocol, Map<String, String> headers, String body) {
         this.method = method;
         this.path = path;
         this.protocol = protocol;
-        this.data = data;
+        this.headers = headers;
+        this.body = body;
     }
 
     RequestMethod getMethod() {
@@ -28,7 +30,11 @@ class Request {
         return protocol;
     }
 
-    Map<String, String> getData() {
-        return data;
+    Map<String, String> getHeaders() {
+        return headers;
+    }
+
+    String getBody() {
+        return body;
     }
 }
