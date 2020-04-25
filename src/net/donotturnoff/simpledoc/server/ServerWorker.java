@@ -51,10 +51,27 @@ class ServerWorker implements Runnable {
     private String recv() throws IOException {
         StringBuilder sb = new StringBuilder();
         String line;
+        int length = 0;
         while ((line = in.readLine()) != null && !line.isBlank()) {
+            if (line.trim().startsWith("length")) {
+                try {
+                    length = Integer.parseInt(line.split("=")[1].trim());
+                    if (length < 0) {
+                        throw new NumberFormatException();
+                    }
+                } catch (NumberFormatException e) {
+                    length = 0;
+                    logger.log(Level.FINER, "Invalid length header (ignoring body; error will be handled later)", e);
+                }
+            }
             sb.append(line);
-            sb.append("\n");
+            sb.append("\r\n");
         }
+        sb.append("\r\n");
+        char[] bodyText = new char[length];
+        int read = in.read(bodyText, 0, length);
+        sb.append(new String(bodyText));
+
         logger.log(Level.FINER, "Received request");
         return sb.toString();
     }

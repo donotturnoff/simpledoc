@@ -1,5 +1,6 @@
 package net.donotturnoff.simpledoc.server;
 
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,8 +40,9 @@ class RequestHandler {
             throw new RequestHandlingException("Request cannot be blank");
         }
 
-        String[] lines = requestString.split("\\r|\\r?\\n");
+        String[] lines = requestString.split("\\r\\n");
 
+        // Extract first line parameters
         String firstLine = lines[0];
         if (!firstLine.matches("(GET|HEAD)(\\s+)(/\\S*)(\\s+)(SDTP/\\d+\\.\\d+)(\\s*)")) {
             throw new RequestHandlingException("First line of request must be of format [method] [path] [protocol]");
@@ -55,8 +57,30 @@ class RequestHandler {
         String path = firstLineParts[1];
         String protocol = firstLineParts[2];
 
-        Map<String, String> data = new HashMap<>();
+        // Extract headers
+        int i = 1;
+        int length = 0;
+        Map<String, String> headers = new HashMap<>();
+        for (; i < lines.length; i++) {
+            if (lines[i].isBlank()) {
+                break;
+            }
+            String[] parts = lines[i].split("=", 1);
+            if (parts.length != 2) {
+                throw new RequestHandlingException("Invalid header syntax");
+            }
+            String key = parts[0].trim();
+            String value = parts[1].trim();
+            headers.put(key, value);
+        }
 
-        return new Request(method, path, protocol, data);
+        // Extract body
+        StringBuilder sb = new StringBuilder();
+        for (; i < lines.length; i++) {
+            sb.append(lines[i]);
+        }
+        String body = sb.toString();
+
+        return new Request(method, path, protocol, headers, body);
     }
 }
