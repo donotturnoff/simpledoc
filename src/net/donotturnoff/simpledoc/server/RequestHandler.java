@@ -59,7 +59,6 @@ class RequestHandler {
 
         // Extract headers
         int i = 1;
-        int length = 0;
         Map<String, String> headers = new HashMap<>();
         for (; i < lines.length; i++) {
             if (lines[i].isBlank()) {
