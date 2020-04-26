@@ -37,9 +37,14 @@ class ServerWorker implements Runnable {
     @Override
     public void run() {
         try {
-            String request = recv();
-            RequestHandler handler = new RequestHandler(request);
-            String response = handler.handle();
+            String reqString = recv();
+            String response;
+            try {
+                Request r = new Request(reqString);
+                response = RequestHandler.handle(r);
+            } catch (RequestHandlingException e) {
+                response = ErrorHandler.handle(e);
+            }
             send(response);
         } catch (IOException e) {
             logger.log(Level.FINE, "Failed to read request from " + c, e);
@@ -76,7 +81,6 @@ class ServerWorker implements Runnable {
         char[] bodyText = new char[length];
         int read = in.read(bodyText, 0, length);
         sb.append(new String(bodyText));
-
         logger.log(Level.FINER, "Received request");
         return sb.toString();
     }

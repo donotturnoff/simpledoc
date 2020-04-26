@@ -1,16 +1,7 @@
 package net.donotturnoff.simpledoc.server;
 
-class ErrorHandler extends RequestHandler {
-
-    private final RequestHandlingException exception;
-
-    ErrorHandler(Request request, RequestHandlingException e) {
-        this.request = request;
-        this.exception = e;
-    }
-
-    @Override
-    String handle() {
-        return "";
+class ErrorHandler {
+    static String handle(RequestHandlingException e) {
+        return "Error";
     }
 }

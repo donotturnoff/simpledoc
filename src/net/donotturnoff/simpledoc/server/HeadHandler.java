@@ -1,13 +1,7 @@
 package net.donotturnoff.simpledoc.server;
 
-class HeadHandler extends RequestHandler {
-
-    HeadHandler(Request request) {
-        this.request = request;
-    }
-
-    @Override
-    String handle() {
-        return "";
+class HeadHandler {
+    static String handle(Request r) {
+        return "HEAD";
     }
 }
