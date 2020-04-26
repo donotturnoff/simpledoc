@@ -1,5 +1,6 @@
 package net.donotturnoff.simpledoc.server;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
@@ -15,7 +16,6 @@ import java.util.logging.SimpleFormatter;
 public class SDTPServer {
 
     static final String DEFAULT_PROTOCOL = "SDTP/0.1";
-    static final String SERVER_NAME = "SDTPServer 0.1";
 
     private static final Properties defaultConfig = new Properties();
     private static Properties config;
@@ -26,6 +26,7 @@ public class SDTPServer {
     static {
         defaultConfig.setProperty("docroot", "doc");
         defaultConfig.setProperty("log", "log.txt");
+        defaultConfig.setProperty("server", "SDTPServer 0.1");
         config = new Properties(defaultConfig);
         try {
             InputStream propStream = new FileInputStream("server.conf");
