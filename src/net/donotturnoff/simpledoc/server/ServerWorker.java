@@ -38,14 +38,14 @@ class ServerWorker implements Runnable {
     public void run() {
         try {
             String reqString = recv();
-            String response;
+            Response response;
             try {
                 Request r = new Request(reqString);
                 response = RequestHandler.handle(r);
             } catch (RequestHandlingException e) {
                 response = ErrorHandler.handle(e);
             }
-            send(response);
+            send(response.toString());
         } catch (IOException e) {
             logger.log(Level.FINE, "Failed to read request from " + c, e);
         } finally {

@@ -1,7 +1,7 @@
 package net.donotturnoff.simpledoc.server;
 
 class RequestHandler {
-    static String handle(Request r) {
+    static Response handle(Request r) {
         try {
             switch (r.getMethod()) {
                 case GET:
