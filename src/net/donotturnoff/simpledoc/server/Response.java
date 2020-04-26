@@ -13,6 +13,7 @@ class Response {
         this.status = status;
         this.headers = headers;
         this.body = body;
+        addDefaultHeaders();
     }
 
     String getProtocol() {
@@ -29,6 +30,11 @@ class Response {
 
     public String getBody() {
         return body;
+    }
+
+    private void addDefaultHeaders() {
+        headers.put("length", Integer.toString(body.length()));
+        headers.put("server", SDTPServer.SERVER_NAME);
     }
 
     @Override

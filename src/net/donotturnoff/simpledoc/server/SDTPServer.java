@@ -13,6 +13,8 @@ import java.util.logging.SimpleFormatter;
 public class SDTPServer {
 
     static final String DEFAULT_PROTOCOL = "SDTP/0.1";
+    static final String SERVER_NAME = "SDTPServer 0.1";
+
     private static final Logger logger = Logger.getLogger(SDTPServer.class.getName());
     private int port;
     private ServerSocket socket;
