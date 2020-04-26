@@ -4,10 +4,11 @@ import java.util.Map;
 
 class HeadHandler {
     static Response handle(Request r) {
-        String protocol = r.getProtocol();
-        Status status = Status.OK;
-        Map<String, String> headers = Map.of();
-        String body = "HEAD";
+        Response getResponse = GetHandler.handle(r);
+        String protocol = getResponse.getProtocol();
+        Status status = getResponse.getStatus();
+        Map<String, String> headers = getResponse.getHeaders();
+        String body = "";
         return new Response(protocol, status, headers, body);
     }
 }

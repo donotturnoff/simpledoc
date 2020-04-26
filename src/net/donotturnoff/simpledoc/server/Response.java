@@ -15,6 +15,22 @@ class Response {
         this.body = body;
     }
 
+    String getProtocol() {
+        return protocol;
+    }
+
+    Status getStatus() {
+        return status;
+    }
+
+    Map<String, String> getHeaders() {
+        return headers;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
