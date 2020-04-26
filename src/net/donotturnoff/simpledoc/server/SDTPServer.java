@@ -1,9 +1,11 @@
 package net.donotturnoff.simpledoc.server;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -15,11 +17,24 @@ public class SDTPServer {
     static final String DEFAULT_PROTOCOL = "SDTP/0.1";
     static final String SERVER_NAME = "SDTPServer 0.1";
 
+    private static final Properties defaultConfig = new Properties();
+    private static Properties config;
     private static final Logger logger = Logger.getLogger(SDTPServer.class.getName());
     private int port;
     private ServerSocket socket;
 
     static {
+        defaultConfig.setProperty("docroot", "doc");
+        defaultConfig.setProperty("log", "log.txt");
+        config = new Properties(defaultConfig);
+        try {
+            InputStream propStream = new FileInputStream("server.conf");
+            config.load(propStream);
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "Failed to open config file");
+            System.exit(1);
+        }
+
         try {
             FileHandler fileHandler = new FileHandler("log.txt", true);
             fileHandler.setFormatter(new SimpleFormatter());
@@ -39,11 +54,11 @@ public class SDTPServer {
                 server.run();
             } catch (IllegalArgumentException e) {
                 logger.log(Level.SEVERE, "Invalid port number", e);
-                System.exit(2);
+                System.exit(3);
             }
         } else {
             logger.log(Level.SEVERE, "One argument required: port number");
-            System.exit(1);
+            System.exit(2);
         }
     }
 
@@ -60,7 +75,7 @@ public class SDTPServer {
             logger.log(Level.INFO, "Listening on port " + socket.getLocalPort());
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Failed to start server", e);
-            System.exit(3);
+            System.exit(4);
         }
         //noinspection InfiniteLoopStatement
         while (true) {
