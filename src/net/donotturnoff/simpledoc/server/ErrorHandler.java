@@ -4,7 +4,7 @@ import java.util.Map;
 
 class ErrorHandler {
     static Response handle(RequestHandlingException e) {
-        String protocol = "SDTP/0.1";
+        String protocol = SDTPServer.DEFAULT_PROTOCOL;
         Status status = Status.INTERNAL_SERVER_ERROR;
         Map<String, String> headers = Map.of();
         String body = "Error";
