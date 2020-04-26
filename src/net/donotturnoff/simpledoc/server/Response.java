@@ -34,7 +34,7 @@ class Response {
 
     private void addDefaultHeaders() {
         headers.put("length", Integer.toString(body.length()));
-        headers.put("server", SDTPServer.SERVER_NAME);
+        headers.put("server", SDTPServer.config.getProperty("server"));
     }
 
     @Override

@@ -18,7 +18,7 @@ public class SDTPServer {
     static final String DEFAULT_PROTOCOL = "SDTP/0.1";
 
     private static final Properties defaultConfig = new Properties();
-    private static Properties config;
+    static Properties config;
     private static final Logger logger = Logger.getLogger(SDTPServer.class.getName());
     private int port;
     private ServerSocket socket;
