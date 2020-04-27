@@ -37,7 +37,7 @@ class Request {
 
     private void parse(String requestString) throws RequestHandlingException {
         if (requestString.isBlank()) {
-            throw new RequestHandlingException("Request cannot be blank");
+            throw new RequestHandlingException(Status.BAD_REQUEST, "Request cannot be blank");
         }
 
         String[] lines = requestString.split("\\r\\n");
@@ -45,13 +45,13 @@ class Request {
         // Extract first line parameters
         String firstLine = lines[0];
         if (!firstLine.matches("(GET|HEAD)(\\s+)(/\\S*)(\\s+)(SDTP/\\d+\\.\\d+)(\\s*)")) {
-            throw new RequestHandlingException("First line of request must be of format [method] [path] [protocol]");
+            throw new RequestHandlingException(Status.BAD_REQUEST, "First line of request must be of format [method] [path] [protocol]");
         }
         String[] firstLineParts = firstLine.split("\\s+");
         try {
             this.method = RequestMethod.valueOf(firstLineParts[0]);
         } catch (IllegalArgumentException e) {
-            throw new RequestHandlingException("Invalid request method used");
+            throw new RequestHandlingException(Status.BAD_REQUEST, "Invalid request method used");
         }
         this.path = firstLineParts[1];
         this.protocol = firstLineParts[2];
@@ -65,7 +65,7 @@ class Request {
             }
             String[] parts = lines[i].split("=", 1);
             if (parts.length != 2) {
-                throw new RequestHandlingException("Invalid header syntax");
+                throw new RequestHandlingException(Status.BAD_REQUEST, "Invalid header syntax");
             }
             String key = parts[0].trim();
             String value = parts[1].trim();

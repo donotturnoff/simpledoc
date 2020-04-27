@@ -6,9 +6,24 @@ import java.util.Map;
 class ErrorHandler {
     static Response handle(RequestHandlingException e) {
         String protocol = SDTPServer.DEFAULT_PROTOCOL;
-        Status status = Status.INTERNAL_SERVER_ERROR;
         Map<String, String> headers = new HashMap<>();
-        String body = "Error";
-        return new Response(protocol, status, headers, body);
+        headers.put("type", "text/sdml");
+        String sb = "doctype(SDML/1.0)\n\n" +
+                "doc(charset=\"UTF-8\"\n" +
+                " head {\n" +
+                "  title {\"" +
+                e.getStatus().toString() +
+                "\"}\n" +
+                " }\n" +
+                " body {\n" +
+                "  h1 {\"" +
+                e.getStatus().toString() +
+                "\"}\n" +
+                "  p {\"" +
+                e.getMessage() +
+                "\"}\n" +
+                " }\n" +
+                "}\n";
+        return new Response(protocol, e.getStatus(), headers, sb);
     }
 }
