@@ -24,16 +24,19 @@ public class SDTPServer {
     private ServerSocket socket;
 
     static {
-        defaultConfig.setProperty("docroot", "doc");
+        defaultConfig.setProperty("docroot", "/var/sdtp/sdml/");
         defaultConfig.setProperty("log", "log.txt");
         defaultConfig.setProperty("server", "SDTPServer 0.1");
+        defaultConfig.setProperty("follow_symlinks", "no");
+        defaultConfig.setProperty("default_mime", "text/sdml");
+        defaultConfig.setProperty("index_pages", "index.sdml");
+        defaultConfig.setProperty("listdir", "no");
         config = new Properties(defaultConfig);
         try {
-            InputStream propStream = new FileInputStream("server.conf");
+            InputStream propStream = new FileInputStream("/etc/sdtp/server.conf");
             config.load(propStream);
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "Failed to open config file");
-            System.exit(1);
+            logger.log(Level.WARNING, "Failed to open config file");
         }
 
         try {
