@@ -63,7 +63,7 @@ class Request {
             if (lines[i].isBlank()) {
                 break;
             }
-            String[] parts = lines[i].split("=", 1);
+            String[] parts = lines[i].split("=", 2);
             if (parts.length != 2) {
                 throw new RequestHandlingException(Status.BAD_REQUEST, "Invalid header syntax");
             }
