@@ -19,9 +19,9 @@ class GetHandler {
             File f = fullPath.toFile();
             return (f.isDirectory()) ? handleDirectory(fullPath, docPath) : handleFile(fullPath);
         } catch (NoSuchFileException e) {
-            throw new RequestHandlingException(Status.NOT_FOUND, e.getMessage());
+            throw new RequestHandlingException(Status.NOT_FOUND, r.getPath());
         } catch (AccessDeniedException e) {
-            throw new RequestHandlingException(Status.FORBIDDEN, e.getMessage());
+            throw new RequestHandlingException(Status.FORBIDDEN, r.getPath());
         } catch (IOException e) {
             throw new RequestHandlingException(Status.INTERNAL_SERVER_ERROR, e.getMessage());
         }
