@@ -12,9 +12,6 @@ class GetHandler {
 
         try {
             String docPath = r.getPath();
-            if (!docPath.startsWith("/")) {
-                docPath = "/" + docPath;
-            }
             docPath = docPath.replaceAll("\\.\\.", "");
             LinkOption[] opts = new LinkOption[]{LinkOption.NOFOLLOW_LINKS};
             if (SDTPServer.config.getProperty("follow_symlinks").equals("yes")) {
