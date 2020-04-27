@@ -3,7 +3,7 @@ package net.donotturnoff.simpledoc.server;
 import java.util.Map;
 
 class HeadHandler {
-    static Response handle(Request r) {
+    static Response handle(Request r) throws RequestHandlingException {
         Response getResponse = GetHandler.handle(r);
         String protocol = getResponse.getProtocol();
         Status status = getResponse.getStatus();

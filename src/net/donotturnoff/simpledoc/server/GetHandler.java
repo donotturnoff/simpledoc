@@ -7,9 +7,7 @@ import java.nio.file.*;
 import java.util.HashMap;
 
 class GetHandler {
-    static Response handle(Request r) {
-        Response response;
-
+    static Response handle(Request r) throws RequestHandlingException {
         try {
             String docPath = r.getPath();
             docPath = docPath.replaceAll("\\.\\.", "");
@@ -19,19 +17,14 @@ class GetHandler {
             }
             Path fullPath = Path.of(SDTPServer.config.getProperty("docroot") + docPath).toRealPath(opts);
             File f = fullPath.toFile();
-            response = (f.isDirectory()) ? handleDirectory(fullPath, docPath) : handleFile(fullPath);
+            return (f.isDirectory()) ? handleDirectory(fullPath, docPath) : handleFile(fullPath);
         } catch (NoSuchFileException e) {
-            RequestHandlingException rhe = new RequestHandlingException(Status.NOT_FOUND, e.getMessage());
-            response = ErrorHandler.handle(rhe);
+            throw new RequestHandlingException(Status.NOT_FOUND, e.getMessage());
         } catch (AccessDeniedException e) {
-            RequestHandlingException rhe = new RequestHandlingException(Status.FORBIDDEN, e.getMessage());
-            response = ErrorHandler.handle(rhe);
+            throw new RequestHandlingException(Status.FORBIDDEN, e.getMessage());
         } catch (IOException e) {
-            RequestHandlingException rhe = new RequestHandlingException(Status.INTERNAL_SERVER_ERROR, e.getMessage());
-            response = ErrorHandler.handle(rhe);
+            throw new RequestHandlingException(Status.INTERNAL_SERVER_ERROR, e.getMessage());
         }
-
-        return response;
     }
 
     private static Response handleDirectory(Path p, String docPath) throws IOException {
