@@ -23,9 +23,16 @@ public class SDTPBrowser implements ActionListener {
     // Labels
     private JLabel statusLabel;
 
+    //
+    private History history;
+
     public static void main(String[] args) {
         SDTPBrowser browser = new SDTPBrowser();
         browser.run();
+    }
+
+    private SDTPBrowser() {
+        history = new History();
     }
 
     private void run() {
