@@ -4,8 +4,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
-public class SDTPBrowser implements ActionListener {
+public class SDTPBrowser implements ActionListener, KeyListener {
 
     // Containers
     private JFrame gui;
@@ -99,6 +101,23 @@ public class SDTPBrowser implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
+
+    }
+
+    @Override
+    public void keyTyped(KeyEvent keyEvent) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent keyEvent) {
+        if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
+            navigate(urlBar.getText());
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent keyEvent) {
 
     }
 }
