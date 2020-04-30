@@ -99,6 +99,11 @@ public class SDTPBrowser implements ActionListener, KeyListener {
         gui.setExtendedState(gui.getExtendedState() | JFrame.MAXIMIZED_BOTH);
     }
 
+
+    private void navigate(String text) {
+
+    }
+
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
 
