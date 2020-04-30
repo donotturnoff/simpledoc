@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class SDTPBrowser implements ActionListener, KeyListener {
 
@@ -100,8 +102,14 @@ public class SDTPBrowser implements ActionListener, KeyListener {
     }
 
 
-    private void navigate(String text) {
+    private void navigate(String urlString) {
+        try {
+            URL url = new URL(urlString);
+            ConnectionWorker worker = new ConnectionWorker(url);
+            worker.execute();
+        } catch (MalformedURLException e) {
 
+        }
     }
 
     @Override

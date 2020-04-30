@@ -7,6 +7,7 @@ import java.io.*;
 import java.net.Socket;
 import java.net.URL;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 class ConnectionWorker extends SwingWorker<Response, Void> {
 
@@ -35,5 +36,17 @@ class ConnectionWorker extends SwingWorker<Response, Void> {
         Request request = new Request(RequestMethod.GET, path, "SDTP/0.1", Map.of(), "");
         ConnectionUtils.send(out, request.toString());
         return new Response(ConnectionUtils.recv(in));
+    }
+
+    @Override
+    public void done() {
+        try {
+            Response response = get();
+            //TODO: call renderer
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 }
