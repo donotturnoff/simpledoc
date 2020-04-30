@@ -1,4 +1,4 @@
-package net.donotturnoff.simpledoc.server;
+package net.donotturnoff.simpledoc.util;
 
 public enum RequestMethod {
     GET, HEAD

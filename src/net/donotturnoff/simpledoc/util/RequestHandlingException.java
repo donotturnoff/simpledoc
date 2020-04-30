@@ -1,6 +1,6 @@
-package net.donotturnoff.simpledoc.server;
+package net.donotturnoff.simpledoc.util;
 
-class RequestHandlingException extends Exception {
+public class RequestHandlingException extends Exception {
     private Status status = Status.INTERNAL_SERVER_ERROR;
 
     RequestHandlingException() {
@@ -16,7 +16,7 @@ class RequestHandlingException extends Exception {
         super(msg);
     }
 
-    RequestHandlingException(Status status, String msg) {
+    public RequestHandlingException(Status status, String msg) {
         super(msg);
         this.status = status;
     }

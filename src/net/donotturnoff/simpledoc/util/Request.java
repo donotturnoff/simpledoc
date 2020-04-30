@@ -1,9 +1,9 @@
-package net.donotturnoff.simpledoc.server;
+package net.donotturnoff.simpledoc.util;
 
 import java.util.HashMap;
 import java.util.Map;
 
-class Request {
+public class Request {
 
     private RequestMethod method;
     private String path;
@@ -11,36 +11,45 @@ class Request {
     private Map<String, String> headers;
     private String body;
 
-    Request(String reqString) throws RequestHandlingException {
-        parse(reqString);
+
+    public Request(String s) throws RequestHandlingException {
+        parse(s);
     }
 
-    RequestMethod getMethod() {
+    public Request(RequestMethod method, String path, String protocol, Map<String, String> headers, String body) {
+        this.method = method;
+        this.path = path;
+        this.protocol = protocol;
+        this.headers = headers;
+        this.body = body;
+    }
+
+    public RequestMethod getMethod() {
         return method;
     }
 
-    String getPath() {
+    public String getPath() {
         return path;
     }
 
-    String getProtocol() {
+    public String getProtocol() {
         return protocol;
     }
 
-    Map<String, String> getHeaders() {
+    public Map<String, String> getHeaders() {
         return headers;
     }
 
-    String getBody() {
+    public String getBody() {
         return body;
     }
 
-    private void parse(String requestString) throws RequestHandlingException {
-        if (requestString.isBlank()) {
+    private void parse(String s) throws RequestHandlingException {
+        if (s.isBlank()) {
             throw new RequestHandlingException(Status.BAD_REQUEST, "Request cannot be blank");
         }
 
-        String[] lines = requestString.split("\\r\\n");
+        String[] lines = s.split("\\r\\n");
 
         // Extract first line parameters
         String firstLine = lines[0];
@@ -78,5 +87,28 @@ class Request {
             sb.append(lines[i]);
         }
         this.body = sb.toString();
+    }
+
+
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(method);
+        sb.append(" ");
+        sb.append(path);
+        sb.append(" ");
+        sb.append(protocol);
+        sb.append("\r\n");
+        for (String k: headers.keySet()) {
+            String v = headers.get(k);
+            sb.append(k);
+            sb.append("=");
+            sb.append(v);
+            sb.append("\r\n");
+        }
+        sb.append("\r\n");
+        sb.append(body);
+        return sb.toString();
     }
 }

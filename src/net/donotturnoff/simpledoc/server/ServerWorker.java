@@ -1,5 +1,10 @@
 package net.donotturnoff.simpledoc.server;
 
+import net.donotturnoff.simpledoc.util.ConnectionUtils;
+import net.donotturnoff.simpledoc.util.Request;
+import net.donotturnoff.simpledoc.util.RequestHandlingException;
+import net.donotturnoff.simpledoc.util.Response;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.logging.FileHandler;
@@ -37,7 +42,7 @@ class ServerWorker implements Runnable {
     @Override
     public void run() {
         try {
-            String reqString = recv();
+            String reqString = ConnectionUtils.recv(in);
             Response response;
             try {
                 Request r = new Request(reqString);
@@ -45,50 +50,12 @@ class ServerWorker implements Runnable {
             } catch (RequestHandlingException e) {
                 response = ErrorHandler.handle(e);
             }
-            send(response.toString());
+            ConnectionUtils.send(out, response.toString());
         } catch (IOException e) {
             logger.log(Level.FINE, "Failed to read request from " + c, e);
         } finally {
             halt();
         }
-    }
-
-    private String recv() throws IOException {
-        StringBuilder sb = new StringBuilder();
-        String line;
-        int length = 0;
-        while ((line = in.readLine()) != null && !line.isBlank()) {
-            if (line.trim().startsWith("length")) {
-                try {
-                    String[] parts = line.split("=");
-                    if (parts.length == 2) {
-                        length = Integer.parseInt(parts[1].trim());
-                        if (length < 0) {
-                            throw new NumberFormatException();
-                        }
-                    } else {
-                        throw new IllegalArgumentException();
-                    }
-                } catch (IllegalArgumentException e) {
-                    length = 0;
-                    logger.log(Level.FINER, "Invalid length header (ignoring body; error will be handled later)", e);
-                }
-            }
-            sb.append(line);
-            sb.append("\r\n");
-        }
-        sb.append("\r\n");
-        char[] bodyText = new char[length];
-        int read = in.read(bodyText, 0, length);
-        sb.append(new String(bodyText));
-        logger.log(Level.FINER, "Received request");
-        return sb.toString();
-    }
-
-    private void send(String response) {
-        out.write(response);
-        out.flush();
-        logger.log(Level.FINER, "Sent response");
     }
 
     void halt() {
