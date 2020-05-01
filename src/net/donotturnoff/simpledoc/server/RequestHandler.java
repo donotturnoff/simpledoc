@@ -12,9 +12,9 @@ class RequestHandler {
         try {
             switch (r.getMethod()) {
                 case GET:
-                    response = GetHandler.handle(r);
+                    response = GetHandler.handle(r); break;
                 case HEAD:
-                    response = HeadHandler.handle(r);
+                    response = HeadHandler.handle(r); break;
                 default: throw new RequestHandlingException(Status.NOT_IMPLEMENTED, "Request method " + r.getMethod() + " not implemented");
             }
         } catch (RequestHandlingException e) {
