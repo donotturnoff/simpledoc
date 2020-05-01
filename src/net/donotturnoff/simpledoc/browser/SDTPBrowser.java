@@ -27,10 +27,11 @@ public class SDTPBrowser implements ActionListener, KeyListener {
     // Labels
     private JLabel statusLabel;
 
-    //
+    // Non-GUI
     private History history;
 
     public static void main(String[] args) {
+        URL.setURLStreamHandlerFactory(new SDTPURLStreamHandlerFactory());
         SDTPBrowser browser = new SDTPBrowser();
         browser.run();
     }
@@ -76,6 +77,8 @@ public class SDTPBrowser implements ActionListener, KeyListener {
         forwardsBtn.addActionListener(this);
         reloadBtn.addActionListener(this);
         newTabBtn.addActionListener(this);
+
+        urlBar.addKeyListener(this);
     }
 
     private void constructGUI() {
@@ -108,7 +111,7 @@ public class SDTPBrowser implements ActionListener, KeyListener {
             ConnectionWorker worker = new ConnectionWorker(url);
             worker.execute();
         } catch (MalformedURLException e) {
-
+            e.printStackTrace();
         }
     }
 

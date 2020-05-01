@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -22,16 +23,13 @@ class ConnectionWorker extends SwingWorker<Response, Void> {
 
     @Override
     protected Response doInBackground() throws IOException, ResponseHandlingException {
-        String host = url.getHost();
-        int port = url.getPort();
-        if (port == -1) {
-            port = 5000; //TODO: add to config file
-        }
         String path = url.getPath();
 
-        Socket s = new Socket(host, port);
-        BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
-        PrintWriter out = new PrintWriter(new OutputStreamWriter(s.getOutputStream()));
+        URLConnection c = url.openConnection();
+        c.setDoOutput(true);
+        c.connect();
+        BufferedReader in = new BufferedReader(new InputStreamReader(c.getInputStream()));
+        PrintWriter out = new PrintWriter(new OutputStreamWriter(c.getOutputStream()));
 
         Request request = new Request(RequestMethod.GET, path, "SDTP/0.1", Map.of(), "");
         ConnectionUtils.send(out, request.toString());
@@ -42,6 +40,7 @@ class ConnectionWorker extends SwingWorker<Response, Void> {
     public void done() {
         try {
             Response response = get();
+            System.out.println(response);
             //TODO: call renderer
         } catch (InterruptedException e) {
             e.printStackTrace();

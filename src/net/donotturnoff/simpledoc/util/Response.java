@@ -50,7 +50,7 @@ public class Response {
 
         // Extract first line parameters
         String firstLine = lines[0];
-        if (!firstLine.matches("(SDTP/\\d+\\.\\d+)(\\s+)(\\d\\d\\d)(\\s+)(\\w+)(\\s*)")) {
+        if (!firstLine.matches("(SDTP/\\d+\\.\\d+)(\\s+)(\\d\\d\\d)(\\s+)(\\w+)(.*)")) {
             throw new ResponseHandlingException("First line of response must be of format [protocol] [code] [status]");
         }
         String[] firstLineParts = firstLine.split("\\s+");
