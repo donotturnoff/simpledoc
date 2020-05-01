@@ -24,6 +24,9 @@ class ConnectionWorker extends SwingWorker<Response, Void> {
     @Override
     protected Response doInBackground() throws IOException, ResponseHandlingException {
         String path = url.getPath();
+        if (path.isBlank()) {
+            path = "/";
+        }
 
         URLConnection c = url.openConnection();
         c.setDoOutput(true);
