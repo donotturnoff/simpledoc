@@ -108,8 +108,12 @@ public class SDTPBrowser implements ActionListener, KeyListener {
     private void navigate(String urlString) {
         try {
             URL url = new URL(urlString);
-            ConnectionWorker worker = new ConnectionWorker(url);
-            worker.execute();
+            if (url.getProtocol().equals("sdtp")) {
+                ConnectionWorker worker = new ConnectionWorker(url);
+                worker.execute();
+            } else {
+                throw new MalformedURLException("Scheme must be sdtp");
+            }
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
