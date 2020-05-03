@@ -17,6 +17,10 @@ class Page {
         this.url = url;
     }
 
+    public void setURL(URL url) {
+        this.url = url;
+    }
+
     public void setData(Response data) {
         this.data = data;
     }
@@ -47,9 +51,12 @@ class Page {
     }
 
     public void render() {
+        panel.removeAll();
         if (data != null) {
             JLabel label = new JLabel(data.getBody());
             panel.add(label);
+            panel.repaint();
+            panel.revalidate();
         }
     }
 }

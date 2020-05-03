@@ -36,7 +36,6 @@ public class SDTPBrowser implements ActionListener, KeyListener {
     private History history;
     private Set<Page> pages;
     private Page currentPage;
-    private int currentTabIndex;
 
     public static void main(String[] args) {
         URL.setURLStreamHandlerFactory(new SDTPURLStreamHandlerFactory());
@@ -75,14 +74,6 @@ public class SDTPBrowser implements ActionListener, KeyListener {
         newTabBtn = new JButton("+");
         urlBar = new JTextField(60);
 
-        try {
-            currentPage = new Page(new URL(HOMEPAGE));
-        } catch (MalformedURLException e) {
-            //TODO: handle error properly
-            e.printStackTrace();
-        }
-        currentTabIndex = 0;
-
         statusLabel = new JLabel("Welcome", JLabel.LEFT);
     }
 
@@ -109,7 +100,13 @@ public class SDTPBrowser implements ActionListener, KeyListener {
 
         statusBar.add(statusLabel);
 
-        addPage(currentPage);
+        try {
+            Page page = new Page(new URL(HOMEPAGE));
+            addPage(page);
+        } catch (MalformedURLException e) {
+            //TODO: handle error properly
+            e.printStackTrace();
+        }
 
         Container pane = gui.getContentPane();
         gui.setJMenuBar(menuBar);
@@ -129,20 +126,16 @@ public class SDTPBrowser implements ActionListener, KeyListener {
         currentPage.load();
         pages.add(page);
         tabbedPane.addTab("Loading", page.getPanel());
-        currentTabIndex = tabbedPane.getTabCount()-1;
     }
 
     private void navigate(String urlString) {
         try {
             URL url = new URL(urlString);
             if (url.getProtocol().equals("sdtp")) {
-                pages.remove(currentPage);
-                currentPage = new Page(url);
+                currentPage.setURL(url);
                 currentPage.load();
-                pages.add(currentPage);
-                tabbedPane.setComponentAt(currentTabIndex, currentPage.getPanel());
             } else {
-                throw new MalformedURLException("Scheme  must be sdtp");
+                throw new MalformedURLException("Scheme must be sdtp");
             }
         } catch (MalformedURLException e) {
             e.printStackTrace();
