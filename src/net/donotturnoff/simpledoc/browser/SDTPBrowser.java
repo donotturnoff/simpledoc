@@ -8,8 +8,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
 
 public class SDTPBrowser implements ActionListener, KeyListener {
+
+    //TODO: add as configuration option
+    private static final String HOMEPAGE = "sdtp://localhost:5000";
 
     // Containers
     private JFrame gui;
@@ -29,6 +34,9 @@ public class SDTPBrowser implements ActionListener, KeyListener {
 
     // Non-GUI
     private History history;
+    private Set<Page> pages;
+    private Page currentPage;
+    private int currentTabIndex;
 
     public static void main(String[] args) {
         URL.setURLStreamHandlerFactory(new SDTPURLStreamHandlerFactory());
@@ -38,6 +46,7 @@ public class SDTPBrowser implements ActionListener, KeyListener {
 
     private SDTPBrowser() {
         history = new History();
+        pages = new HashSet<>();
     }
 
     private void run() {
@@ -66,6 +75,14 @@ public class SDTPBrowser implements ActionListener, KeyListener {
         newTabBtn = new JButton("+");
         urlBar = new JTextField(60);
 
+        try {
+            currentPage = new Page(new URL(HOMEPAGE));
+        } catch (MalformedURLException e) {
+            //TODO: handle error properly
+            e.printStackTrace();
+        }
+        currentTabIndex = 0;
+
         statusLabel = new JLabel("Welcome", JLabel.LEFT);
     }
 
@@ -92,6 +109,8 @@ public class SDTPBrowser implements ActionListener, KeyListener {
 
         statusBar.add(statusLabel);
 
+        addPage(currentPage);
+
         Container pane = gui.getContentPane();
         gui.setJMenuBar(menuBar);
         pane.add("North", navBar);
@@ -105,14 +124,25 @@ public class SDTPBrowser implements ActionListener, KeyListener {
     }
 
 
+    private void addPage(Page page) {
+        currentPage = page;
+        currentPage.load();
+        pages.add(page);
+        tabbedPane.addTab("Loading", page.getPanel());
+        currentTabIndex = tabbedPane.getTabCount()-1;
+    }
+
     private void navigate(String urlString) {
         try {
             URL url = new URL(urlString);
             if (url.getProtocol().equals("sdtp")) {
-                ConnectionWorker worker = new ConnectionWorker(url);
-                worker.execute();
+                pages.remove(currentPage);
+                currentPage = new Page(url);
+                currentPage.load();
+                pages.add(currentPage);
+                tabbedPane.setComponentAt(currentTabIndex, currentPage.getPanel());
             } else {
-                throw new MalformedURLException("Scheme must be sdtp");
+                throw new MalformedURLException("Scheme  must be sdtp");
             }
         } catch (MalformedURLException e) {
             e.printStackTrace();

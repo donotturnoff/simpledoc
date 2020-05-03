@@ -12,17 +12,18 @@ import java.util.concurrent.ExecutionException;
 
 class ConnectionWorker extends SwingWorker<Response, Void> {
 
-    private final URL url;
+    private final Page page;
     private Socket s;
     private BufferedReader in;
     private PrintWriter out;
 
-    ConnectionWorker(URL url) {
-        this.url = url;
+    ConnectionWorker(Page page) {
+        this.page = page;
     }
 
     @Override
     protected Response doInBackground() throws IOException, ResponseHandlingException {
+        URL url = page.getUrl();
         String path = url.getPath();
         if (path.isBlank()) {
             path = "/";
@@ -43,8 +44,9 @@ class ConnectionWorker extends SwingWorker<Response, Void> {
     public void done() {
         try {
             Response response = get();
-            System.out.println(response);
-            //TODO: call renderer
+            page.setData(response);
+            page.parse();
+            page.render();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
