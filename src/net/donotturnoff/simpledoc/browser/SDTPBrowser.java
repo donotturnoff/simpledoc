@@ -130,7 +130,7 @@ public class SDTPBrowser implements ActionListener, KeyListener {
                 throw new MalformedURLException("Scheme must be sdtp");
             }
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            page.displayError(e);
         }
     }
 

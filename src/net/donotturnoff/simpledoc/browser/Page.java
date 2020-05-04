@@ -55,4 +55,8 @@ class Page {
             panel.revalidate();
         }
     }
+
+    public void displayError(Exception e) {
+        JOptionPane.showMessageDialog(panel, e, e.getMessage(), JOptionPane.ERROR_MESSAGE);
+    }
 }
