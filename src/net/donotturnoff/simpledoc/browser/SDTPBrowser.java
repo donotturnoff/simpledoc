@@ -49,14 +49,17 @@ public class SDTPBrowser implements ActionListener, KeyListener {
     }
 
     private void run() {
-        SwingUtilities.invokeLater(this::createAndShowGUI);
+        SwingUtilities.invokeLater(this::init);
     }
 
-    private void createAndShowGUI() {
+    private void init() {
         createWidgets();
         configureWidgets();
         constructGUI();
         showGUI();
+        Page startPage = new Page();
+        addPage(startPage);
+        navigate(startPage, HOMEPAGE);
     }
 
     private void createWidgets() {
@@ -100,14 +103,6 @@ public class SDTPBrowser implements ActionListener, KeyListener {
 
         statusBar.add(statusLabel);
 
-        try {
-            Page page = new Page(new URL(HOMEPAGE));
-            addPage(page);
-        } catch (MalformedURLException e) {
-            //TODO: handle error properly
-            e.printStackTrace();
-        }
-
         Container pane = gui.getContentPane();
         gui.setJMenuBar(menuBar);
         pane.add("North", navBar);
@@ -120,20 +115,17 @@ public class SDTPBrowser implements ActionListener, KeyListener {
         gui.setExtendedState(gui.getExtendedState() | JFrame.MAXIMIZED_BOTH);
     }
 
-
     private void addPage(Page page) {
         currentPage = page;
-        currentPage.load();
         pages.add(page);
         tabbedPane.addTab("Loading", page.getPanel());
     }
 
-    private void navigate(String urlString) {
+    private void navigate(Page page, String urlString) {
         try {
             URL url = new URL(urlString);
             if (url.getProtocol().equals("sdtp")) {
-                currentPage.setURL(url);
-                currentPage.load();
+                page.load(url);
             } else {
                 throw new MalformedURLException("Scheme must be sdtp");
             }
@@ -155,7 +147,7 @@ public class SDTPBrowser implements ActionListener, KeyListener {
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
-            navigate(urlBar.getText());
+            navigate(currentPage, urlBar.getText());
         }
     }
 

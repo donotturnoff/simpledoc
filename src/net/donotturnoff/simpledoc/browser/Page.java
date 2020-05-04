@@ -12,13 +12,8 @@ class Page {
     private Response data;
     private Element root;
 
-    Page(URL url) {
+    Page() {
         this.panel = new JPanel();
-        this.url = url;
-    }
-
-    public void setURL(URL url) {
-        this.url = url;
     }
 
     public void setData(Response data) {
@@ -41,7 +36,8 @@ class Page {
         return root;
     }
 
-    public void load() {
+    public void load(URL url) {
+        this.url = url;
         ConnectionWorker worker = new ConnectionWorker(this);
         worker.execute();
     }
