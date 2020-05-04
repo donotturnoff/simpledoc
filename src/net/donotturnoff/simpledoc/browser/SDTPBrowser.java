@@ -33,7 +33,6 @@ public class SDTPBrowser implements ActionListener, KeyListener {
     private JLabel statusLabel;
 
     // Non-GUI
-    private History history;
     private Set<Page> pages;
     private Page currentPage;
 
@@ -44,7 +43,6 @@ public class SDTPBrowser implements ActionListener, KeyListener {
     }
 
     private SDTPBrowser() {
-        history = new History();
         pages = new HashSet<>();
     }
 
@@ -59,7 +57,7 @@ public class SDTPBrowser implements ActionListener, KeyListener {
         showGUI();
         Page startPage = new Page();
         addPage(startPage);
-        navigate(startPage, HOMEPAGE);
+        startPage.navigate(HOMEPAGE);
     }
 
     private void createWidgets() {
@@ -121,22 +119,16 @@ public class SDTPBrowser implements ActionListener, KeyListener {
         tabbedPane.addTab("Loading", page.getPanel());
     }
 
-    private void navigate(Page page, String urlString) {
-        try {
-            URL url = new URL(urlString);
-            if (url.getProtocol().equals("sdtp")) {
-                page.load(url);
-            } else {
-                throw new MalformedURLException("Scheme must be sdtp");
-            }
-        } catch (MalformedURLException e) {
-            page.displayError(e);
-        }
-    }
-
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-
+        JButton source = (JButton) actionEvent.getSource();
+        if (source == backBtn) {
+            currentPage.back();
+        } else if (source == forwardsBtn) {
+            currentPage.forward();
+        } else if (source == reloadBtn) {
+            currentPage.reload();
+        }
     }
 
     @Override
@@ -147,7 +139,7 @@ public class SDTPBrowser implements ActionListener, KeyListener {
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
-            navigate(currentPage, urlBar.getText());
+            currentPage.navigate(urlBar.getText());
         }
     }
 

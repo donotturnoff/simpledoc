@@ -50,9 +50,7 @@ class ConnectionWorker extends SwingWorker<Response, Void> {
         try {
             Response response = get();
             if (response != null) {
-                page.setData(response);
-                page.parse();
-                page.render();
+                page.loaded(response);
             } else {
                 throw e;
             }

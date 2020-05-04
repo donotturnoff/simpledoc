@@ -1,15 +1,20 @@
 package net.donotturnoff.simpledoc.browser;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 class History {
-    private List<String> docs;
+    private List<URL> docs;
     private int current;
 
     History() {
         docs = new ArrayList<>();
-        current = 0;
+        current = -1;
+    }
+
+    List<URL> getDocs() {
+        return List.copyOf(docs);
     }
 
     boolean canGoBack() {
@@ -20,7 +25,7 @@ class History {
         return current < docs.size()-1;
     }
 
-    String jumpTo(int index) {
+    URL jumpTo(int index) {
         if (index < 0) {
             index = 0;
         } else if (index > docs.size()-1) {
@@ -30,16 +35,17 @@ class History {
         return docs.get(current);
     }
 
-    String back() {
+    URL back() {
         return jumpTo(current-1);
     }
 
-    String forward() {
+    URL forward() {
         return jumpTo(current+1);
     }
 
-    void navigate(String site) {
-        docs = docs.subList(0, current+1);
+    void navigate(URL site) {
+        current++;
+        docs = docs.subList(0, current);
         docs.add(site);
     }
 }
