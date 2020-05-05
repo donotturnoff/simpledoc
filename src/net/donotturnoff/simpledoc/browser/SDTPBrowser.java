@@ -55,9 +55,7 @@ public class SDTPBrowser implements ActionListener, KeyListener {
         configureWidgets();
         constructGUI();
         showGUI();
-        Page startPage = new Page();
-        addPage(startPage);
-        startPage.navigate(HOMEPAGE);
+        addPage(HOMEPAGE);
     }
 
     private void createWidgets() {
@@ -113,10 +111,11 @@ public class SDTPBrowser implements ActionListener, KeyListener {
         gui.setExtendedState(gui.getExtendedState() | JFrame.MAXIMIZED_BOTH);
     }
 
-    private void addPage(Page page) {
-        currentPage = page;
-        pages.add(page);
-        tabbedPane.addTab("Loading", page.getPanel());
+    private void addPage(String urlString) {
+        currentPage = new Page();
+        currentPage.navigate(urlString);
+        pages.add(currentPage);
+        tabbedPane.addTab("Loading", currentPage.getPanel());
     }
 
     @Override
@@ -128,6 +127,8 @@ public class SDTPBrowser implements ActionListener, KeyListener {
             currentPage.forward();
         } else if (source == reloadBtn) {
             currentPage.reload();
+        } else if (source == newTabBtn) {
+            addPage(HOMEPAGE);
         }
     }
 
