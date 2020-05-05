@@ -116,6 +116,7 @@ public class SDTPBrowser implements ActionListener, KeyListener {
         currentPage.navigate(urlString);
         pages.add(currentPage);
         tabbedPane.addTab("Loading", currentPage.getPanel());
+        tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-1);
     }
 
     @Override
