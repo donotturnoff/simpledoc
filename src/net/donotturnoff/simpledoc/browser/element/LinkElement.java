@@ -40,7 +40,10 @@ public class LinkElement extends Element implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
-
+        String href = attributes.get("href");
+        if (href != null) {
+            page.navigate(href);
+        }
     }
 
     @Override

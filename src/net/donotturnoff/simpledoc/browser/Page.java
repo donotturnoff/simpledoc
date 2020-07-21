@@ -58,10 +58,15 @@ public class Page {
     }
 
     public void navigate(String s) {
+        URL url;
         try {
-            URL url = new URL(s);
-            if (!url.getProtocol().equals("sdtp")) {
-                throw new MalformedURLException("Scheme must be sdtp");
+            url = new URL(s);
+        } catch (MalformedURLException e) {
+            try {
+                url = new URL(this.url, s);
+            } catch (MalformedURLException e2) {
+                displayError(e);
+                return;
             }
         }
         if (!url.getProtocol().equals("sdtp")) {
