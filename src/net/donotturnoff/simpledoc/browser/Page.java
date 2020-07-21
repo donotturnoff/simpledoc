@@ -134,6 +134,6 @@ public class Page {
 
     public void displayError(Exception e) {
         e.printStackTrace();
-        JOptionPane.showMessageDialog(panel, e, e.getMessage(), JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(panel, e, "Error", JOptionPane.ERROR_MESSAGE);
     }
 }
