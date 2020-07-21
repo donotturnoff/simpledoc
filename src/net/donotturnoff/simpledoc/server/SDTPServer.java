@@ -20,8 +20,9 @@ public class SDTPServer {
     private static final Properties defaultConfig = new Properties();
     static Properties config;
     private static final Logger logger = Logger.getLogger(SDTPServer.class.getName());
-    private int port;
+    private final int port;
     private ServerSocket socket;
+    private final Set<ServerWorker> workers;
 
     static {
         defaultConfig.setProperty("docroot", "/var/sdtp/sdml/");
@@ -48,8 +49,6 @@ public class SDTPServer {
             logger.log(Level.SEVERE, "Failed to open log file", e);
         }
     }
-
-    private Set<ServerWorker> workers;
 
     public static void main(String[] args) {
         if (args.length == 1) {
