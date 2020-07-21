@@ -63,12 +63,14 @@ public class Page {
             if (!url.getProtocol().equals("sdtp")) {
                 throw new MalformedURLException("Scheme must be sdtp");
             }
-            this.url = url;
-            revisiting = false;
-            load(url);
-        } catch (MalformedURLException e) {
-            displayError(e);
         }
+        if (!url.getProtocol().equals("sdtp")) {
+            displayError(new MalformedURLException("Scheme must be sdtp"));
+            return;
+        }
+        this.url = url;
+        revisiting = false;
+        load(url);
     }
 
     private void load(URL url) {
@@ -137,7 +139,6 @@ public class Page {
     }
 
     public void displayError(Exception e) {
-        e.printStackTrace();
         JOptionPane.showMessageDialog(panel, e, "Error", JOptionPane.ERROR_MESSAGE);
     }
 }

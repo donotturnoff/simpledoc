@@ -18,8 +18,8 @@ public class PElement extends Element {
         defaultStyle.put("font_style", "plain");
     }
 
-    public PElement(Map<String, String> attributes, List<Element> children) {
-        super("p", attributes, children);
+    public PElement(Page page, Map<String, String> attributes, List<Element> children) {
+        super(page, "p", attributes, children);
     }
 
     @Override

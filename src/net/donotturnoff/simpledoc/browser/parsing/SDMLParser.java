@@ -57,13 +57,13 @@ public class SDMLParser {
                 return null;
             }
             try {
-                return tagClass.getConstructor(Map.class, List.class).newInstance(attrs, children);
+                return tagClass.getConstructor(Page.class, Map.class, List.class).newInstance(page, attrs, children);
             } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 page.displayWarning("Failed to construct " + tag + " object");
                 return null;
             }
         } else {
-            Element textElement = new TextElement((String) nextToken.getValue());
+            Element textElement = new TextElement(page, (String) nextToken.getValue());
             getToken();
             return textElement;
         }

@@ -18,8 +18,8 @@ public class H1Element extends Element {
         defaultStyle.put("font_style", "bold");
     }
 
-    public H1Element(Map<String, String> attributes, List<Element> children) {
-        super("h1", attributes, children);
+    public H1Element(Page page, Map<String, String> attributes, List<Element> children) {
+        super(page, "h1", attributes, children);
     }
 
     @Override

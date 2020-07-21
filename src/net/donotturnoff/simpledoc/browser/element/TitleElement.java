@@ -8,8 +8,8 @@ import java.util.Map;
 
 public class TitleElement extends Element {
 
-    public TitleElement(Map<String, String> attributes, List<Element> children) {
-        super("title", attributes, children);
+    public TitleElement(Page page, Map<String, String> attributes, List<Element> children) {
+        super(page, "title", attributes, children);
     }
 
     @Override

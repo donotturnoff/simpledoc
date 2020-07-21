@@ -3,7 +3,9 @@ package net.donotturnoff.simpledoc.browser.element;
 import net.donotturnoff.simpledoc.browser.Page;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public abstract class Element {
     private static final Set<String> tags = Set.of("doc", "head", "body", "title", "res", "style", "base", "header",
@@ -18,6 +20,8 @@ public abstract class Element {
     private static final Set<String> allAttrs = new HashSet<>();
     private static final Map<String, Class<? extends Element>> tagClasses = new HashMap<>();
     protected final Map<String, String> defaultStyle = new HashMap<>();
+    public static final Map<String, Integer> fontStyleMap = Map.of("plain", Font.PLAIN, "bold", Font.BOLD, "italic", Font.ITALIC);
+    public static final Map<String, Integer> cursorMap = Map.of("default", Cursor.DEFAULT_CURSOR, "pointer", Cursor.HAND_CURSOR, "text", Cursor.TEXT_CURSOR);
 
     static {
         tagSpecificAttrs.put("doc", Set.of("version", "charset", "author", "description", "keywords"));
@@ -57,12 +61,14 @@ public abstract class Element {
         return tagClasses.get(tag);
     }
 
+    protected Page page;
     protected String name;
     protected Map<String, String> attributes;
     protected List<Element> children;
     protected Map<String, String> style;
 
-    public Element(String name, Map<String, String> attributes, List<Element> children) {
+    public Element(Page page, String name, Map<String, String> attributes, List<Element> children) {
+        this.page = page;
         this.name = name;
         this.attributes = attributes;
         this.children = children;
