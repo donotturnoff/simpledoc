@@ -104,7 +104,7 @@ public abstract class Element {
                 sb.append(k);
                 sb.append("=\"");
                 sb.append(v);
-                sb.append("\", ");
+                sb.append("\" ");
             }
             sb.deleteCharAt(sb.length() - 1);
             sb.append(")");
