@@ -12,7 +12,9 @@ public abstract class InvisibleElement extends Element {
     }
 
     @Override
-    protected final void draw(Page page) {
-
+    public final void render(Page page, JPanel parentPanel) {
+        for (Element c: children) {
+            c.render(page, parentPanel);
+        }
     }
 }

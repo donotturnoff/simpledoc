@@ -16,8 +16,8 @@ public abstract class Element {
             "dir", "hidden", "style", "tabindex");
     private static final Map<String, Set<String>> tagSpecificAttrs = new HashMap<>();
     private static final Set<String> allAttrs = new HashSet<>();
-
     private static final Map<String, Class<? extends Element>> tagClasses = new HashMap<>();
+    protected final Map<String, String> defaultStyle = new HashMap<>();
 
     static {
         tagSpecificAttrs.put("doc", Set.of("version", "charset", "author", "description", "keywords"));
@@ -60,11 +60,16 @@ public abstract class Element {
     protected String name;
     protected Map<String, String> attributes;
     protected List<Element> children;
+    protected Map<String, String> style;
 
     public Element(String name, Map<String, String> attributes, List<Element> children) {
         this.name = name;
         this.attributes = attributes;
         this.children = children;
+    }
+
+    public void setStyle(Map<String, String> style) {
+        this.style = style;
     }
 
     public List<Element> getChildren() {
@@ -79,14 +84,11 @@ public abstract class Element {
         return name;
     }
 
-    protected abstract void draw(Page page);
-
-    public void render(Page page) {
-        draw(page);
-        for (Element c: children) {
-            c.render(page);
-        }
+    public Map<String, String> getStyle() {
+        return style;
     }
+
+    public abstract void render(Page page, JPanel parentPanel);
 
     @Override
     public String toString() {

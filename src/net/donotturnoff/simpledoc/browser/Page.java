@@ -7,6 +7,7 @@ import net.donotturnoff.simpledoc.browser.lexing.Token;
 import net.donotturnoff.simpledoc.browser.lexing.TokenType;
 import net.donotturnoff.simpledoc.browser.parsing.ParsingException;
 import net.donotturnoff.simpledoc.browser.parsing.SDMLParser;
+import net.donotturnoff.simpledoc.browser.styling.SDMLStyler;
 import net.donotturnoff.simpledoc.util.Response;
 
 import javax.swing.*;
@@ -85,6 +86,7 @@ public class Page {
         if (!tokens.isEmpty()) {
             Element root = parse(tokens);
             if (root != null) {
+                style(root);
                 render(root);
             }
         }
@@ -113,14 +115,18 @@ public class Page {
         } catch (ParsingException e) {
             displayError(e);
         }
-        System.out.println(root);
         return root;
+    }
+
+    private void style(Element root) {
+        SDMLStyler styler = new SDMLStyler();
+        styler.style(root);
     }
 
     private void render(Element root) {
         panel.removeAll();
         if (data != null) {
-            root.render(this);
+            root.render(this, panel);
             panel.repaint();
             panel.revalidate();
         }

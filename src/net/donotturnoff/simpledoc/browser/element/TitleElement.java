@@ -13,7 +13,7 @@ public class TitleElement extends Element {
     }
 
     @Override
-    protected void draw(Page page) {
+    public void render(Page page, JPanel parentPanel) {
 
     }
 }
