@@ -129,7 +129,7 @@ public class Page {
     }
 
     public void displayWarning(String w) {
-        JOptionPane.showMessageDialog(panel, "Warning", w, JOptionPane.WARNING_MESSAGE);
+        JOptionPane.showMessageDialog(panel, w, "Warning", JOptionPane.WARNING_MESSAGE);
     }
 
     public void displayError(Exception e) {
