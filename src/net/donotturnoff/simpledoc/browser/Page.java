@@ -1,6 +1,5 @@
 package net.donotturnoff.simpledoc.browser;
 
-import net.donotturnoff.simpledoc.browser.element.DocElement;
 import net.donotturnoff.simpledoc.browser.element.Element;
 import net.donotturnoff.simpledoc.browser.lexing.LexingException;
 import net.donotturnoff.simpledoc.browser.lexing.SDMLLexer;
@@ -122,7 +121,7 @@ public class Page {
     private void render(Element root) {
         panel.removeAll();
         if (data != null) {
-            root.render(panel);
+            root.render(this);
             panel.repaint();
             panel.revalidate();
         }

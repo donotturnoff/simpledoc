@@ -1,5 +1,7 @@
 package net.donotturnoff.simpledoc.browser.element;
 
+import net.donotturnoff.simpledoc.browser.Page;
+
 import javax.swing.*;
 import java.util.*;
 
@@ -77,12 +79,12 @@ public abstract class Element {
         return name;
     }
 
-    protected abstract void draw(JPanel panel);
+    protected abstract void draw(Page page);
 
-    public void render(JPanel panel) {
-        draw(panel);
+    public void render(Page page) {
+        draw(page);
         for (Element c: children) {
-            c.render(panel);
+            c.render(page);
         }
     }
 
