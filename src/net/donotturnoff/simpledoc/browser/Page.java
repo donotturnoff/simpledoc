@@ -1,17 +1,25 @@
 package net.donotturnoff.simpledoc.browser;
 
+import net.donotturnoff.simpledoc.browser.element.DocElement;
+import net.donotturnoff.simpledoc.browser.element.Element;
+import net.donotturnoff.simpledoc.browser.lexing.LexingException;
+import net.donotturnoff.simpledoc.browser.lexing.SDMLLexer;
+import net.donotturnoff.simpledoc.browser.lexing.Token;
+import net.donotturnoff.simpledoc.browser.lexing.TokenType;
 import net.donotturnoff.simpledoc.util.Response;
 
 import javax.swing.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 class Page {
 
     private final JPanel panel;
     private URL url;
     private Response data;
-    private Element root;
     private final History history;
     private boolean revisiting;
 
@@ -31,10 +39,6 @@ class Page {
 
     public Response getData() {
         return data;
-    }
-
-    public Element getRoot() {
-        return root;
     }
 
     public void back() {
@@ -77,19 +81,37 @@ class Page {
         if (!revisiting) {
             history.navigate(url);
         }
-        parse();
-        render();
+        List<Token<?>> tokens = lex(data.getBody());
+        System.out.println(tokens);
+        if (!tokens.isEmpty()) {
+            Element root = parse(tokens);
+            render(root);
+        }
     }
 
-    private void parse() {
-
+    private List<Token<?>> lex(String body) {
+        List<Token<?>> tokens = new ArrayList<>();
+        try {
+            SDMLLexer lexer = new SDMLLexer(body);
+            Token<?> t;
+            do {
+                t = lexer.nextToken();
+                tokens.add(t);
+            } while (t.getType() != TokenType.EOF);
+        } catch (LexingException e) {
+            displayError(e);
+        }
+        return tokens;
     }
 
-    private void render() {
+    private Element parse(List<Token<?>> tokens) {
+        return new DocElement(Map.of(), List.of());
+    }
+
+    private void render(Element root) {
         panel.removeAll();
         if (data != null) {
-            JLabel label = new JLabel(data.getBody());
-            panel.add(label);
+            root.render(panel);
             panel.repaint();
             panel.revalidate();
         }
