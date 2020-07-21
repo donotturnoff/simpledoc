@@ -6,6 +6,8 @@ import net.donotturnoff.simpledoc.browser.lexing.LexingException;
 import net.donotturnoff.simpledoc.browser.lexing.SDMLLexer;
 import net.donotturnoff.simpledoc.browser.lexing.Token;
 import net.donotturnoff.simpledoc.browser.lexing.TokenType;
+import net.donotturnoff.simpledoc.browser.parsing.ParsingException;
+import net.donotturnoff.simpledoc.browser.parsing.SDMLParser;
 import net.donotturnoff.simpledoc.util.Response;
 
 import javax.swing.*;
@@ -84,7 +86,9 @@ public class Page {
         List<Token<?>> tokens = lex(data.getBody());
         if (!tokens.isEmpty()) {
             Element root = parse(tokens);
-            render(root);
+            if (root != null) {
+                render(root);
+            }
         }
     }
 
@@ -104,7 +108,15 @@ public class Page {
     }
 
     private Element parse(List<Token<?>> tokens) {
-        return new DocElement(Map.of(), List.of());
+        Element root = null;
+        try {
+            SDMLParser parser = new SDMLParser(this, tokens);
+            root = parser.parse();
+        } catch (ParsingException e) {
+            displayError(e);
+        }
+        System.out.println(root);
+        return root;
     }
 
     private void render(Element root) {
