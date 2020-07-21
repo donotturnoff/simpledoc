@@ -11,8 +11,7 @@ class ErrorHandler {
         String protocol = SDTPServer.DEFAULT_PROTOCOL;
         Map<String, String> headers = new HashMap<>();
         headers.put("type", "text/sdml");
-        String sb = "doctype(SDML/1.0)\n\n" +
-                "doc(charset=\"UTF-8\"\n" +
+        String sb = "doc(version=\"SDML/1.0\" charset=\"UTF-8\") {\n" +
                 " head {\n" +
                 "  title {\"" +
                 e.getStatus().toString() +
