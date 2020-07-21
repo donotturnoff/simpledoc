@@ -1,14 +1,17 @@
 package net.donotturnoff.simpledoc.browser.lexing;
 
+import net.donotturnoff.simpledoc.browser.Page;
 import net.donotturnoff.simpledoc.browser.element.Element;
 
 public class SDMLLexer {
+    private final Page page;
     private final String body;
     private int i;
     private char nextChar;
     private boolean end;
 
-    public SDMLLexer(String body) {
+    public SDMLLexer(Page page, String body) {
+        this.page = page;
         this.body = body;
         this.i = 0;
         getChar();
@@ -45,9 +48,6 @@ public class SDMLLexer {
                     break;
                 case '=':
                     t = new Token<Void>(TokenType.EQUALS); getChar();
-                    break;
-                case ',':
-                    t = new Token<Void>(TokenType.COMMA); getChar();
                     break;
                 case '"':
                 case '\'':

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-class Page {
+public class Page {
 
     private final JPanel panel;
     private URL url;
@@ -82,7 +82,6 @@ class Page {
             history.navigate(url);
         }
         List<Token<?>> tokens = lex(data.getBody());
-        System.out.println(tokens);
         if (!tokens.isEmpty()) {
             Element root = parse(tokens);
             render(root);
@@ -92,7 +91,7 @@ class Page {
     private List<Token<?>> lex(String body) {
         List<Token<?>> tokens = new ArrayList<>();
         try {
-            SDMLLexer lexer = new SDMLLexer(body);
+            SDMLLexer lexer = new SDMLLexer(this, body);
             Token<?> t;
             do {
                 t = lexer.nextToken();
@@ -115,6 +114,10 @@ class Page {
             panel.repaint();
             panel.revalidate();
         }
+    }
+
+    public void displayWarning(String w) {
+        JOptionPane.showMessageDialog(panel, "Warning", w, JOptionPane.WARNING_MESSAGE);
     }
 
     public void displayError(Exception e) {
