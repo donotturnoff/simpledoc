@@ -23,6 +23,7 @@ public abstract class Element {
         tagSpecificAttrs.put("base", Set.of("href"));
         tagSpecificAttrs.put("link", Set.of("href"));
         tagSpecificAttrs.put("res", Set.of("src", "type", "rel"));
+
         allAttrs.addAll(generalAttrs);
         tagSpecificAttrs.values().forEach(allAttrs::addAll);
     }
@@ -36,12 +37,18 @@ public abstract class Element {
     }
 
     public static boolean isLegalAttribute(String tag, String attr) {
-        return tagSpecificAttrs.get(tag).contains(attr);
+        return tagSpecificAttrs.containsKey(tag) && tagSpecificAttrs.get(tag).contains(attr);
     }
 
     protected String name;
     protected Map<String, String> attributes;
     protected List<Element> children;
+
+    public Element(String name, Map<String, String> attributes, List<Element> children) {
+        this.name = name;
+        this.attributes = attributes;
+        this.children = children;
+    }
 
     public List<Element> getChildren() {
         return children;
@@ -69,7 +76,7 @@ public abstract class Element {
         return toString("");
     }
 
-    private String toString(String indent) {
+    protected String toString(String indent) {
         StringBuilder sb = new StringBuilder();
         sb.append(indent);
         sb.append(name);
@@ -88,8 +95,7 @@ public abstract class Element {
         if (children.size() > 0) {
             sb.append(" {\n");
             for (Element c: children) {
-                sb.append(indent);
-                sb.append(c.toString(indent+"\t"));
+                sb.append(c.toString(indent+" "));
                 sb.append("\n");
             }
             sb.append(indent);
