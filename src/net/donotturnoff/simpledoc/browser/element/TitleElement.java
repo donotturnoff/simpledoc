@@ -14,6 +14,10 @@ public class TitleElement extends Element {
 
     @Override
     public void render(Page page, JPanel parentPanel) {
-
+        for (Element c: children) {
+            if (c instanceof TextElement) {
+                page.setTabTitle(((TextElement) c).getText());
+            }
+        }
     }
 }

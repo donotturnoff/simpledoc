@@ -18,16 +18,33 @@ import java.util.List;
 
 public class Page {
 
+    private final SDTPBrowser browser;
     private final JPanel panel;
     private URL url;
     private Response data;
     private final History history;
     private boolean revisiting;
 
-    Page() {
+    Page(SDTPBrowser browser) {
+        this.browser = browser;
         this.panel = new JPanel();
         this.history = new History();
         this.revisiting = false;
+        this.url = null;
+    }
+
+    public void setTabTitle(String title) {
+        JTabbedPane tabbedPane = (JTabbedPane) SwingUtilities.getAncestorOfClass(JTabbedPane.class, panel);
+        for (int i = 0; i < tabbedPane.getTabCount(); i++) {
+            if (SwingUtilities.isDescendingFrom(panel, tabbedPane.getComponentAt(i))) {
+                tabbedPane.setTitleAt(i, title);
+                break;
+            }
+        }
+    }
+
+    public SDTPBrowser getBrowser() {
+        return browser;
     }
 
     public URL getUrl() {
@@ -73,13 +90,14 @@ public class Page {
             displayError(new MalformedURLException("Scheme must be sdtp"));
             return;
         }
-        this.url = url;
         revisiting = false;
         load(url);
     }
 
     private void load(URL url) {
         this.url = url;
+        browser.setUrlBar(url);
+        setTabTitle("Loading");
         ConnectionWorker worker = new ConnectionWorker(this);
         worker.execute();
     }
@@ -144,6 +162,7 @@ public class Page {
     }
 
     public void displayError(Exception e) {
+        e.printStackTrace();
         JOptionPane.showMessageDialog(panel, e, "Error", JOptionPane.ERROR_MESSAGE);
     }
 }

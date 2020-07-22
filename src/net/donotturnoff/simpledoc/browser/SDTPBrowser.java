@@ -1,17 +1,19 @@
 package net.donotturnoff.simpledoc.browser;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
-public class SDTPBrowser implements ActionListener, KeyListener {
+public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener {
 
     //TODO: add as configuration option
     private static final String HOMEPAGE = "sdtp://localhost:5000";
@@ -33,7 +35,7 @@ public class SDTPBrowser implements ActionListener, KeyListener {
     private JLabel statusLabel;
 
     // Non-GUI
-    private Set<Page> pages;
+    private List<Page> pages;
     private Page currentPage;
 
     public static void main(String[] args) {
@@ -43,7 +45,15 @@ public class SDTPBrowser implements ActionListener, KeyListener {
     }
 
     private SDTPBrowser() {
-        pages = new HashSet<>();
+        pages = new ArrayList<>();
+    }
+
+    public void setUrlBar(URL url) {
+        if (url == null) {
+            urlBar.setText("Loading");
+        } else {
+            urlBar.setText(url.toString());
+        }
     }
 
     private void run() {
@@ -80,6 +90,8 @@ public class SDTPBrowser implements ActionListener, KeyListener {
         gui.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         gui.setMinimumSize(new Dimension(800, 600));
 
+        tabbedPane.addChangeListener(this);
+
         backBtn.addActionListener(this);
         forwardsBtn.addActionListener(this);
         reloadBtn.addActionListener(this);
@@ -112,11 +124,11 @@ public class SDTPBrowser implements ActionListener, KeyListener {
     }
 
     private void addPage(String urlString) {
-        currentPage = new Page();
-        currentPage.navigate(urlString);
+        currentPage = new Page(this);
         pages.add(currentPage);
         tabbedPane.addTab("Loading", currentPage.getPanel());
         tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-1);
+        currentPage.navigate(urlString);
     }
 
     @Override
@@ -148,5 +160,13 @@ public class SDTPBrowser implements ActionListener, KeyListener {
     @Override
     public void keyReleased(KeyEvent keyEvent) {
 
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent changeEvent) {
+        if (changeEvent.getSource() == tabbedPane) {
+            currentPage = pages.get(tabbedPane.getSelectedIndex());
+            setUrlBar(currentPage.getUrl());
+        }
     }
 }

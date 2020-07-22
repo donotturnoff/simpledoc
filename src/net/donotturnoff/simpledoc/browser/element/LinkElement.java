@@ -27,7 +27,6 @@ public class LinkElement extends Element implements MouseListener {
     public void render(Page page, JPanel parentPanel) {
         Map<String, String> style = getStyle();
         Cursor cursor = new Cursor(Element.cursorMap.getOrDefault(style.getOrDefault("cursor", "default"), Cursor.DEFAULT_CURSOR));
-        System.out.println(cursor);
 
         JPanel panel = new JPanel();
         panel.setCursor(cursor);
