@@ -12,13 +12,19 @@ public abstract class BoxElement extends Element {
         super(page, name, attributes, children);
     }
 
-    @Override
-    public void render(Page page, JPanel parentPanel) {
+    public void style(JComponent component) {
         Map<String, String> style = getStyle();
         Cursor cursor = new Cursor(Element.cursorMap.getOrDefault(style.getOrDefault("cursor", "default"), Cursor.DEFAULT_CURSOR));
+        Color backgroundColour = Color.decode(style.getOrDefault("background_colour", "#FFFFFF"));
 
+        component.setCursor(cursor);
+        component.setBackground(backgroundColour);
+    }
+
+    @Override
+    public void render(Page page, JPanel parentPanel) {
         JPanel panel = new JPanel();
-        panel.setCursor(cursor);
+        style(panel);
         parentPanel.add(panel);
         for (Element c: children) {
             c.render(page, panel);
