@@ -89,15 +89,16 @@ class GetHandler {
         sb.append(" }\n");
         sb.append("}\n");
 
-        return new Response(protocol, status, headers, sb.toString());
+        return new Response(protocol, status, headers, sb.toString().getBytes());
     }
 
     private static Response handleFile(Path p) throws IOException {
-        String body = new String(Files.readAllBytes(p));
+        byte[] body = Files.readAllBytes(p);
+        String bodyText = new String(body);
         String protocol = SDTPServer.DEFAULT_PROTOCOL;
         Status status = Status.OK;
         HashMap<String, String> headers = new HashMap<>();
-        if (body.matches("^doctype\\(SDML/(\\d+)\\.(\\d+)\\)")) {
+        if (bodyText.matches("^doc\\(")) {
             headers.put("type", "text/sdml");
         } else {
             String mime = Files.probeContentType(p);

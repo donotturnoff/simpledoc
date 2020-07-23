@@ -7,13 +7,14 @@ public class Response {
     private String protocol;
     private Status status;
     private HashMap<String, String> headers;
-    private String body;
+    private final byte[] body;
 
-    public Response(String s) throws ResponseHandlingException {
-        parse(s);
+    public Response(Message msg) throws ResponseHandlingException {
+        parse(msg.getHead());
+        this.body = msg.getBody();
     }
 
-    public Response(String protocol, Status status, Map<String, String> headers, String body) {
+    public Response(String protocol, Status status, Map<String, String> headers, byte[] body) {
         this.protocol = protocol;
         this.status = status;
         this.headers = new HashMap<>();
@@ -37,7 +38,7 @@ public class Response {
         return headers;
     }
 
-    public String getBody() {
+    public byte[] getBody() {
         return body;
     }
 
@@ -81,17 +82,9 @@ public class Response {
             String value = parts[1].trim();
             headers.put(key, value);
         }
-
-        // Extract body
-        StringBuilder sb = new StringBuilder();
-        for (; i < lines.length; i++) {
-            sb.append(lines[i]);
-        }
-        this.body = sb.toString();
     }
 
-    @Override
-    public String toString() {
+    public String getHead() {
         StringBuilder sb = new StringBuilder();
         sb.append(protocol);
         sb.append(" ");
@@ -105,7 +98,11 @@ public class Response {
             sb.append("\r\n");
         }
         sb.append("\r\n");
-        sb.append(body);
         return sb.toString();
+    }
+
+    @Override
+    public String toString() {
+        return getHead() + new String(body);
     }
 }

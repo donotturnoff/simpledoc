@@ -9,14 +9,15 @@ public class Request {
     private String path;
     private String protocol;
     private Map<String, String> headers;
-    private String body;
+    private final byte[] body;
 
 
-    public Request(String s) throws RequestHandlingException {
-        parse(s);
+    public Request(Message msg) throws RequestHandlingException {
+        parse(msg.getHead());
+        this.body = msg.getBody();
     }
 
-    public Request(RequestMethod method, String path, String protocol, Map<String, String> headers, String body) {
+    public Request(RequestMethod method, String path, String protocol, Map<String, String> headers, byte[] body) {
         this.method = method;
         this.path = path;
         this.protocol = protocol;
@@ -40,7 +41,7 @@ public class Request {
         return headers;
     }
 
-    public String getBody() {
+    public byte[] getBody() {
         return body;
     }
 
@@ -80,19 +81,9 @@ public class Request {
             String value = parts[1].trim();
             headers.put(key, value);
         }
-
-        // Extract body
-        StringBuilder sb = new StringBuilder();
-        for (; i < lines.length; i++) {
-            sb.append(lines[i]);
-        }
-        this.body = sb.toString();
     }
 
-
-
-    @Override
-    public String toString() {
+    public String getHead() {
         StringBuilder sb = new StringBuilder();
         sb.append(method);
         sb.append(" ");
@@ -108,7 +99,11 @@ public class Request {
             sb.append("\r\n");
         }
         sb.append("\r\n");
-        sb.append(body);
         return sb.toString();
+    }
+
+    @Override
+    public String toString() {
+        return getHead() + new String(body);
     }
 }

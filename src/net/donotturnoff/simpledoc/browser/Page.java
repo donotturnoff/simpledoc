@@ -8,12 +8,14 @@ import net.donotturnoff.simpledoc.browser.lexing.TokenType;
 import net.donotturnoff.simpledoc.browser.parsing.ParsingException;
 import net.donotturnoff.simpledoc.browser.parsing.SDMLParser;
 import net.donotturnoff.simpledoc.browser.styling.SDMLStyler;
+import net.donotturnoff.simpledoc.util.ConnectionUtils;
 import net.donotturnoff.simpledoc.util.Response;
 
 import javax.swing.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Page {
@@ -75,20 +77,10 @@ public class Page {
     }
 
     public void navigate(String s) {
-        URL url;
         try {
-            url = new URL(s);
+            url = ConnectionUtils.getURL(url, s);
         } catch (MalformedURLException e) {
-            try {
-                url = new URL(this.url, s);
-            } catch (MalformedURLException e2) {
-                displayError(e);
-                return;
-            }
-        }
-        if (!url.getProtocol().equals("sdtp")) {
-            displayError(new MalformedURLException("Scheme must be sdtp"));
-            return;
+            displayError(e);
         }
         revisiting = false;
         load(url);
@@ -102,12 +94,12 @@ public class Page {
         worker.execute();
     }
 
-    public void loaded(Response response) {
+    public Void loaded(Response response) {
         this.data = response;
         if (!revisiting || !history.pageVisited(url)) {
             history.navigate(url);
         }
-        List<Token<?>> tokens = lex(data.getBody());
+        List<Token<?>> tokens = lex(new String(data.getBody()));
         if (!tokens.isEmpty()) {
             Element root = parse(tokens);
             if (root != null) {
@@ -115,6 +107,7 @@ public class Page {
                 render(root);
             }
         }
+        return null;
     }
 
     private List<Token<?>> lex(String body) {

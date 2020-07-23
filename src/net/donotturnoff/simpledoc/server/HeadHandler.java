@@ -14,6 +14,6 @@ class HeadHandler {
         Status status = getResponse.getStatus();
         Map<String, String> headers = getResponse.getHeaders();
         String body = "";
-        return new Response(protocol, status, headers, body);
+        return new Response(protocol, status, headers, new byte[0]);
     }
 }

@@ -36,6 +36,7 @@ public class SDMLStyler {
         try {
             Field field = element.getClass().getField("defaultStyle");
             if (Map.class.isAssignableFrom(field.getType())) {
+                Object defaultStyleObject = field.get(null);
                 defaultStyle = (Map<String, String>) field.get(null);
             }
         } catch (NoSuchFieldException | IllegalAccessException ignored) {

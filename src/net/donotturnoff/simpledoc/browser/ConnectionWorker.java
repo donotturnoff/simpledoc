@@ -4,26 +4,32 @@ import net.donotturnoff.simpledoc.util.*;
 
 import javax.swing.*;
 import java.io.*;
-import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
+import java.util.function.Function;
 
-class ConnectionWorker extends SwingWorker<Response, Void> {
+public class ConnectionWorker extends SwingWorker<Response, Void> {
 
     private final Page page;
-    private Socket s;
-    private BufferedReader in;
-    private PrintWriter out;
+    private final URL url;
+    private final Function<Response, Void> callback;
     private Exception e;
 
     ConnectionWorker(Page page) {
+        this.url = page.getUrl();
         this.page = page;
+        this.callback = page::loaded;
+    }
+
+    public ConnectionWorker(URL url, Page page, Function<Response, Void> callback) {
+        this.url = url;
+        this.page = page;
+        this.callback = callback;
     }
 
     @Override
     protected Response doInBackground() {
-        URL url = page.getUrl();
         String path = url.getPath();
         if (path.isBlank()) {
             path = "/";
@@ -33,12 +39,13 @@ class ConnectionWorker extends SwingWorker<Response, Void> {
             URLConnection c = url.openConnection();
             c.setDoOutput(true);
             c.connect();
-            BufferedReader in = new BufferedReader(new InputStreamReader(c.getInputStream()));
-            PrintWriter out = new PrintWriter(new OutputStreamWriter(c.getOutputStream()));
+            InputStream in = c.getInputStream();
+            OutputStream out = c.getOutputStream();
 
-            Request request = new Request(RequestMethod.GET, path, "SDTP/0.1", Map.of(), "");
-            ConnectionUtils.send(out, request.toString());
-            return new Response(ConnectionUtils.recv(in));
+            Request request = new Request(RequestMethod.GET, path, "SDTP/0.1", Map.of(), new byte[0]);
+            ConnectionUtils.send(out, new Message(request));
+            Response response = new Response(ConnectionUtils.recv(in));
+            return response;
         } catch (Exception e) {
             this.e = e;
             return null;
@@ -50,7 +57,7 @@ class ConnectionWorker extends SwingWorker<Response, Void> {
         try {
             Response response = get();
             if (response != null) {
-                page.loaded(response);
+                callback.apply(response);
             } else {
                 throw e;
             }

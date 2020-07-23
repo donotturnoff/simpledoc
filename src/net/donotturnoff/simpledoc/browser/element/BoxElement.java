@@ -22,6 +22,15 @@ public abstract class BoxElement extends Element {
         super(page, name, attributes, children);
     }
 
+    public JPanel createPanel() {
+        return new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0)) {
+            @Override
+            public Dimension getMaximumSize() {
+                return getPreferredSize();
+            }
+        };
+    }
+
     public void style(JComponent component) {
         Map<String, String> style = getStyle();
         Cursor cursor = new Cursor(Element.cursorMap.getOrDefault(style.getOrDefault("cursor", "default"), Cursor.DEFAULT_CURSOR));
@@ -55,18 +64,17 @@ public abstract class BoxElement extends Element {
         component.setBorder(surroundings);
     }
 
-    @Override
-    public void render(Page page, JPanel parentPanel) {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0)) {
-            @Override
-            public Dimension getMaximumSize() {
-                return getPreferredSize();
-            }
-        };
-        style(panel);
-        parentPanel.add(panel);
+    public void renderChildren(Page page, JPanel panel) {
         for (Element c: children) {
             c.render(page, panel);
         }
+    }
+
+    @Override
+    public void render(Page page, JPanel parentPanel) {
+        JPanel panel = createPanel();
+        style(panel);
+        parentPanel.add(panel);
+        renderChildren(page, panel);
     }
 }

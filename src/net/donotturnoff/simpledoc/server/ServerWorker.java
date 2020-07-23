@@ -1,9 +1,6 @@
 package net.donotturnoff.simpledoc.server;
 
-import net.donotturnoff.simpledoc.util.ConnectionUtils;
-import net.donotturnoff.simpledoc.util.Request;
-import net.donotturnoff.simpledoc.util.RequestHandlingException;
-import net.donotturnoff.simpledoc.util.Response;
+import net.donotturnoff.simpledoc.util.*;
 
 import java.io.*;
 import java.net.Socket;
@@ -29,30 +26,30 @@ class ServerWorker implements Runnable {
 
     private SDTPServer server;
     private Socket c;
-    private BufferedReader in;
-    private PrintWriter out;
+    private InputStream in;
+    private OutputStream out;
 
     ServerWorker(SDTPServer server, Socket c) throws IOException {
         this.server = server;
         this.c = c;
-        this.in = new BufferedReader(new InputStreamReader(c.getInputStream()));
-        this.out = new PrintWriter(new OutputStreamWriter(c.getOutputStream()));
+        this.in = c.getInputStream();
+        this.out = c.getOutputStream();
     }
 
     @Override
     public void run() {
         try {
-            String reqString = ConnectionUtils.recv(in);
+            Message msg = ConnectionUtils.recv(in);
             Response response;
             try {
-                Request r = new Request(reqString);
+                Request r = new Request(msg);
                 response = RequestHandler.handle(r);
             } catch (RequestHandlingException e) {
                 response = ErrorHandler.handle(e);
             }
-            ConnectionUtils.send(out, response.toString());
+            ConnectionUtils.send(out, new Message(response));
         } catch (IOException e) {
-            logger.log(Level.FINE, "Failed to read request from " + c, e);
+            logger.log(Level.INFO, "Failed to read request from " + c, e);
         } finally {
             halt();
         }

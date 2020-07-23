@@ -25,8 +25,8 @@ class RequestHandler {
     }
 
     private static void addDefaultHeaders(Response response) {
-        String body = response.getBody();
-        response.putHeader("length", Integer.toString(body.length()));
+        byte[] body = response.getBody();
+        response.putHeader("length", Integer.toString(body.length));
         response.putHeader("server", SDTPServer.config.getProperty("server"));
     }
 }
