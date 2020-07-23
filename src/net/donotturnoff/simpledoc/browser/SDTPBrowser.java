@@ -126,7 +126,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
     private void addPage(String urlString) {
         currentPage = new Page(this);
         pages.add(currentPage);
-        tabbedPane.addTab("Loading", currentPage.getPanel());
+        tabbedPane.addTab("Loading", currentPage.getScrollPane());
         tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-1);
         currentPage.navigate(urlString);
     }

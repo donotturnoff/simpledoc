@@ -12,6 +12,7 @@ import net.donotturnoff.simpledoc.util.ConnectionUtils;
 import net.donotturnoff.simpledoc.util.Response;
 
 import javax.swing.*;
+import java.awt.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class Page {
 
     private final SDTPBrowser browser;
     private final JPanel panel;
+    private final JScrollPane scrollPane;
     private URL url;
     private Response data;
     private final History history;
@@ -30,9 +32,15 @@ public class Page {
     Page(SDTPBrowser browser) {
         this.browser = browser;
         this.panel = new JPanel();
+        this.scrollPane = new JScrollPane(panel);
         this.history = new History();
         this.revisiting = false;
         this.url = null;
+
+        scrollPane.getVerticalScrollBar().setUnitIncrement(10);
+        scrollPane.getHorizontalScrollBar().setUnitIncrement(10);
+        scrollPane.getVerticalScrollBar().setBlockIncrement(40);
+        scrollPane.getHorizontalScrollBar().setUnitIncrement(40);
     }
 
     public void setTabTitle(String title) {
@@ -55,6 +63,10 @@ public class Page {
 
     public JPanel getPanel() {
         return panel;
+    }
+
+    public JScrollPane getScrollPane() {
+        return scrollPane;
     }
 
     public Response getData() {
