@@ -104,7 +104,7 @@ public class Page {
 
     public void loaded(Response response) {
         this.data = response;
-        if (!revisiting) {
+        if (!revisiting || !history.pageVisited(url)) {
             history.navigate(url);
         }
         List<Token<?>> tokens = lex(data.getBody());

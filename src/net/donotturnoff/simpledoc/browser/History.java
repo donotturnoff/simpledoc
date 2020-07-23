@@ -17,6 +17,10 @@ class History {
         return List.copyOf(docs);
     }
 
+    boolean pageVisited(URL url) {
+        return docs.contains(url);
+    }
+
     boolean canGoBack() {
         return current > 0;
     }
