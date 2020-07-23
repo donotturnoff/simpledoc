@@ -16,6 +16,8 @@ public class H1Element extends BoxElement {
         defaultStyle.put("font_size", "40");
         defaultStyle.put("font_style", "bold");
         defaultStyle.put("cursor", "text");
+        defaultStyle.put("margin_top", "5");
+        defaultStyle.put("margin_bottom", "5");
     }
 
     public H1Element(Page page, Map<String, String> attributes, List<Element> children) {
