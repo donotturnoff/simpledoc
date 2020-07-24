@@ -11,12 +11,14 @@ import net.donotturnoff.simpledoc.browser.styling.SDMLStyler;
 import net.donotturnoff.simpledoc.util.ConnectionUtils;
 import net.donotturnoff.simpledoc.util.Response;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Page {
@@ -116,12 +118,18 @@ public class Page {
         if (!revisiting || !history.pageVisited(url)) {
             history.navigate(url);
         }
-        List<Token<?>> tokens = lex(new String(data.getBody()));
-        if (!tokens.isEmpty()) {
-            Element root = parse(tokens);
-            if (root != null) {
-                style(root);
-                render(root);
+        String type = response.getHeaders().get("type");
+        String generalType = type.split("/")[0];
+        if (generalType.equals("image")) {
+            displayImage(data.getBody());
+        } else if (type.equals("text/sdml")) {
+            List<Token<?>> tokens = lex(new String(data.getBody()));
+            if (!tokens.isEmpty()) {
+                Element root = parse(tokens);
+                if (root != null) {
+                    style(root);
+                    render(root);
+                }
             }
         }
         setStatus("Loaded " + url);
@@ -165,6 +173,22 @@ public class Page {
             root.render(this, panel);
             panel.repaint();
             panel.revalidate();
+        }
+    }
+
+    private void displayImage(byte[] data) {
+        panel.removeAll();
+        ByteArrayInputStream bais = new ByteArrayInputStream(data);
+        BufferedImage image;
+        try {
+            image = ImageIO.read(bais);
+            if (image == null) {
+                throw new IOException("No data or unrecognised format");
+            }
+            JLabel picLabel = new JLabel(new ImageIcon(image));
+            panel.add(picLabel);
+        } catch (IOException e) {
+            setStatus("Failed to load " + url);
         }
     }
 
