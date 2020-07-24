@@ -131,6 +131,15 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         currentPage.navigate(urlString);
     }
 
+    public void setTitle(int tab, String title) {
+        gui.setTitle(title + " - Simpledoc browser v0.1");
+        tabbedPane.setTitleAt(tab, title);
+    }
+
+    public void setStatus(String status) {
+        statusLabel.setText(status);
+    }
+
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         JButton source = (JButton) actionEvent.getSource();

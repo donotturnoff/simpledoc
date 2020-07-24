@@ -47,10 +47,14 @@ public class Page {
         JTabbedPane tabbedPane = (JTabbedPane) SwingUtilities.getAncestorOfClass(JTabbedPane.class, panel);
         for (int i = 0; i < tabbedPane.getTabCount(); i++) {
             if (SwingUtilities.isDescendingFrom(panel, tabbedPane.getComponentAt(i))) {
-                tabbedPane.setTitleAt(i, title);
+                browser.setTitle(i, title);
                 break;
             }
         }
+    }
+
+    public void setStatus(String status) {
+        browser.setStatus(status);
     }
 
     public SDTPBrowser getBrowser() {
@@ -102,6 +106,7 @@ public class Page {
         this.url = url;
         browser.setUrlBar(url);
         setTabTitle("Loading");
+        setStatus("Loading " + url);
         ConnectionWorker worker = new ConnectionWorker(this);
         worker.execute();
     }
@@ -119,6 +124,7 @@ public class Page {
                 render(root);
             }
         }
+        setStatus("Loaded " + url);
         return null;
     }
 

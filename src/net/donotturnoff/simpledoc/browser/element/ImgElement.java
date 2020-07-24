@@ -18,12 +18,14 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ImgElement extends BoxElement {
 
     private JPanel panel;
+    private URL url;
 
     public ImgElement(Page page, Map<String, String> attributes, List<Element> children) {
         super(page, "img", attributes, children);
@@ -35,10 +37,9 @@ public class ImgElement extends BoxElement {
         style(panel);
         parentPanel.add(panel);
         String src = attributes.get("src");
-        URL url;
         try {
             url = ConnectionUtils.getURL(page.getUrl(), src);
-            load(url);
+            load();
         } catch (MalformedURLException e) {
             loadingFailure("Failed to load image: " + e.getMessage());
         }
@@ -46,11 +47,13 @@ public class ImgElement extends BoxElement {
 
     private void loadingFailure(String s) {
         super.renderChildren(page, panel);
+        page.setStatus("Failed to load " + url);
         panel.repaint();
         panel.revalidate();
     }
 
-    private void load(URL url) {
+    private void load() {
+        page.setStatus("Loading " + url);
         ConnectionWorker worker = new ConnectionWorker(url, page, this::loaded);
         worker.execute();
     }
@@ -68,6 +71,7 @@ public class ImgElement extends BoxElement {
             panel.add(picLabel);
             panel.repaint();
             panel.revalidate();
+            page.setStatus("Loaded " + url);
         } catch (IOException e) {
             loadingFailure("Failed to load image: " + e.getMessage());
         }

@@ -18,6 +18,7 @@ public abstract class BoxElement extends Element {
         defaultStyle.put("cursor", "default");
         defaultStyle.put("background_color", "#FFFFFF");
     }
+
     public BoxElement(Page page, String name, Map<String, String> attributes, List<Element> children) {
         super(page, name, attributes, children);
     }
