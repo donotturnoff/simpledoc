@@ -19,13 +19,14 @@ public class SDMLStyler {
         inheritableStyles.add("colour");
         inheritableStyles.add("background_colour");
         inheritableStyles.add("cursor");
+        inheritableStyles.add("bullet_style");
     }
 
     public void style(Element root) {
         style(root, Map.of());
     }
     
-    private void style(Element element, Map<String, String> parentStyle) {
+    public void style(Element element, Map<String, String> parentStyle) {
         Map<String, String> style = new HashMap<>();
         for (String s: inheritableStyles) {
             if (parentStyle.containsKey(s)) {

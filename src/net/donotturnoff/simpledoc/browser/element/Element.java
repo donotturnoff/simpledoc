@@ -22,6 +22,7 @@ public abstract class Element {
     protected final Map<String, String> defaultStyle = new HashMap<>();
     public static final Map<String, Integer> fontStyleMap = Map.of("plain", Font.PLAIN, "bold", Font.BOLD, "italic", Font.ITALIC);
     public static final Map<String, Integer> cursorMap = Map.of("default", Cursor.DEFAULT_CURSOR, "pointer", Cursor.HAND_CURSOR, "text", Cursor.TEXT_CURSOR);
+    public static final Map<String, String> bulletStyleMap = Map.of("default", "\u2022", "disc", "\u2022");
 
     static {
         tagSpecificAttrs.put("doc", Set.of("version", "charset", "author", "description", "keywords"));
