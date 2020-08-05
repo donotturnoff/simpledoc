@@ -65,8 +65,7 @@ class GetHandler {
         headers.put("type", "text/sdml");
 
         StringBuilder sb = new StringBuilder();
-        sb.append("doctype(SDML/1.0)\n\n");
-        sb.append("doc(charset=\"UTF-8\"\n");
+        sb.append("doc(version=\"SDML/1.0\" charset=\"UTF-8\") {\n");
         sb.append(" head {\n");
         sb.append("  title {\"Directory listing\"}\n");
         sb.append(" }\n");
@@ -77,7 +76,7 @@ class GetHandler {
         assert files != null;
         for (File f: files) {
             sb.append("   li {\n");
-            sb.append("    a (href=\"");
+            sb.append("    link(href=\"");
             sb.append(docPath).append("/").append(f.getName());
             sb.append("\") {\"");
             sb.append(f.getName());

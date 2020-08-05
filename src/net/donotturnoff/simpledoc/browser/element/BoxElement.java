@@ -24,12 +24,22 @@ public abstract class BoxElement extends Element {
     }
 
     public JPanel createPanel() {
-        return new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0)) {
+        JPanel panel = new JPanel() {
             @Override
             public Dimension getMaximumSize() {
                 return getPreferredSize();
             }
         };
+        Map<String, String> style = getStyle();
+        String layoutName = style.getOrDefault("layout", "flow");
+        LayoutManager layout;
+        switch (layoutName) {
+            case "vbox": layout = new BoxLayout(panel, BoxLayout.Y_AXIS); break;
+            case "hbox": layout = new BoxLayout(panel, BoxLayout.X_AXIS); break;
+            default: layout = new FlowLayout(FlowLayout.LEFT, 0, 0);
+        }
+        panel.setLayout(layout);
+        return panel;
     }
 
     public void style(JComponent component) {
