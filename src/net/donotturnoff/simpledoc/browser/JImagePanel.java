@@ -9,20 +9,15 @@ public class ImagePanel extends JPanel {
 
     public ImagePanel(BufferedImage img) {
         this.img = img;
+        setPreferredSize(new Dimension(img.getWidth(), img.getHeight()));
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        // Paint the background image and scale it appropriately
-        int pnlW = getWidth();
-        int pnlH = getHeight();
-        int w = img.getWidth();
-        int h = img.getHeight();
-        double aspect = ((double) w)/h;
-        if (w > pnlW) {
-            w = pnlW;
-            h = (int) (w/aspect);
+        if (img != null) {
+            // Paint the background image
+            g.drawImage(img, 0, 0, img.getWidth(), img.getHeight(), this);
         }
         if (h > pnlH) {
             h = pnlH;

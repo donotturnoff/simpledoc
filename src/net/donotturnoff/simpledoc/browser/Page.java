@@ -1,7 +1,6 @@
 package net.donotturnoff.simpledoc.browser;
 
 import net.donotturnoff.simpledoc.browser.element.Element;
-import net.donotturnoff.simpledoc.browser.element.ImagePanel;
 import net.donotturnoff.simpledoc.browser.lexing.LexingException;
 import net.donotturnoff.simpledoc.browser.lexing.SDMLLexer;
 import net.donotturnoff.simpledoc.browser.lexing.Token;
@@ -15,7 +14,6 @@ import net.donotturnoff.simpledoc.util.Response;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -191,7 +189,7 @@ public class Page {
             if (img == null) {
                 throw new IOException("No data or unrecognised format");
             }
-            ImagePanel imgPanel = new ImagePanel(img);
+            JImagePanel imgPanel = new JImagePanel(img);
             imgPanel.setBackground(Color.WHITE);
             panel.add(imgPanel);
             panel.repaint();

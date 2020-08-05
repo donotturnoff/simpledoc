@@ -23,27 +23,27 @@ public abstract class BoxElement extends Element {
         super(page, name, attributes, children);
     }
 
-    public JPanel createPanel() {
-        JPanel panel = new JPanel() {
+    public JPanel getPanel() {
+        return new JPanel() {
             @Override
             public Dimension getMaximumSize() {
                 return getPreferredSize();
             }
         };
-        Map<String, String> style = getStyle();
-        String layoutName = style.getOrDefault("layout", "flow");
-        LayoutManager layout;
-        switch (layoutName) {
-            case "vbox": layout = new BoxLayout(panel, BoxLayout.Y_AXIS); break;
-            case "hbox": layout = new BoxLayout(panel, BoxLayout.X_AXIS); break;
-            default: layout = new FlowLayout(FlowLayout.LEFT, 0, 0);
-        }
-        panel.setLayout(layout);
-        return panel;
     }
 
     public void style(JComponent component) {
         Map<String, String> style = getStyle();
+
+        String layoutName = style.getOrDefault("layout", "flow");
+        LayoutManager layout;
+        switch (layoutName) {
+            case "vbox": layout = new BoxLayout(component, BoxLayout.Y_AXIS); break;
+            case "hbox": layout = new BoxLayout(component, BoxLayout.X_AXIS); break;
+            default: layout = new FlowLayout(FlowLayout.LEFT, 0, 0);
+        }
+        component.setLayout(layout);
+
         Cursor cursor = new Cursor(Element.cursorMap.getOrDefault(style.getOrDefault("cursor", "default"), Cursor.DEFAULT_CURSOR));
         Color backgroundColour = Color.decode(style.getOrDefault("background_colour", "#FFFFFF"));
 
@@ -83,7 +83,7 @@ public abstract class BoxElement extends Element {
 
     @Override
     public void render(Page page, JPanel parentPanel) {
-        JPanel panel = createPanel();
+        JPanel panel = getPanel();
         style(panel);
         parentPanel.add(panel);
         renderChildren(page, panel);

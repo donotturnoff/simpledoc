@@ -22,7 +22,7 @@ public class LiElement extends BoxElement {
 
     @Override
     public void render(Page page, JPanel parentPanel) {
-        JPanel panel = createPanel();
+        JPanel panel = getPanel();
         Map<String, String> style = getStyle();
         String bulletTextName = style.getOrDefault("bullet_style", "default");
         String bulletText = bulletStyleMap.getOrDefault(bulletTextName, bulletTextName);
