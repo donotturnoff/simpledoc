@@ -16,6 +16,7 @@ public class BodyElement extends BoxElement {
         defaultStyle.put("padding_bottom", "5");
         defaultStyle.put("padding_left", "5");
         defaultStyle.put("padding_right", "5");
+        defaultStyle.put("layout", "vbox");
     }
 
     public BodyElement(Page page, Map<String, String> attributes, List<Element> children) {
