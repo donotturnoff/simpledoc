@@ -3,7 +3,6 @@ package net.donotturnoff.simpledoc.browser.element;
 import net.donotturnoff.simpledoc.browser.Page;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

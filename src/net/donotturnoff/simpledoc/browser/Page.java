@@ -1,6 +1,7 @@
 package net.donotturnoff.simpledoc.browser;
 
 import net.donotturnoff.simpledoc.browser.element.Element;
+import net.donotturnoff.simpledoc.browser.element.ImagePanel;
 import net.donotturnoff.simpledoc.browser.lexing.LexingException;
 import net.donotturnoff.simpledoc.browser.lexing.SDMLLexer;
 import net.donotturnoff.simpledoc.browser.lexing.Token;
@@ -13,11 +14,16 @@ import net.donotturnoff.simpledoc.util.Response;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -179,16 +185,22 @@ public class Page {
     private void displayImage(byte[] data) {
         panel.removeAll();
         ByteArrayInputStream bais = new ByteArrayInputStream(data);
-        BufferedImage image;
+        BufferedImage img;
         try {
-            image = ImageIO.read(bais);
-            if (image == null) {
+            img = ImageIO.read(bais);
+            if (img == null) {
                 throw new IOException("No data or unrecognised format");
             }
-            JLabel picLabel = new JLabel(new ImageIcon(image));
-            panel.add(picLabel);
+            ImagePanel imgPanel = new ImagePanel(img);
+            imgPanel.setBackground(Color.WHITE);
+            panel.add(imgPanel);
+            panel.repaint();
+            panel.revalidate();
+            setTabTitle(Paths.get(new URI(url.toString()).getPath()).getFileName().toString());
         } catch (IOException e) {
             setStatus("Failed to load " + url);
+        } catch (URISyntaxException e) {
+            setTabTitle(url.getFile());
         }
     }
 
