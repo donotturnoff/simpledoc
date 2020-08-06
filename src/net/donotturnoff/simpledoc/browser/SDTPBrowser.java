@@ -132,7 +132,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
 
     public void setUrlBar(URL url) {
         if (url == null) {
-            urlBar.setText("Loading");
+            urlBar.setText("");
         } else {
             urlBar.setText(url.toString());
         }
@@ -151,9 +151,11 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         pages.remove(index);
         tabbedPane.remove(index);
 
-        int newIndex = tabbedPane.getSelectedIndex()%(pages.size());
-        tabbedPane.setSelectedIndex(newIndex);
-        currentPage = pages.get(newIndex);
+        if (pages.size() > 0) {
+            int newIndex = tabbedPane.getSelectedIndex() % (pages.size());
+            tabbedPane.setSelectedIndex(newIndex);
+            currentPage = pages.get(newIndex);
+        }
     }
 
     public void setTitle(int index, String title) {
@@ -208,8 +210,13 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
     @Override
     public void stateChanged(ChangeEvent changeEvent) {
         if (changeEvent.getSource() == tabbedPane) {
-            currentPage = pages.get(tabbedPane.getSelectedIndex());
-            setUrlBar(currentPage.getUrl());
+            int index = tabbedPane.getSelectedIndex();
+            if (index >= 0 && index < pages.size()) {
+                currentPage = pages.get(index);
+                setUrlBar(currentPage.getUrl());
+            } else {
+                setUrlBar(null);
+            }
         }
     }
 }
