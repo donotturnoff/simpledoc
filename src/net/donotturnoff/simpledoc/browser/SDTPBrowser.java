@@ -1,6 +1,8 @@
 package net.donotturnoff.simpledoc.browser;
 
 import javax.swing.*;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
@@ -70,6 +72,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
     private void createWidgets() {
         gui = new JFrame("Simpledoc browser v0.1");
         navBar = new JPanel();
+        navBar.setLayout(new BoxLayout(navBar, BoxLayout.X_AXIS));
         statusBar = new JPanel(new FlowLayout(FlowLayout.LEFT));
         tabbedPane = new JTabbedPane();
 
@@ -80,7 +83,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         forwardsBtn = new JButton("\u2b62");
         reloadBtn = new JButton("\u27f3");
         newTabBtn = new JButton("+");
-        urlBar = new JTextField(60);
+        urlBar = new JTextField();
 
         statusLabel = new JLabel("Welcome", JLabel.LEFT);
     }
@@ -88,6 +91,8 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
     private void configureWidgets() {
         gui.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         gui.setMinimumSize(new Dimension(800, 600));
+
+        navBar.setBorder(new CompoundBorder(navBar.getBorder(), new EmptyBorder(5, 5, 5, 5)));
 
         tabbedPane.addChangeListener(this);
 
@@ -101,9 +106,13 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
 
     private void constructGUI() {
         navBar.add(backBtn);
+        navBar.add(Box.createRigidArea(new Dimension(5, 0)));
         navBar.add(forwardsBtn);
+        navBar.add(Box.createRigidArea(new Dimension(5, 0)));
         navBar.add(reloadBtn);
+        navBar.add(Box.createRigidArea(new Dimension(5, 0)));
         navBar.add(urlBar);
+        navBar.add(Box.createRigidArea(new Dimension(5, 0)));
         navBar.add(newTabBtn);
 
         menuBar.add(fileMenu);
