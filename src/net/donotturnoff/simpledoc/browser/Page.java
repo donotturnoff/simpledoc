@@ -110,7 +110,6 @@ public class Page {
     }
 
     private void load(URL url) {
-        System.out.println(url);
         browser.setUrlBar(url);
         setTabTitle("Loading");
         setStatus("Loading " + url);

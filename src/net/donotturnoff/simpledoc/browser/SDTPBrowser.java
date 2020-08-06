@@ -62,6 +62,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
     }
 
     private void init() {
+        UIManager.put("swing.boldMetal", false);
         createWidgets();
         configureWidgets();
         constructGUI();
@@ -74,7 +75,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         navBar = new JPanel();
         navBar.setLayout(new BoxLayout(navBar, BoxLayout.X_AXIS));
         statusBar = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        tabbedPane = new JTabbedPane();
+        tabbedPane = new JTabbedPane(SwingConstants.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
 
         menuBar = new JMenuBar();
         fileMenu = new JMenu("File");
@@ -136,7 +137,17 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         pages.add(currentPage);
         tabbedPane.addTab("Loading", currentPage.getScrollPane());
         tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-1);
+        tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(), new CustomTabComponent(this, tabbedPane));
         currentPage.navigate(urlString);
+    }
+
+    public void removePage(int index) {
+        pages.remove(index);
+        tabbedPane.remove(index);
+
+        int newIndex = tabbedPane.getSelectedIndex()%(pages.size());
+        tabbedPane.setSelectedIndex(newIndex);
+        currentPage = pages.get(newIndex);
     }
 
     public void setTitle(int tab, String title) {
