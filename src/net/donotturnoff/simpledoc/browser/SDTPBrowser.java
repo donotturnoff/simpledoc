@@ -55,6 +55,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
 
     private void init() {
         UIManager.put("swing.boldMetal", false);
+
         createWidgets();
         configureWidgets();
         constructGUI();
@@ -87,6 +88,13 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
     private void configureWidgets() {
         gui.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         gui.setMinimumSize(new Dimension(800, 600));
+
+        URL url = ClassLoader.getSystemResource("net/donotturnoff/simpledoc/browser/icon.png");
+        if (url != null) {
+            Toolkit kit = Toolkit.getDefaultToolkit();
+            Image img = kit.createImage(url);
+            gui.setIconImage(img);
+        }
 
         navBar.setBorder(new CompoundBorder(navBar.getBorder(), new EmptyBorder(5, 5, 5, 5)));
         urlBar.setBorder(new EmptyBorder(0, 0, 0, 0));
