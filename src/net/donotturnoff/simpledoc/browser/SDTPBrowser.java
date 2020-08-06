@@ -49,14 +49,6 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         pages = new ArrayList<>();
     }
 
-    public void setUrlBar(URL url) {
-        if (url == null) {
-            urlBar.setText("Loading");
-        } else {
-            urlBar.setText(url.toString());
-        }
-    }
-
     private void run() {
         SwingUtilities.invokeLater(this::init);
     }
@@ -103,6 +95,12 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         newTabBtn.addActionListener(this);
 
         urlBar.addKeyListener(this);
+
+        navBar.setToolTipText("Enter a URL to visit");
+        backBtn.setToolTipText("Visit previous page");
+        forwardBtn.setToolTipText("Visit next page");
+        reloadBtn.setToolTipText("Reload current page");
+        newTabBtn.setToolTipText("Add a new tab");
     }
 
     private void constructGUI() {
@@ -132,6 +130,14 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         gui.setExtendedState(gui.getExtendedState() | JFrame.MAXIMIZED_BOTH);
     }
 
+    public void setUrlBar(URL url) {
+        if (url == null) {
+            urlBar.setText("Loading");
+        } else {
+            urlBar.setText(url.toString());
+        }
+    }
+
     private void addPage(String urlString) {
         currentPage = new Page(this);
         pages.add(currentPage);
@@ -150,9 +156,10 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         currentPage = pages.get(newIndex);
     }
 
-    public void setTitle(int tab, String title) {
+    public void setTitle(int index, String title) {
         gui.setTitle(title + " - Simpledoc browser v0.1");
-        tabbedPane.setTitleAt(tab, title);
+        tabbedPane.setTitleAt(index, title);
+        tabbedPane.setToolTipTextAt(index, title);
     }
 
     public void setStatus(String status) {
