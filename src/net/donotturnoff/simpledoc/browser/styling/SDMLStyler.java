@@ -26,19 +26,19 @@ public class SDMLStyler {
     
     public void style(Element element, Style parentStyle) {
         Style style = new Style();
-        try {
-            Field field = element.getClass().getField("defaultStyle");
-            if (Style.class.isAssignableFrom(field.getType())) {
-                style = new Style((Style) field.get(null));
-            } else {
-                throw new NoSuchFieldException();
-            }
-        } catch (NoSuchFieldException | IllegalAccessException ignored) {}
         for (String s: inheritableStyles) {
             if (parentStyle.containsRule(s)) {
                 style.set(s, parentStyle.get(s), parentStyle.isCustomRule(s));
             }
         }
+        try {
+            Field field = element.getClass().getField("defaultStyle");
+            if (Style.class.isAssignableFrom(field.getType())) {
+                style.setAll((Style) field.get(null));
+            } else {
+                throw new NoSuchFieldException();
+            }
+        } catch (NoSuchFieldException | IllegalAccessException ignored) {}
         element.setStyle(style);
         for (Element child: element.getChildren()) {
             style(child, style);

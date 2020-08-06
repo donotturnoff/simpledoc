@@ -31,10 +31,18 @@ public class Style {
         set(key, value, true);
     }
 
-    public void set(String key, String value, boolean isCustom) {
-        rules.put(key, value);
-        if (isCustom) {
+    public void set(String key, String value, boolean isCustomRule) {
+        if (isCustomRule || !isCustomRule(key))
+            rules.put(key, value);{
             customRules.add(key);
+        }
+    }
+
+    public void setAll(Style style) {
+        for (Map.Entry<String, String> rule: style.rules.entrySet()) {
+            String key = rule.getKey();
+            String value = rule.getValue();
+            set(key, value, style.isCustomRule(key));
         }
     }
 
