@@ -186,9 +186,8 @@ public class Page {
     private void render(Element root) {
         panel.removeAll();
         if (data != null) {
-            root.render(this, panel);
-            panel.repaint();
-            panel.revalidate();
+            RenderWorker worker = new RenderWorker(this, root);
+            worker.execute();
         }
     }
 
