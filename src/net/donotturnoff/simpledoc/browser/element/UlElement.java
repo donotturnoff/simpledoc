@@ -11,7 +11,7 @@ public class UlElement extends BoxElement {
     public final static Style defaultStyle = new Style();
 
     static {
-        defaultStyle.set("bullet_style", "triangle");
+        defaultStyle.set("bullet_style", "default");
         defaultStyle.set("margin_left", "10");
         defaultStyle.set("layout", "vbox");
     }
