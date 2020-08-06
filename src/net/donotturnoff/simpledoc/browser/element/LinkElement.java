@@ -26,8 +26,10 @@ public class LinkElement extends BoxElement implements MouseListener {
     public void render(Page page, JPanel parentPanel) {
         JPanel panel = getPanel();
         style(panel);
-        panel.addMouseListener(this);
-        parentPanel.add(panel);
+        if (panel != null) {
+            panel.addMouseListener(this);
+        }
+        addPanel(parentPanel, panel);
         renderChildren(page, panel);
     }
 

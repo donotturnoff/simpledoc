@@ -28,7 +28,7 @@ public class LiElement extends BoxElement {
         new SDMLStyler().style(bullet, style);
         children.add(0, bullet);
         style(panel);
-        parentPanel.add(panel);
+        addPanel(parentPanel, panel);
         renderChildren(page, panel);
     }
 }

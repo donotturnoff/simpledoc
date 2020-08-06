@@ -26,20 +26,26 @@ public class ImgElement extends BoxElement {
     }
 
     public JImagePanel getPanel() {
-        return new JImagePanel();
+        if (isHidden()) {
+            return null;
+        } else {
+            return new JImagePanel();
+        }
     }
 
     @Override
     public void render(Page page, JPanel parentPanel) {
         panel = getPanel();
         style(panel);
-        parentPanel.add(panel);
-        String src = attributes.get("src");
-        try {
-            url = ConnectionUtils.getURL(page.getUrl(), src);
-            load();
-        } catch (MalformedURLException e) {
-            loadingFailure("Failed to load image: " + e.getMessage());
+        addPanel(parentPanel, panel);
+        if (panel != null) {
+            String src = attributes.get("src");
+            try {
+                url = ConnectionUtils.getURL(page.getUrl(), src);
+                load();
+            } catch (MalformedURLException e) {
+                loadingFailure("Failed to load image: " + e.getMessage());
+            }
         }
     }
 

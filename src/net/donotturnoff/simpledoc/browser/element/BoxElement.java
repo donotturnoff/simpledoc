@@ -23,37 +23,55 @@ public abstract class BoxElement extends Element {
         super(page, name, attributes, children);
     }
 
-    public JPanel getPanel() {
-        return new JPanel() {
-            @Override
-            public Dimension getMaximumSize() {
-                return getPreferredSize();
-            }
-        };
+    protected boolean isHidden() {
+        return attributes.containsKey("hidden") && !attributes.get("hidden").equals("false");
     }
 
-    public void style(JComponent component) {
-        LayoutManager layout = style.getLayoutManager(component);
-        Cursor cursor = style.getCursor();
-        Color backgroundColour = style.getBackgroundColour();
-        Border padding = style.getPadding();
-        Border border = style.getBorder();
-        Border margin = style.getMargin();
-        CompoundBorder surroundings = BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(margin, border), padding);
+    public JPanel getPanel() {
+        if (isHidden()) {
+            return null;
+        } else {
+            return new JPanel() {
+                @Override
+                public Dimension getMaximumSize() {
+                    return getPreferredSize();
+                }
+            };
+        }
+    }
 
-        component.setLayout(layout);
-        component.setCursor(cursor);
-        component.setBackground(backgroundColour);
-        component.setAlignmentX(Component.LEFT_ALIGNMENT);
-        component.setAlignmentY(Component.TOP_ALIGNMENT);
-        component.setBorder(surroundings);
+    public void style(JPanel panel) {
+        if (panel != null) {
+            LayoutManager layout = style.getLayoutManager(panel);
+            Cursor cursor = style.getCursor();
+            Color backgroundColour = style.getBackgroundColour();
+            Border padding = style.getPadding();
+            Border border = style.getBorder();
+            Border margin = style.getMargin();
+            CompoundBorder surroundings = BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(margin, border), padding);
 
-        component.setToolTipText(attributes.get("title"));
+            panel.setLayout(layout);
+            panel.setCursor(cursor);
+            panel.setBackground(backgroundColour);
+            panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+            panel.setAlignmentY(Component.TOP_ALIGNMENT);
+            panel.setBorder(surroundings);
+
+            panel.setToolTipText(attributes.get("title"));
+        }
     }
 
     public void renderChildren(Page page, JPanel panel) {
-        for (Element c: children) {
-            c.render(page, panel);
+        if (panel != null) {
+            for (Element c : children) {
+                c.render(page, panel);
+            }
+        }
+    }
+
+    public void addPanel(JPanel parentPanel, JPanel panel) {
+        if (panel != null) {
+            parentPanel.add(panel);
         }
     }
 
@@ -61,7 +79,7 @@ public abstract class BoxElement extends Element {
     public void render(Page page, JPanel parentPanel) {
         JPanel panel = getPanel();
         style(panel);
-        parentPanel.add(panel);
+        addPanel(parentPanel, panel);
         renderChildren(page, panel);
     }
 }
