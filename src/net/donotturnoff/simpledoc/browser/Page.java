@@ -99,25 +99,27 @@ public class Page {
     }
 
     public void navigate(String s) {
+        URL url;
         try {
-            url = ConnectionUtils.getURL(url, s);
+            url = ConnectionUtils.getURL(this.url, s);
+            revisiting = false;
+            load(url);
         } catch (MalformedURLException e) {
             displayError(e);
         }
-        revisiting = false;
-        load(url);
     }
 
     private void load(URL url) {
-        this.url = url;
+        System.out.println(url);
         browser.setUrlBar(url);
         setTabTitle("Loading");
         setStatus("Loading " + url);
-        ConnectionWorker worker = new ConnectionWorker(this);
+        ConnectionWorker worker = new ConnectionWorker(url,this);
         worker.execute();
     }
 
-    public Void loaded(Response response) {
+    public Void loaded(URL url, Response response) {
+        this.url = url;
         this.data = response;
         if (!revisiting || !history.pageVisited(url)) {
             history.navigate(url);

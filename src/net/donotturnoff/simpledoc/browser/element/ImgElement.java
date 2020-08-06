@@ -56,7 +56,7 @@ public class ImgElement extends BoxElement {
         worker.execute();
     }
 
-    public Void loaded(Response response) {
+    public Void loaded(URL url, Response response) {
         byte[] data = response.getBody();
         ByteArrayInputStream bais = new ByteArrayInputStream(data);
         BufferedImage img;

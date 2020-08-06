@@ -7,13 +7,13 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 public class ConnectionWorker extends SwingWorker<Response, Void> {
 
     private final Page page;
     private final URL url;
-    private final Function<Response, Void> callback;
+    private final BiFunction<URL, Response, Void> callback;
     private Exception e;
 
     ConnectionWorker(Page page) {
@@ -22,7 +22,13 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
         this.callback = page::loaded;
     }
 
-    public ConnectionWorker(URL url, Page page, Function<Response, Void> callback) {
+    ConnectionWorker(URL url, Page page) {
+        this.url = url;
+        this.page = page;
+        this.callback = page::loaded;
+    }
+
+    public ConnectionWorker(URL url, Page page, BiFunction<URL, Response, Void> callback) {
         this.url = url;
         this.page = page;
         this.callback = callback;
@@ -44,8 +50,7 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
 
             Request request = new Request(RequestMethod.GET, path, "SDTP/0.1", Map.of(), new byte[0]);
             ConnectionUtils.send(out, new Message(request));
-            Response response = new Response(ConnectionUtils.recv(in));
-            return response;
+            return new Response(ConnectionUtils.recv(in));
         } catch (Exception e) {
             this.e = e;
             return null;
@@ -57,7 +62,7 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
         try {
             Response response = get();
             if (response != null) {
-                callback.apply(response);
+                callback.apply(url, response);
             } else {
                 throw e;
             }
