@@ -53,7 +53,7 @@ public class Page {
     }
 
     public void setTabTitle(String title) {
-        JTabbedPane tabbedPane = (JTabbedPane) SwingUtilities.getAncestorOfClass(JTabbedPane.class, panel);
+        JTabbedPane tabbedPane = browser.getTabbedPane();
         for (int i = 0; i < tabbedPane.getTabCount(); i++) {
             if (SwingUtilities.isDescendingFrom(panel, tabbedPane.getComponentAt(i))) {
                 browser.setTitle(i, title);

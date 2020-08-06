@@ -176,6 +176,10 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         forwardBtn.setEnabled(enabled);
     }
 
+    public JTabbedPane getTabbedPane() {
+        return tabbedPane;
+    }
+
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         JButton source = (JButton) actionEvent.getSource();
@@ -215,7 +219,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
                 currentPage = pages.get(index);
                 setUrlBar(currentPage.getUrl());
             } else {
-                setUrlBar(null);
+                System.exit(0);
             }
         }
     }
