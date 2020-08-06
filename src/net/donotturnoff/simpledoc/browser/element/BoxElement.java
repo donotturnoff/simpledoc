@@ -47,6 +47,8 @@ public abstract class BoxElement extends Element {
         component.setAlignmentX(Component.LEFT_ALIGNMENT);
         component.setAlignmentY(Component.TOP_ALIGNMENT);
         component.setBorder(surroundings);
+
+        component.setToolTipText(attributes.get("title"));
     }
 
     public void renderChildren(Page page, JPanel panel) {

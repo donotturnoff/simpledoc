@@ -52,7 +52,7 @@ public abstract class Element {
     }
 
     public static boolean isLegalAttribute(String tag, String attr) {
-        return tagSpecificAttrs.containsKey(tag) && tagSpecificAttrs.get(tag).contains(attr);
+        return allAttrs.contains(attr) || (tagSpecificAttrs.containsKey(tag) && tagSpecificAttrs.get(tag).contains(attr));
     }
 
     public static Class<? extends Element> getTagClass(String tag) {
