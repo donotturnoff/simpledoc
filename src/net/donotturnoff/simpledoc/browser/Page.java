@@ -43,6 +43,9 @@ public class Page {
         this.revisiting = false;
         this.url = null;
 
+        browser.setBackButtonState(false);
+        browser.setForwardButtonState(false);
+
         scrollPane.getVerticalScrollBar().setUnitIncrement(10);
         scrollPane.getHorizontalScrollBar().setUnitIncrement(10);
         scrollPane.getVerticalScrollBar().setBlockIncrement(40);
@@ -85,12 +88,18 @@ public class Page {
 
     public void back() {
         revisiting = true;
-        load(history.back());
+        URL back = history.back();
+        browser.setBackButtonState(history.canGoBack());
+        browser.setForwardButtonState(history.canGoForward());
+        load(back);
     }
 
     public void forward() {
         revisiting = true;
-        load(history.forward());
+        URL forward = history.forward();
+        browser.setBackButtonState(history.canGoBack());
+        browser.setForwardButtonState(history.canGoForward());
+        load(forward);
     }
 
     public void reload() {
@@ -122,6 +131,8 @@ public class Page {
         this.data = response;
         if (!revisiting || !history.pageVisited(url)) {
             history.navigate(url);
+            browser.setBackButtonState(history.canGoBack());
+            browser.setForwardButtonState(history.canGoForward());
         }
         String type = response.getHeaders().get("type");
         String generalType = type.split("/")[0];

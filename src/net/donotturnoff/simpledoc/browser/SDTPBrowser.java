@@ -29,7 +29,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
     private JMenu fileMenu;
 
     // Inputs
-    private JButton backBtn, forwardsBtn, reloadBtn, newTabBtn;
+    private JButton backBtn, forwardBtn, reloadBtn, newTabBtn;
     private JTextField urlBar;
 
     // Labels
@@ -73,7 +73,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         fileMenu = new JMenu("File");
 
         backBtn = new JButton("\u2b60");
-        forwardsBtn = new JButton("\u2b62");
+        forwardBtn = new JButton("\u2b62");
         reloadBtn = new JButton("\u27f3");
         newTabBtn = new JButton("+");
         urlBar = new JTextField();
@@ -90,7 +90,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         tabbedPane.addChangeListener(this);
 
         backBtn.addActionListener(this);
-        forwardsBtn.addActionListener(this);
+        forwardBtn.addActionListener(this);
         reloadBtn.addActionListener(this);
         newTabBtn.addActionListener(this);
 
@@ -106,7 +106,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
     private void constructGUI() {
         navBar.add(backBtn);
         navBar.add(Box.createRigidArea(new Dimension(5, 0)));
-        navBar.add(forwardsBtn);
+        navBar.add(forwardBtn);
         navBar.add(Box.createRigidArea(new Dimension(5, 0)));
         navBar.add(reloadBtn);
         navBar.add(Box.createRigidArea(new Dimension(5, 0)));
@@ -166,12 +166,20 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         statusLabel.setText(status);
     }
 
+    public void setBackButtonState(boolean enabled) {
+        backBtn.setEnabled(enabled);
+    }
+
+    public void setForwardButtonState(boolean enabled) {
+        forwardBtn.setEnabled(enabled);
+    }
+
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         JButton source = (JButton) actionEvent.getSource();
         if (source == backBtn) {
             currentPage.back();
-        } else if (source == forwardsBtn) {
+        } else if (source == forwardBtn) {
             currentPage.forward();
         } else if (source == reloadBtn) {
             currentPage.reload();
