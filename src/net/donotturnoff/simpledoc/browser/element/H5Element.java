@@ -4,7 +4,6 @@ import net.donotturnoff.simpledoc.browser.Page;
 import net.donotturnoff.simpledoc.browser.styling.Style;
 
 import java.awt.*;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

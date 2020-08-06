@@ -5,7 +5,6 @@ import net.donotturnoff.simpledoc.browser.styling.SDMLStyler;
 import net.donotturnoff.simpledoc.browser.styling.Style;
 
 import javax.swing.*;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

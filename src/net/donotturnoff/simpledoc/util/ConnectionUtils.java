@@ -3,9 +3,6 @@ package net.donotturnoff.simpledoc.util;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Objects;
 
 public class ConnectionUtils {
     public static Message recv(InputStream in) throws IOException {
@@ -71,7 +68,7 @@ public class ConnectionUtils {
 
     private static String readLine(InputStream in) throws IOException {
         StringBuilder line = new StringBuilder();
-        byte prev = 0, c = 0;
+        byte prev = 0, c;
         while ((c = (byte) in.read()) >= 0 && !(prev == '\r' && c == '\n')) {
             prev = c;
             line.append((char) c);

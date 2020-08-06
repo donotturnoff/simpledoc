@@ -10,7 +10,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener {
@@ -35,7 +34,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
     private JLabel statusLabel;
 
     // Non-GUI
-    private List<Page> pages;
+    private final List<Page> pages;
     private Page currentPage;
 
     public static void main(String[] args) {

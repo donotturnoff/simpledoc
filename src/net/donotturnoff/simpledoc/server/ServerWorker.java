@@ -24,10 +24,10 @@ class ServerWorker implements Runnable {
         }
     }
 
-    private SDTPServer server;
-    private Socket c;
-    private InputStream in;
-    private OutputStream out;
+    private final SDTPServer server;
+    private final Socket c;
+    private final InputStream in;
+    private final OutputStream out;
 
     ServerWorker(SDTPServer server, Socket c) throws IOException {
         this.server = server;
