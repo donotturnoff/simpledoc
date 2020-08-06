@@ -21,7 +21,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
 
     // Containers
     private JFrame gui;
-    private JPanel navBar, statusBar;
+    private JPanel navBar, urlBarContainer, statusBar;
     private JTabbedPane tabbedPane;
 
     // Menus
@@ -29,7 +29,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
     private JMenu fileMenu;
 
     // Inputs
-    private JButton backBtn, forwardBtn, reloadBtn, newTabBtn;
+    private JButton backBtn, forwardBtn, reloadBtn, goBtn, newTabBtn;
     private JTextField urlBar;
 
     // Labels
@@ -68,6 +68,8 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         navBar.setLayout(new BoxLayout(navBar, BoxLayout.X_AXIS));
         statusBar = new JPanel(new FlowLayout(FlowLayout.LEFT));
         tabbedPane = new JTabbedPane(SwingConstants.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
+        urlBarContainer = new JPanel();
+        urlBarContainer.setLayout(new BoxLayout(urlBarContainer, BoxLayout.X_AXIS));
 
         menuBar = new JMenuBar();
         fileMenu = new JMenu("File");
@@ -75,6 +77,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         backBtn = new JButton("\u2b60");
         forwardBtn = new JButton("\u2b62");
         reloadBtn = new JButton("\u27f3");
+        goBtn = new JButton("Go");
         newTabBtn = new JButton("+");
         urlBar = new JTextField();
 
@@ -86,12 +89,17 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         gui.setMinimumSize(new Dimension(800, 600));
 
         navBar.setBorder(new CompoundBorder(navBar.getBorder(), new EmptyBorder(5, 5, 5, 5)));
+        urlBar.setBorder(new EmptyBorder(0, 0, 0, 0));
+        urlBarContainer.setBorder(new CompoundBorder(BorderFactory.createLoweredBevelBorder(), new EmptyBorder(2, 2, 2, 2)));
+
+        urlBarContainer.setBackground(Color.WHITE);
 
         tabbedPane.addChangeListener(this);
 
         backBtn.addActionListener(this);
         forwardBtn.addActionListener(this);
         reloadBtn.addActionListener(this);
+        goBtn.addActionListener(this);
         newTabBtn.addActionListener(this);
 
         urlBar.addKeyListener(this);
@@ -104,13 +112,16 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
     }
 
     private void constructGUI() {
+        urlBarContainer.add(urlBar);
+        urlBarContainer.add(goBtn);
+
         navBar.add(backBtn);
         navBar.add(Box.createRigidArea(new Dimension(5, 0)));
         navBar.add(forwardBtn);
         navBar.add(Box.createRigidArea(new Dimension(5, 0)));
         navBar.add(reloadBtn);
         navBar.add(Box.createRigidArea(new Dimension(5, 0)));
-        navBar.add(urlBar);
+        navBar.add(urlBarContainer);
         navBar.add(Box.createRigidArea(new Dimension(5, 0)));
         navBar.add(newTabBtn);
 
@@ -189,6 +200,8 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
             currentPage.forward();
         } else if (source == reloadBtn) {
             currentPage.reload();
+        } else if (source == goBtn) {
+            currentPage.navigate(urlBar.getText());
         } else if (source == newTabBtn) {
             addPage(HOMEPAGE);
         }
