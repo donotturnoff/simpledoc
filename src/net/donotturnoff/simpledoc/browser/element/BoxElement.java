@@ -1,6 +1,7 @@
 package net.donotturnoff.simpledoc.browser.element;
 
 import net.donotturnoff.simpledoc.browser.Page;
+import net.donotturnoff.simpledoc.browser.styling.Style;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -12,11 +13,11 @@ import java.util.Map;
 
 public abstract class BoxElement extends Element {
 
-    public final static Map<String, String> defaultStyle = new HashMap<>();
+    public final static Style defaultStyle = new Style();
 
     static {
-        defaultStyle.put("cursor", "default");
-        defaultStyle.put("background_color", "#FFFFFF");
+        defaultStyle.set("cursor", "default");
+        defaultStyle.set("background_color", "#FFFFFF");
     }
 
     public BoxElement(Page page, String name, Map<String, String> attributes, List<Element> children) {
@@ -33,41 +34,15 @@ public abstract class BoxElement extends Element {
     }
 
     public void style(JComponent component) {
-        Map<String, String> style = getStyle();
-
-        String layoutName = style.getOrDefault("layout", "flow");
-        LayoutManager layout;
-        switch (layoutName) {
-            case "vbox": layout = new BoxLayout(component, BoxLayout.Y_AXIS); break;
-            case "hbox": layout = new BoxLayout(component, BoxLayout.X_AXIS); break;
-            default: layout = new FlowLayout(FlowLayout.LEFT, 0, 0);
-        }
-        component.setLayout(layout);
-
-        Cursor cursor = new Cursor(Element.cursorMap.getOrDefault(style.getOrDefault("cursor", "default"), Cursor.DEFAULT_CURSOR));
-        Color backgroundColour = Color.decode(style.getOrDefault("background_colour", "#FFFFFF"));
-
-        int paddingTop = Integer.parseInt(style.getOrDefault("padding_top", "0"));
-        int paddingLeft = Integer.parseInt(style.getOrDefault("padding_left", "0"));
-        int paddingBottom = Integer.parseInt(style.getOrDefault("padding_bottom", "0"));
-        int paddingRight = Integer.parseInt(style.getOrDefault("padding_right", "0"));
-        Border padding = BorderFactory.createEmptyBorder(paddingTop, paddingLeft, paddingBottom, paddingRight);
-
-        int borderTopWidth = Integer.parseInt(style.getOrDefault("border_top_width", "0"));
-        int borderLeftWidth = Integer.parseInt(style.getOrDefault("border_left_width", "0"));
-        int borderBottomWidth = Integer.parseInt(style.getOrDefault("border_bottom_width", "0"));
-        int borderRightWidth = Integer.parseInt(style.getOrDefault("border_right_width", "0"));
-        Color borderColour = Color.decode(style.getOrDefault("border_colour", "#000000"));
-        Border border = BorderFactory.createMatteBorder(borderTopWidth, borderLeftWidth, borderBottomWidth, borderRightWidth, borderColour);
-
-        int marginTop = Integer.parseInt(style.getOrDefault("margin_top", "0"));
-        int marginLeft = Integer.parseInt(style.getOrDefault("margin_left", "0"));
-        int marginBottom = Integer.parseInt(style.getOrDefault("margin_bottom", "0"));
-        int marginRight = Integer.parseInt(style.getOrDefault("margin_right", "0"));
-        Border margin = BorderFactory.createEmptyBorder(marginTop, marginLeft, marginBottom, marginRight);
-
+        LayoutManager layout = style.getLayoutManager(component);
+        Cursor cursor = style.getCursor();
+        Color backgroundColour = style.getBackgroundColour();
+        Border padding = style.getPadding();
+        Border border = style.getBorder();
+        Border margin = style.getMargin();
         CompoundBorder surroundings = BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(margin, border), padding);
 
+        component.setLayout(layout);
         component.setCursor(cursor);
         component.setBackground(backgroundColour);
         component.setAlignmentX(Component.LEFT_ALIGNMENT);

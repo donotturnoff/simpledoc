@@ -1,21 +1,21 @@
 package net.donotturnoff.simpledoc.browser.element;
 
 import net.donotturnoff.simpledoc.browser.Page;
+import net.donotturnoff.simpledoc.browser.styling.Style;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class LinkElement extends BoxElement implements MouseListener {
-    public final static Map<String, String> defaultStyle = new HashMap<>();
+    public final static Style defaultStyle = new Style();
 
     static {
-        defaultStyle.put("cursor", "pointer");
-        defaultStyle.put("colour", "#0000FF");
-        defaultStyle.put("text_decoration", "underline");
+        defaultStyle.set("cursor", "pointer");
+        defaultStyle.set("colour", "#0000FF");
+        defaultStyle.set("underline", "single");
     }
 
     public LinkElement(Page page, Map<String, String> attributes, List<Element> children) {
@@ -24,8 +24,11 @@ public class LinkElement extends BoxElement implements MouseListener {
 
     @Override
     public void render(Page page, JPanel parentPanel) {
-        super.render(page, parentPanel);
-        parentPanel.addMouseListener(this);
+        JPanel panel = getPanel();
+        style(panel);
+        panel.addMouseListener(this);
+        parentPanel.add(panel);
+        renderChildren(page, panel);
     }
 
     @Override

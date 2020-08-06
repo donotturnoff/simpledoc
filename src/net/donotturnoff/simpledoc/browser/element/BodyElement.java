@@ -1,6 +1,7 @@
 package net.donotturnoff.simpledoc.browser.element;
 
 import net.donotturnoff.simpledoc.browser.Page;
+import net.donotturnoff.simpledoc.browser.styling.Style;
 
 import javax.swing.*;
 import java.util.HashMap;
@@ -9,14 +10,14 @@ import java.util.Map;
 
 public class BodyElement extends BoxElement {
 
-    public final static Map<String, String> defaultStyle = new HashMap<>();
+    public final static Style defaultStyle = new Style();
 
     static {
-        defaultStyle.put("padding_top", "5");
-        defaultStyle.put("padding_bottom", "5");
-        defaultStyle.put("padding_left", "5");
-        defaultStyle.put("padding_right", "5");
-        defaultStyle.put("layout", "vbox");
+        defaultStyle.set("padding_top", "5");
+        defaultStyle.set("padding_bottom", "5");
+        defaultStyle.set("padding_left", "5");
+        defaultStyle.set("padding_right", "5");
+        defaultStyle.set("layout", "vbox");
     }
 
     public BodyElement(Page page, Map<String, String> attributes, List<Element> children) {

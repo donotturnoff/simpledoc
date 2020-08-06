@@ -1,6 +1,7 @@
 package net.donotturnoff.simpledoc.browser.element;
 
 import net.donotturnoff.simpledoc.browser.Page;
+import net.donotturnoff.simpledoc.browser.styling.Style;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,10 +20,6 @@ public abstract class Element {
     private static final Map<String, Set<String>> tagSpecificAttrs = new HashMap<>();
     private static final Set<String> allAttrs = new HashSet<>();
     private static final Map<String, Class<? extends Element>> tagClasses = new HashMap<>();
-    protected final Map<String, String> defaultStyle = new HashMap<>();
-    public static final Map<String, Integer> fontStyleMap = Map.of("plain", Font.PLAIN, "bold", Font.BOLD, "italic", Font.ITALIC);
-    public static final Map<String, Integer> cursorMap = Map.of("default", Cursor.DEFAULT_CURSOR, "pointer", Cursor.HAND_CURSOR, "text", Cursor.TEXT_CURSOR);
-    public static final Map<String, String> bulletStyleMap = Map.of("default", "\u2022", "disc", "\u2022");
 
     static {
         tagSpecificAttrs.put("doc", Set.of("version", "charset", "author", "description", "keywords"));
@@ -36,10 +33,11 @@ public abstract class Element {
         allAttrs.addAll(generalAttrs);
         tagSpecificAttrs.values().forEach(allAttrs::addAll);
 
+        String packageName = "net.donotturnoff.simpledoc.browser.element.";
         tags.forEach(t -> {
-            String name = "net.donotturnoff.simpledoc.browser.element." + t.substring(0, 1).toUpperCase() + t.substring(1) + "Element";
+            String name = t.substring(0, 1).toUpperCase() + t.substring(1) + "Element";
             try {
-                tagClasses.put(t, Class.forName(name).asSubclass(Element.class));
+                tagClasses.put(t, Class.forName(packageName + name).asSubclass(Element.class));
             } catch (ClassNotFoundException e) {
                 System.out.println("Class not found for tag: " + name);
             }
@@ -62,11 +60,12 @@ public abstract class Element {
         return tagClasses.get(tag);
     }
 
+    protected final Style defaultStyle = new Style();
     protected Page page;
     protected String name;
     protected Map<String, String> attributes;
     protected List<Element> children;
-    protected Map<String, String> style;
+    protected Style style;
 
     public Element(Page page, String name, Map<String, String> attributes, List<Element> children) {
         this.page = page;
@@ -75,7 +74,7 @@ public abstract class Element {
         this.children = children;
     }
 
-    public void setStyle(Map<String, String> style) {
+    public void setStyle(Style style) {
         this.style = style;
     }
 
@@ -91,7 +90,7 @@ public abstract class Element {
         return name;
     }
 
-    public Map<String, String> getStyle() {
+    public Style getStyle() {
         return style;
     }
 

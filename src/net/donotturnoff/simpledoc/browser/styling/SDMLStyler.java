@@ -3,9 +3,7 @@ package net.donotturnoff.simpledoc.browser.styling;
 import net.donotturnoff.simpledoc.browser.element.Element;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 public class SDMLStyler {
@@ -15,7 +13,7 @@ public class SDMLStyler {
         inheritableStyles.add("font_family");
         inheritableStyles.add("font_size");
         inheritableStyles.add("font_style");
-        inheritableStyles.add("text_decoration");
+        inheritableStyles.add("underline");
         inheritableStyles.add("colour");
         inheritableStyles.add("background_colour");
         inheritableStyles.add("cursor");
@@ -23,27 +21,24 @@ public class SDMLStyler {
     }
 
     public void style(Element root) {
-        style(root, Map.of());
+        style(root, new Style());
     }
     
-    public void style(Element element, Map<String, String> parentStyle) {
-        Map<String, String> style = new HashMap<>();
-        for (String s: inheritableStyles) {
-            if (parentStyle.containsKey(s)) {
-                style.put(s, parentStyle.get(s));
-            }
-        }
-        Map<String, String> defaultStyle = new HashMap<>();
+    public void style(Element element, Style parentStyle) {
+        Style style = new Style();
         try {
             Field field = element.getClass().getField("defaultStyle");
-            if (Map.class.isAssignableFrom(field.getType())) {
-                Object defaultStyleObject = field.get(null);
-                defaultStyle = (Map<String, String>) field.get(null);
+            if (Style.class.isAssignableFrom(field.getType())) {
+                style = new Style((Style) field.get(null));
+            } else {
+                throw new NoSuchFieldException();
             }
-        } catch (NoSuchFieldException | IllegalAccessException ignored) {
-
+        } catch (NoSuchFieldException | IllegalAccessException ignored) {}
+        for (String s: inheritableStyles) {
+            if (parentStyle.containsRule(s)) {
+                style.set(s, parentStyle.get(s), parentStyle.isCustomRule(s));
+            }
         }
-        style.putAll(defaultStyle);
         element.setStyle(style);
         for (Element child: element.getChildren()) {
             style(child, style);
