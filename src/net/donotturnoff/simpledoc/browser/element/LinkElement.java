@@ -2,10 +2,13 @@ package net.donotturnoff.simpledoc.browser.element;
 
 import net.donotturnoff.simpledoc.browser.Page;
 import net.donotturnoff.simpledoc.browser.styling.Style;
+import net.donotturnoff.simpledoc.util.ConnectionUtils;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -53,11 +56,18 @@ public class LinkElement extends BoxElement implements MouseListener {
 
     @Override
     public void mouseEntered(MouseEvent mouseEvent) {
-
+        String href = attributes.get("href");
+        if (href != null) {
+            try {
+                page.setStatus(ConnectionUtils.getURL(page.getUrl(), href).toString());
+            } catch (MalformedURLException e) {
+                page.setStatus(href);
+            }
+        }
     }
 
     @Override
     public void mouseExited(MouseEvent mouseEvent) {
-
+        page.setStatus(" ");
     }
 }
