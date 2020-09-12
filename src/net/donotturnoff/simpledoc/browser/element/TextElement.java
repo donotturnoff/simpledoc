@@ -9,6 +9,7 @@ import java.util.Map;
 
 public class TextElement extends Element {
     private final String text;
+    private JLabel label;
 
     public TextElement(Page page, String text) {
         super(page, "text", Map.of(), List.of());
@@ -24,10 +25,24 @@ public class TextElement extends Element {
         Font font = style.getFont();
         Color colour = style.getColour();
 
-        JLabel label = new JLabel(text);
+        label = new JLabel(text);
         label.setFont(font);
         label.setForeground(colour);
         parentPanel.add(label);
+    }
+
+    @Override
+    public void refresh(Page page) {
+        Font font = style.getFont();
+        Color colour = style.getColour();
+
+        if (label != null) {
+            label.setFont(font);
+            label.setForeground(colour);
+
+            label.revalidate();
+            label.repaint();
+        }
     }
 
     @Override

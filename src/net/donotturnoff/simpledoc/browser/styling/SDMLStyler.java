@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class SDMLStyler {
-    private static final Set<String> inheritableStyles = new HashSet<>();
+    /*private static final Set<String> inheritableStyles = new HashSet<>();
 
     static {
         inheritableStyles.add("font_family");
@@ -28,7 +28,7 @@ public class SDMLStyler {
         Style style = new Style();
         for (String s: inheritableStyles) {
             if (parentStyle.containsRule(s)) {
-                style.set(s, parentStyle.get(s), parentStyle.isCustomRule(s));
+                style.set(s, parentStyle.get(s), -1, parentStyle.isCustomRule(s));
             }
         }
         try {
@@ -44,4 +44,26 @@ public class SDMLStyler {
             style(child, style);
         }
     }
+
+    public void style(Element element, Style thisStyle, Style parentStyle) {
+        Style style = parentStyle.getInheritedStyle();
+        style.setAll(thisStyle);
+        element.setStyle(style);
+        for (Element child: element.getChildren()) {
+            style(child, style);
+        }
+    }
+
+    public Style getDefaultStyle(Element element) {
+        try {
+            Field field = element.getClass().getField("defaultStyle");
+            if (Style.class.isAssignableFrom(field.getType())) {
+                return ((Style) field.get(null));
+            } else {
+                throw new NoSuchFieldException();
+            }
+        } catch (NoSuchFieldException | IllegalAccessException ignored) {
+            return new Style();
+        }
+    }*/
 }

@@ -1,4 +1,4 @@
-package net.donotturnoff.simpledoc.browser.lexing;
+package net.donotturnoff.simpledoc.browser.parsing;
 
 public class LexingException extends Exception {
     public LexingException() {

@@ -5,6 +5,7 @@ import net.donotturnoff.simpledoc.browser.JImagePanel;
 import net.donotturnoff.simpledoc.browser.Page;
 import net.donotturnoff.simpledoc.util.ConnectionUtils;
 import net.donotturnoff.simpledoc.util.Response;
+import net.donotturnoff.simpledoc.util.Status;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -18,7 +19,6 @@ import java.util.Map;
 
 public class ImgElement extends BoxElement {
 
-    private JImagePanel panel;
     private URL url;
 
     public ImgElement(Page page, Map<String, String> attributes, List<Element> children) {
@@ -63,20 +63,24 @@ public class ImgElement extends BoxElement {
     }
 
     public Void loaded(URL url, Response response) {
-        byte[] data = response.getBody();
-        ByteArrayInputStream bais = new ByteArrayInputStream(data);
-        BufferedImage img;
-        try {
-            img = ImageIO.read(bais);
-            if (img == null) {
-                throw new IOException("No data or unrecognised format");
+        if (response.getStatus().equals(Status.OK)) {
+            byte[] data = response.getBody();
+            ByteArrayInputStream bais = new ByteArrayInputStream(data);
+            BufferedImage img;
+            try {
+                img = ImageIO.read(bais);
+                if (img == null) {
+                    throw new IOException("No data or unrecognised format");
+                }
+                ((JImagePanel) panel).setImage(img);
+                panel.repaint();
+                panel.revalidate();
+                page.setStatus("Loaded " + url);
+            } catch (IOException e) {
+                loadingFailure("Failed to load image: " + e.getMessage());
             }
-            panel.setImage(img);
-            panel.repaint();
-            panel.revalidate();
-            page.setStatus("Loaded " + url);
-        } catch (IOException e) {
-            loadingFailure("Failed to load image: " + e.getMessage());
+        } else {
+            loadingFailure("Failed to load image: image not found");
         }
         return null;
     }

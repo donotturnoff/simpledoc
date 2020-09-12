@@ -1,7 +1,6 @@
 package net.donotturnoff.simpledoc.browser.element;
 
 import net.donotturnoff.simpledoc.browser.Page;
-import net.donotturnoff.simpledoc.browser.styling.Style;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -12,15 +11,12 @@ import java.util.Map;
 
 public abstract class BoxElement extends Element {
 
-    public final static Style defaultStyle = new Style();
-
-    static {
-        defaultStyle.set("cursor", "default");
-        defaultStyle.set("background_color", "#FFFFFF");
-    }
+    protected JPanel panel;
 
     public BoxElement(Page page, String name, Map<String, String> attributes, List<Element> children) {
         super(page, name, attributes, children);
+        style.setDefault("cursor", "default");
+        style.setDefault("background_colour", "#FFFFFF");
     }
 
     protected boolean isHidden() {
@@ -69,6 +65,14 @@ public abstract class BoxElement extends Element {
         }
     }
 
+    public void refreshChildren(Page page) {
+        if (panel != null) {
+            for (Element c: children) {
+                c.refresh(page);
+            }
+        }
+    }
+
     public void addPanel(JPanel parentPanel, JPanel panel) {
         if (panel != null) {
             parentPanel.add(panel);
@@ -77,9 +81,19 @@ public abstract class BoxElement extends Element {
 
     @Override
     public void render(Page page, JPanel parentPanel) {
-        JPanel panel = getPanel();
+        panel = getPanel();
         style(panel);
         addPanel(parentPanel, panel);
         renderChildren(page, panel);
+    }
+
+    @Override
+    public void refresh(Page page) {
+        style(panel);
+        if (panel != null) {
+            panel.revalidate();
+            panel.repaint();
+        }
+        refreshChildren(page);
     }
 }

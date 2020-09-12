@@ -65,7 +65,7 @@ class GetHandler {
         headers.put("type", "text/sdml");
 
         StringBuilder sb = new StringBuilder();
-        sb.append("doc(version=\"SDML/1.0\" charset=\"UTF-8\") {\n");
+        sb.append("doc(version=\"SDML/1.0\", charset=\"UTF-8\") {\n");
         sb.append(" head {\n");
         sb.append("  title {\"Directory listing\"}\n");
         sb.append(" }\n");

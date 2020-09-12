@@ -24,7 +24,7 @@ public class RenderWorker extends SwingWorker<Void, Void> {
 
     @Override
     protected void done() {
-        panel.repaint();
-        panel.revalidate();
+        root.cascadeStyles();
+        root.refresh(page);
     }
 }

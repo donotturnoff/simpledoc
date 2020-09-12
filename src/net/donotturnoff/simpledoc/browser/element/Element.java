@@ -1,7 +1,7 @@
 package net.donotturnoff.simpledoc.browser.element;
 
 import net.donotturnoff.simpledoc.browser.Page;
-import net.donotturnoff.simpledoc.browser.styling.Style;
+import net.donotturnoff.simpledoc.browser.Style;
 
 import javax.swing.*;
 import java.util.*;
@@ -59,7 +59,6 @@ public abstract class Element {
         return tagClasses.get(tag);
     }
 
-    protected final Style defaultStyle = new Style();
     protected Page page;
     protected String name;
     protected Map<String, String> attributes;
@@ -71,6 +70,7 @@ public abstract class Element {
         this.name = name;
         this.attributes = attributes;
         this.children = children;
+        this.style = new Style();
     }
 
     public void setStyle(Style style) {
@@ -94,6 +94,23 @@ public abstract class Element {
     }
 
     public abstract void render(Page page, JPanel parentPanel);
+
+    public void refresh(Page page) {
+        for (Element c: children) {
+            c.refresh(page);
+        }
+    }
+
+    public void cascadeStyles() {
+        cascadeStyles(-1);
+    }
+
+    public void cascadeStyles(int priority) {
+        for (Element child: children) {
+            child.style.inheritAll(style, priority);
+            child.cascadeStyles(priority - 1);
+        }
+    }
 
     @Override
     public String toString() {

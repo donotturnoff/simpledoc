@@ -20,4 +20,9 @@ public class TitleElement extends Element {
             }
         }
     }
+
+    @Override
+    public void refresh(Page page) {
+
+    }
 }

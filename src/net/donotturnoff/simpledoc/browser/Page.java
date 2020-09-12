@@ -1,13 +1,7 @@
 package net.donotturnoff.simpledoc.browser;
 
 import net.donotturnoff.simpledoc.browser.element.Element;
-import net.donotturnoff.simpledoc.browser.lexing.LexingException;
-import net.donotturnoff.simpledoc.browser.lexing.SDMLLexer;
-import net.donotturnoff.simpledoc.browser.lexing.Token;
-import net.donotturnoff.simpledoc.browser.lexing.TokenType;
-import net.donotturnoff.simpledoc.browser.parsing.ParsingException;
-import net.donotturnoff.simpledoc.browser.parsing.SDMLParser;
-import net.donotturnoff.simpledoc.browser.styling.SDMLStyler;
+import net.donotturnoff.simpledoc.browser.parsing.*;
 import net.donotturnoff.simpledoc.util.ConnectionUtils;
 import net.donotturnoff.simpledoc.util.Response;
 
@@ -22,8 +16,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Set;
 
 public class Page {
 
@@ -34,6 +30,8 @@ public class Page {
     private Response data;
     private final History history;
     private boolean revisiting;
+    private Element root;
+    private final Set<Element> allElements;
 
     Page(SDTPBrowser browser) {
         this.browser = browser;
@@ -42,6 +40,7 @@ public class Page {
         this.history = new History();
         this.revisiting = false;
         this.url = null;
+        this.allElements = new HashSet<>();
 
         browser.setBackButtonState(false);
         browser.setForwardButtonState(false);
@@ -86,6 +85,10 @@ public class Page {
         return data;
     }
 
+    public Element getRoot() {
+        return root;
+    }
+
     public void back() {
         revisiting = true;
         URL back = history.back();
@@ -128,7 +131,8 @@ public class Page {
 
     public Void loaded(URL url, Response response) {
         this.url = url;
-        this.data = response;
+        data = response;
+        allElements.clear();
         if (!revisiting || !history.pageVisited(url)) {
             history.navigate(url);
             browser.setBackButtonState(history.canGoBack());
@@ -139,12 +143,11 @@ public class Page {
         if (generalType.equals("image")) {
             displayImage(data.getBody());
         } else if (type.equals("text/sdml")) {
-            List<Token<?>> tokens = lex(new String(data.getBody()));
+            Queue<Terminal<?>> tokens = lex(new String(data.getBody()));
             if (!tokens.isEmpty()) {
                 Element root = parse(tokens);
                 if (root != null) {
-                    style(root);
-                    render(root);
+                    render();
                 }
             }
         }
@@ -152,38 +155,29 @@ public class Page {
         return null;
     }
 
-    private List<Token<?>> lex(String body) {
-        List<Token<?>> tokens = new ArrayList<>();
+    private Queue<Terminal<?>> lex(String body) {
+        Queue<Terminal<?>> tokens = new LinkedList<>();
         try {
-            SDMLLexer lexer = new SDMLLexer(this, body);
-            Token<?> t;
-            do {
-                t = lexer.nextToken();
-                tokens.add(t);
-            } while (t.getType() != TokenType.EOF);
+            SDMLLexer lexer = new SDMLLexer(this);
+            tokens = lexer.lex(body);
         } catch (LexingException e) {
             displayError(e);
         }
         return tokens;
     }
 
-    private Element parse(List<Token<?>> tokens) {
-        Element root = null;
+    private Element parse(Queue<Terminal<?>> tokens) {
+        root = null;
         try {
-            SDMLParser parser = new SDMLParser(this, tokens);
-            root = parser.parse();
+            SDMLParser parser = new SDMLParser(this);
+            root = parser.parse(tokens);
         } catch (ParsingException e) {
             displayError(e);
         }
         return root;
     }
 
-    private void style(Element root) {
-        SDMLStyler styler = new SDMLStyler();
-        styler.style(root);
-    }
-
-    private void render(Element root) {
+    public void render() {
         panel.removeAll();
         if (data != null) {
             RenderWorker worker = new RenderWorker(this, root);
@@ -220,5 +214,13 @@ public class Page {
     public void displayError(Exception e) {
         e.printStackTrace();
         JOptionPane.showMessageDialog(panel, e, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void addElement(Element e) {
+        allElements.add(e);
+    }
+
+    public Set<Element> getAllElements() {
+        return allElements;
     }
 }
