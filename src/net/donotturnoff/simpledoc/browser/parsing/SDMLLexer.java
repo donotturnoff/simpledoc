@@ -1,8 +1,6 @@
 package net.donotturnoff.simpledoc.browser.parsing;
 
 import net.donotturnoff.simpledoc.browser.Page;
-import net.donotturnoff.simpledoc.browser.lexing.Token;
-import net.donotturnoff.simpledoc.browser.lexing.TokenType;
 
 public class SDMLLexer extends Lexer {
 

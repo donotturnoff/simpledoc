@@ -2,14 +2,10 @@ package net.donotturnoff.simpledoc.browser;
 
 import net.donotturnoff.simpledoc.browser.element.Element;
 import net.donotturnoff.simpledoc.browser.parsing.*;
-import net.donotturnoff.simpledoc.browser.lexing.Token;
 
 import javax.swing.*;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
-import java.util.concurrent.ExecutionException;
 
 public class StyleWorker extends SwingWorker<Void, Void> {
 

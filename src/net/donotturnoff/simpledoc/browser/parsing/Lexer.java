@@ -1,7 +1,6 @@
 package net.donotturnoff.simpledoc.browser.parsing;
 
 import net.donotturnoff.simpledoc.browser.Page;
-import net.donotturnoff.simpledoc.browser.element.Element;
 
 import java.util.LinkedList;
 import java.util.Queue;

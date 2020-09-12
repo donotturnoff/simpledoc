@@ -5,7 +5,6 @@ import net.donotturnoff.simpledoc.browser.Style;
 
 import javax.swing.*;
 import java.util.*;
-import java.util.List;
 
 public abstract class Element {
     private static final Set<String> tags = Set.of("doc", "head", "body", "title", "res", "style", "base", "header",
