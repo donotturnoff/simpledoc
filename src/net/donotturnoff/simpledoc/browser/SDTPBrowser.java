@@ -17,7 +17,7 @@ import java.util.List;
 public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener {
 
     //TODO: add as configuration option
-    private static final String HOMEPAGE = "sdtp://localhost:5000";
+    private static final String HOMEPAGE = "sdtp://localhost:500";
 
     // Containers
     private JFrame gui;

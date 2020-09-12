@@ -16,10 +16,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
+import java.util.List;
 
 public class Page {
 
@@ -32,6 +30,7 @@ public class Page {
     private boolean revisiting;
     private Element root;
     private final Set<Element> allElements;
+    private List<BrowserEvent> events;
 
     Page(SDTPBrowser browser) {
         this.browser = browser;
@@ -41,6 +40,7 @@ public class Page {
         this.revisiting = false;
         this.url = null;
         this.allElements = new HashSet<>();
+        this.events = new ArrayList<>();
 
         browser.setBackButtonState(false);
         browser.setForwardButtonState(false);
@@ -117,20 +117,20 @@ public class Page {
             revisiting = false;
             load(url);
         } catch (MalformedURLException e) {
-            displayError(e);
+            error(e.getMessage());
         }
     }
 
     private void load(URL url) {
+        this.url = url;
         browser.setUrlBar(url);
         setTabTitle("Loading");
-        setStatus("Loading " + url);
+        info("Navigated to " + url);
         ConnectionWorker worker = new ConnectionWorker(url,this);
         worker.execute();
     }
 
     public Void loaded(URL url, Response response) {
-        this.url = url;
         data = response;
         allElements.clear();
         if (!revisiting || !history.pageVisited(url)) {
@@ -143,6 +143,11 @@ public class Page {
         if (generalType.equals("image")) {
             displayImage(data.getBody());
         } else if (type.equals("text/sdml")) {
+            try {
+                setTabTitle(Paths.get(new URI(url.toString()).getPath()).getFileName().toString());
+            } catch (URISyntaxException e) {
+                setTabTitle(url.getFile());
+            }
             Queue<Terminal<?>> tokens = lex(new String(data.getBody()));
             if (!tokens.isEmpty()) {
                 Element root = parse(tokens);
@@ -151,7 +156,7 @@ public class Page {
                 }
             }
         }
-        setStatus("Loaded " + url);
+        info("Loaded " + url);
         return null;
     }
 
@@ -161,7 +166,7 @@ public class Page {
             SDMLLexer lexer = new SDMLLexer(this);
             tokens = lexer.lex(body);
         } catch (LexingException e) {
-            displayError(e);
+            error("Failed to lex page: " + e.getMessage());
         }
         return tokens;
     }
@@ -172,7 +177,7 @@ public class Page {
             SDMLParser parser = new SDMLParser(this);
             root = parser.parse(tokens);
         } catch (ParsingException e) {
-            displayError(e);
+            error("Failed to parse page: " + e.getMessage());
         }
         return root;
     }
@@ -192,7 +197,7 @@ public class Page {
         try {
             img = ImageIO.read(bais);
             if (img == null) {
-                throw new IOException("No data or unrecognised format");
+                throw new IOException("No data or unrecognised image format");
             }
             JImagePanel imgPanel = new JImagePanel(img);
             imgPanel.setBackground(Color.WHITE);
@@ -201,19 +206,29 @@ public class Page {
             panel.revalidate();
             setTabTitle(Paths.get(new URI(url.toString()).getPath()).getFileName().toString());
         } catch (IOException e) {
-            setStatus("Failed to load " + url);
+            error("Failed to load image: " + e.getMessage());
         } catch (URISyntaxException e) {
             setTabTitle(url.getFile());
         }
     }
 
-    public void displayWarning(String w) {
-        JOptionPane.showMessageDialog(panel, w, "Warning", JOptionPane.WARNING_MESSAGE);
+    public void info(String i) {
+        events.add(new BrowserEvent(BrowserEvent.INFO, i));
+        setStatus(i);
     }
 
-    public void displayError(Exception e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(panel, e, "Error", JOptionPane.ERROR_MESSAGE);
+    public void warning(String w) {
+        events.add(new BrowserEvent(BrowserEvent.WARNING, w));
+        setStatus(w);
+    }
+
+    public void error(String e) {
+        BrowserEvent event = new BrowserEvent(BrowserEvent.ERROR, e);
+        events.add(event);
+        setStatus(e);
+        setTabTitle("Error");
+        System.out.println(event);
+        panel.removeAll();
     }
 
     public void addElement(Element e) {

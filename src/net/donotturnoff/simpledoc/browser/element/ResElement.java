@@ -6,6 +6,7 @@ import net.donotturnoff.simpledoc.util.Response;
 import net.donotturnoff.simpledoc.util.Status;
 
 import javax.swing.*;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -26,17 +27,13 @@ public class ResElement extends Element {
             url = ConnectionUtils.getURL(page.getUrl(), src);
             load();
         } catch (MalformedURLException e) {
-            loadingFailure("Failed to load resource: " + e.getMessage());
+            page.error("Failed to load resource: " + e.getMessage());
         }
     }
 
     @Override
     public void refresh(Page page) {
 
-    }
-
-    private void loadingFailure(String s) {
-        page.setStatus("Failed to load " + url);
     }
 
     private void load() {
@@ -51,8 +48,9 @@ public class ResElement extends Element {
             if (rel.equals("stylesheet")) {
                 handleStylesheet(response);
             }
+            page.info("Loaded " + url);
         } else {
-            loadingFailure("Failed to load resource: resource not found");
+            page.error("Failed to load resource: resource not found");
         }
 
         return null;

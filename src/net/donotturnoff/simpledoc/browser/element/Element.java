@@ -36,8 +36,8 @@ public abstract class Element {
             String name = t.substring(0, 1).toUpperCase() + t.substring(1) + "Element";
             try {
                 tagClasses.put(t, Class.forName(packageName + name).asSubclass(Element.class));
-            } catch (ClassNotFoundException e) {
-                System.out.println("Class not found for tag: " + name);
+            } catch (ClassNotFoundException ignored) {
+                //System.out.println("Class not found for tag: " + name);
             }
         });
     }

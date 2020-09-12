@@ -100,7 +100,7 @@ public class SDMLParser {
             page.addElement(e);
             return e;
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            page.displayWarning("Failed to construct " + tag + " object");
+            page.warning("Failed to construct " + tag + " object");
             return null;
         }
     }
