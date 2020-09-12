@@ -33,7 +33,7 @@ public class LinkElement extends BoxElement implements MouseListener {
     public void mouseClicked(MouseEvent mouseEvent) {
         String href = attributes.get("href");
         if (href != null) {
-            page.navigate(href);
+            page.navigate(href, false);
         }
     }
 

@@ -30,7 +30,7 @@ public class Page {
     private boolean revisiting;
     private Element root;
     private final Set<Element> allElements;
-    private List<BrowserEvent> events;
+    private final List<BrowserEvent> events;
 
     Page(SDTPBrowser browser) {
         this.browser = browser;
@@ -110,14 +110,18 @@ public class Page {
         load(url);
     }
 
-    public void navigate(String s) {
+    public void navigate(String s, boolean externalInput) {
         URL url;
         try {
-            url = ConnectionUtils.getURL(this.url, s);
+            if (!externalInput) {
+                url = ConnectionUtils.getURL(this.url, s);
+            } else {
+                url = new URL(s);
+            }
             revisiting = false;
             load(url);
         } catch (MalformedURLException e) {
-            error(e.getMessage());
+            error("Failed to load " + s + ": " + e.getMessage());
         }
     }
 

@@ -17,7 +17,7 @@ import java.util.List;
 public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener {
 
     //TODO: add as configuration option
-    private static final String HOMEPAGE = "sdtp://localhost:500";
+    private static final String HOMEPAGE = "sdtp://localhost";
 
     // Containers
     private JFrame gui;
@@ -60,7 +60,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         configureWidgets();
         constructGUI();
         showGUI();
-        addPage(HOMEPAGE);
+        addPage(HOMEPAGE, true);
     }
 
     private void createWidgets() {
@@ -157,13 +157,13 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         }
     }
 
-    private void addPage(String urlString) {
+    private void addPage(String urlString, boolean externalInput) {
         currentPage = new Page(this);
         pages.add(currentPage);
         tabbedPane.addTab("Loading", currentPage.getScrollPane());
         tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-1);
         tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(), new CustomTabComponent(this, tabbedPane));
-        currentPage.navigate(urlString);
+        currentPage.navigate(urlString, externalInput);
     }
 
     public void removePage(int index) {
@@ -209,9 +209,9 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         } else if (source == reloadBtn) {
             currentPage.reload();
         } else if (source == goBtn) {
-            currentPage.navigate(urlBar.getText());
+            currentPage.navigate(urlBar.getText(), true);
         } else if (source == newTabBtn) {
-            addPage(HOMEPAGE);
+            addPage(HOMEPAGE, true);
         }
     }
 
@@ -223,7 +223,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
-            currentPage.navigate(urlBar.getText());
+            currentPage.navigate(urlBar.getText(), true);
         }
     }
 
