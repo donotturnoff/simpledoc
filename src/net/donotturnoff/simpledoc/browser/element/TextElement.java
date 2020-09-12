@@ -8,12 +8,17 @@ import java.util.List;
 import java.util.Map;
 
 public class TextElement extends Element {
-    private final String text;
+    private String text;
     private JLabel label;
 
     public TextElement(Page page, String text) {
         super(page, "text", Map.of(), List.of());
         this.text = text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+        label.setText(text);
     }
 
     public String getText() {
