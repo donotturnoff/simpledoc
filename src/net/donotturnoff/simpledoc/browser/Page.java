@@ -56,6 +56,10 @@ public class Page {
         for (int i = 0; i < tabbedPane.getTabCount(); i++) {
             if (SwingUtilities.isDescendingFrom(panel, tabbedPane.getComponentAt(i))) {
                 browser.setTitle(i, title);
+                Component tabComponent = tabbedPane.getTabComponentAt(i);
+                if (tabComponent instanceof CustomTabComponent) {
+                    ((CustomTabComponent) tabComponent).updateSize();
+                }
                 break;
             }
         }

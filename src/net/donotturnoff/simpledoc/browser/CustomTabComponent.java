@@ -9,6 +9,7 @@ public class CustomTabComponent extends JPanel  {
 
     private final SDTPBrowser browser;
     private final JTabbedPane pane;
+    private final JLabel label;
 
     public CustomTabComponent(final SDTPBrowser browser, final JTabbedPane pane)  {
         //unset default FlowLayout' gaps
@@ -21,7 +22,7 @@ public class CustomTabComponent extends JPanel  {
         setOpaque(false);
 
         //make JLabel read titles from JTabbedPane
-        JLabel label = new JLabel() {
+        label = new JLabel() {
             public String getText() {
                 int i = pane.indexOfTabComponent(CustomTabComponent.this);
                 if (i != -1) {
@@ -31,6 +32,7 @@ public class CustomTabComponent extends JPanel  {
             }
         };
 
+        updateSize();
         add(label);
         //add more space between the label and the button
         label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
@@ -39,6 +41,10 @@ public class CustomTabComponent extends JPanel  {
         add(button);
         //add more space to the top of the component
         setBorder(BorderFactory.createEmptyBorder(4, 0, 0, 0));
+    }
+
+    public void updateSize() {
+        label.setSize(label.getPreferredSize());
     }
 
     private class TabButton extends JButton implements ActionListener {
