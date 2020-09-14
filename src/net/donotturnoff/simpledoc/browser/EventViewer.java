@@ -9,13 +9,18 @@ public class EventViewer {
 
     private final static Object[] COLUMNS = {"Timestamp", "Type", "Message"};
 
+    private final Page page;
     private final JFrame gui;
     private final DefaultTableModel tm;
 
     public EventViewer(Page page) {
+        this.page = page;
+
         gui = new JFrame("Event viewer");
         gui.setMinimumSize(new Dimension(800, 600));
         gui.setIconImage(SDTPBrowser.ICON);
+
+        updateTitle();
 
         tm = new DefaultTableModel(COLUMNS, 0) {
             @Override
@@ -48,5 +53,9 @@ public class EventViewer {
 
     public void toggle() {
         gui.setVisible(!gui.isVisible());
+    }
+
+    public void updateTitle() {
+        gui.setTitle("Event viewer for " + page.getUrl());
     }
 }

@@ -131,9 +131,9 @@ public class Page {
 
     private void load(URL url) {
         this.url = url;
+        ev.updateTitle();
         browser.setUrlBar(url);
         setTabTitle("Loading");
-        info("Navigated to " + url);
         ConnectionWorker worker = new ConnectionWorker(url,this);
         worker.execute();
     }
