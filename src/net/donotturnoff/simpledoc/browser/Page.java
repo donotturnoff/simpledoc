@@ -15,6 +15,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
@@ -152,7 +153,12 @@ public class Page {
             displayImage(data.getBody());
         } else if (type.equals("text/sdml")) {
             try {
-                setTabTitle(Paths.get(new URI(url.toString()).getPath()).getFileName().toString());
+                Path filename = Paths.get(new URI(url.toString()).getPath()).getFileName();
+                if (filename == null) {
+                    setTabTitle(url.getFile());
+                } else {
+                    setTabTitle(filename.toString());
+                }
             } catch (URISyntaxException e) {
                 setTabTitle(url.getFile());
             }
