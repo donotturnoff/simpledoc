@@ -27,7 +27,7 @@ public class ResElement extends Element {
             url = ConnectionUtils.getURL(page.getUrl(), src);
             load();
         } catch (MalformedURLException e) {
-            page.error("Failed to load resource: " + e.getMessage());
+            page.error("Failed to load resource", e);
         }
     }
 

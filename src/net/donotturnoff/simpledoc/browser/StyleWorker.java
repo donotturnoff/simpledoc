@@ -34,7 +34,7 @@ public class StyleWorker extends SwingWorker<Void, Void> {
             SDSSLexer lexer = new SDSSLexer(page);
             tokens = lexer.lex(body);
         } catch (LexingException e) {
-            page.error("Failed to lex stylesheet: " + e.getMessage());
+            page.error("Failed to lex stylesheet", e);
         }
         return tokens;
     }
@@ -44,7 +44,7 @@ public class StyleWorker extends SwingWorker<Void, Void> {
             SDSSParser parser = new SDSSParser(page);
             parser.parse(tokens);
         } catch (ParsingException e) {
-            page.error("Failed to parse stylesheet: " + e.getMessage());
+            page.error("Failed to parse stylesheet", e);
         }
     }
 

@@ -74,7 +74,7 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
                 throw e;
             }
         } catch (Exception e) {
-            page.error("Failed to load " + url + ": " + e);
+            page.error("Failed to load " + url, e);
         }
     }
 }

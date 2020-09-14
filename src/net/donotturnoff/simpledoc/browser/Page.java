@@ -173,7 +173,7 @@ public class Page {
             SDMLLexer lexer = new SDMLLexer(this);
             tokens = lexer.lex(body);
         } catch (LexingException e) {
-            error("Failed to lex page: " + e.getMessage());
+            error("Failed to lex page", e);
         }
         return tokens;
     }
@@ -184,7 +184,7 @@ public class Page {
             SDMLParser parser = new SDMLParser(this);
             root = parser.parse(tokens);
         } catch (ParsingException e) {
-            error("Failed to parse page: " + e.getMessage());
+            error("Failed to parse page", e);
         }
         return root;
     }
@@ -213,7 +213,7 @@ public class Page {
             panel.revalidate();
             setTabTitle(Paths.get(new URI(url.toString()).getPath()).getFileName().toString());
         } catch (IOException e) {
-            error("Failed to load image: " + e.getMessage());
+            error("Failed to display image", e);
         } catch (URISyntaxException e) {
             setTabTitle(url.getFile());
         }
@@ -229,6 +229,10 @@ public class Page {
         setStatus(w);
     }
 
+    public void error(String prefix, Exception e) {
+        error(prefix + ": " + e.getMessage());
+        e.printStackTrace();
+    }
     public void error(String e) {
         BrowserEvent event = new BrowserEvent(BrowserEvent.ERROR, e);
         ev.addEvent(event);
