@@ -48,9 +48,6 @@ public class ResElement extends Element {
             if (rel.equals("stylesheet")) {
                 handleStylesheet(response);
             }
-            page.info("Loaded " + url);
-        } else {
-            page.error("Failed to load resource: resource not found");
         }
 
         return null;

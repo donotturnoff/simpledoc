@@ -63,8 +63,13 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
         try {
             Response response = get();
             if (response != null) {
+                Status s = response.getStatus();
+                if (s.equals(Status.OK)) {
+                    page.info("Loaded " + url + ": " + s);
+                } else {
+                    page.error("Failed to load " + url + ": " + s);
+                }
                 callback.apply(url, response);
-                page.info("Loaded " + url);
             } else {
                 throw e;
             }
