@@ -36,6 +36,7 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
 
     @Override
     protected Response doInBackground() {
+        page.info("Loading " + url);
         String path = url.getPath();
         if (path.isBlank()) {
             path = "/";
@@ -63,6 +64,7 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
             Response response = get();
             if (response != null) {
                 callback.apply(url, response);
+                page.info("Loaded " + url);
             } else {
                 throw e;
             }

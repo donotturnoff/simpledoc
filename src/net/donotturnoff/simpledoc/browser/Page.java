@@ -30,7 +30,7 @@ public class Page {
     private boolean revisiting;
     private Element root;
     private final Set<Element> allElements;
-    private final List<BrowserEvent> events;
+    private final EventViewer ev;
 
     Page(SDTPBrowser browser) {
         this.browser = browser;
@@ -40,7 +40,7 @@ public class Page {
         this.revisiting = false;
         this.url = null;
         this.allElements = new HashSet<>();
-        this.events = new ArrayList<>();
+        this.ev = new EventViewer(this);
 
         browser.setBackButtonState(false);
         browser.setForwardButtonState(false);
@@ -139,6 +139,7 @@ public class Page {
     }
 
     public Void loaded(URL url, Response response) {
+        warning("Test");
         data = response;
         allElements.clear();
         if (!revisiting || !history.pageVisited(url)) {
@@ -164,7 +165,6 @@ public class Page {
                 }
             }
         }
-        info("Loaded " + url);
         return null;
     }
 
@@ -221,18 +221,18 @@ public class Page {
     }
 
     public void info(String i) {
-        events.add(new BrowserEvent(BrowserEvent.INFO, i));
+        ev.addEvent(new BrowserEvent(BrowserEvent.INFO, i));
         setStatus(i);
     }
 
     public void warning(String w) {
-        events.add(new BrowserEvent(BrowserEvent.WARNING, w));
+        ev.addEvent(new BrowserEvent(BrowserEvent.WARNING, w));
         setStatus(w);
     }
 
     public void error(String e) {
         BrowserEvent event = new BrowserEvent(BrowserEvent.ERROR, e);
-        events.add(event);
+        ev.addEvent(event);
         setStatus(e);
         setTabTitle("Error");
         System.out.println(event);
@@ -245,5 +245,9 @@ public class Page {
 
     public Set<Element> getAllElements() {
         return allElements;
+    }
+
+    public void showEventViewer() {
+        ev.toggle();
     }
 }

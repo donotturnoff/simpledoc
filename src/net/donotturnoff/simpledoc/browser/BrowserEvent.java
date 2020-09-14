@@ -1,6 +1,7 @@
 package net.donotturnoff.simpledoc.browser;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class BrowserEvent {
     public final static int ERROR = 0, WARNING = 1, INFO = 2;
@@ -31,5 +32,9 @@ public class BrowserEvent {
     @Override
     public String toString() {
         return "(" + timestamp + ") [" + String.format("%1$-" + 8 + "s", typeNames[type]) + "] " + message;
+    }
+
+    public Object[] toTableRow() {
+        return new Object[]{timestamp, typeNames[type], message};
     }
 }

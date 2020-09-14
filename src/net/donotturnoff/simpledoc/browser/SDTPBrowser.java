@@ -18,6 +18,13 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
 
     //TODO: add as configuration option
     private static final String HOMEPAGE = "sdtp://localhost";
+    public static final Image ICON;
+
+    static {
+        URL url = ClassLoader.getSystemResource("net/donotturnoff/simpledoc/browser/icon.png");
+        Toolkit kit = Toolkit.getDefaultToolkit();
+        ICON = kit.createImage(url);
+    }
 
     // Containers
     private JFrame gui;
@@ -29,7 +36,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
     private JMenu fileMenu;
 
     // Inputs
-    private JButton backBtn, forwardBtn, reloadBtn, goBtn, newTabBtn;
+    private JButton backBtn, forwardBtn, reloadBtn, goBtn, newTabBtn, evBtn;
     private JTextField urlBar;
 
     // Labels
@@ -80,6 +87,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         reloadBtn = new JButton("\u27f3");
         goBtn = new JButton("Go");
         newTabBtn = new JButton("+");
+        evBtn = new JButton("Log");
         urlBar = new JTextField();
 
         statusLabel = new JLabel("Welcome", JLabel.LEFT);
@@ -88,13 +96,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
     private void configureWidgets() {
         gui.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         gui.setMinimumSize(new Dimension(800, 600));
-
-        URL url = ClassLoader.getSystemResource("net/donotturnoff/simpledoc/browser/icon.png");
-        if (url != null) {
-            Toolkit kit = Toolkit.getDefaultToolkit();
-            Image img = kit.createImage(url);
-            gui.setIconImage(img);
-        }
+        gui.setIconImage(ICON);
 
         navBar.setBorder(new CompoundBorder(navBar.getBorder(), new EmptyBorder(5, 5, 5, 5)));
         urlBar.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -109,6 +111,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         reloadBtn.addActionListener(this);
         goBtn.addActionListener(this);
         newTabBtn.addActionListener(this);
+        evBtn.addActionListener(this);
 
         urlBar.addKeyListener(this);
 
@@ -117,6 +120,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         forwardBtn.setToolTipText("Visit next page");
         reloadBtn.setToolTipText("Reload current page");
         newTabBtn.setToolTipText("Add a new tab");
+        evBtn.setToolTipText("Display page event viewer");
     }
 
     private void constructGUI() {
@@ -136,6 +140,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         menuBar.add(fileMenu);
 
         statusBar.add(statusLabel);
+        statusBar.add(evBtn);
 
         Container pane = gui.getContentPane();
         gui.setJMenuBar(menuBar);
@@ -212,6 +217,8 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
             currentPage.navigate(urlBar.getText(), true);
         } else if (source == newTabBtn) {
             addPage(HOMEPAGE, true);
+        } else if (source == evBtn) {
+            currentPage.showEventViewer();
         }
     }
 
