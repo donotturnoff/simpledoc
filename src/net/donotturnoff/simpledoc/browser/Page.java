@@ -139,7 +139,6 @@ public class Page {
     }
 
     public Void loaded(URL url, Response response) {
-        warning("Test");
         data = response;
         allElements.clear();
         if (!revisiting || !history.pageVisited(url)) {

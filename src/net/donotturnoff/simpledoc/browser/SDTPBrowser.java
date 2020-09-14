@@ -74,7 +74,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         gui = new JFrame("Simpledoc browser v0.1");
         navBar = new JPanel();
         navBar.setLayout(new BoxLayout(navBar, BoxLayout.X_AXIS));
-        statusBar = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        statusBar = new JPanel(new BorderLayout());
         tabbedPane = new JTabbedPane(SwingConstants.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
         urlBarContainer = new JPanel();
         urlBarContainer.setLayout(new BoxLayout(urlBarContainer, BoxLayout.X_AXIS));
@@ -101,6 +101,8 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         navBar.setBorder(new CompoundBorder(navBar.getBorder(), new EmptyBorder(5, 5, 5, 5)));
         urlBar.setBorder(new EmptyBorder(0, 0, 0, 0));
         urlBarContainer.setBorder(new CompoundBorder(BorderFactory.createLoweredBevelBorder(), new EmptyBorder(2, 2, 2, 2)));
+
+        statusBar.setBorder(new EmptyBorder(2, 2, 2, 2));
 
         urlBarContainer.setBackground(Color.WHITE);
 
@@ -139,8 +141,8 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
 
         menuBar.add(fileMenu);
 
-        statusBar.add(statusLabel);
-        statusBar.add(evBtn);
+        statusBar.add(statusLabel, BorderLayout.LINE_START);
+        statusBar.add(evBtn, BorderLayout.LINE_END);
 
         Container pane = gui.getContentPane();
         gui.setJMenuBar(menuBar);
