@@ -36,7 +36,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
     private JMenu fileMenu;
 
     // Inputs
-    private JButton backBtn, forwardBtn, reloadBtn, goBtn, newTabBtn, evBtn;
+    private JButton backBtn, forwardBtn, reloadBtn, goBtn, evBtn;
     private JTextField urlBar;
 
     // Labels
@@ -86,9 +86,10 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         forwardBtn = new JButton("\u2b62");
         reloadBtn = new JButton("\u27f3");
         goBtn = new JButton("Go");
-        newTabBtn = new JButton("+");
         evBtn = new JButton("Log");
         urlBar = new JTextField();
+
+        tabbedPane.add(new JPanel());
 
         statusLabel = new JLabel("Welcome", JLabel.LEFT);
     }
@@ -106,13 +107,15 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
 
         urlBarContainer.setBackground(Color.WHITE);
 
+        tabbedPane.setEnabledAt(0, false);
+        tabbedPane.setTabComponentAt(0, new AddTabComponent(this));
+
         tabbedPane.addChangeListener(this);
 
         backBtn.addActionListener(this);
         forwardBtn.addActionListener(this);
         reloadBtn.addActionListener(this);
         goBtn.addActionListener(this);
-        newTabBtn.addActionListener(this);
         evBtn.addActionListener(this);
 
         urlBar.addKeyListener(this);
@@ -121,7 +124,6 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         backBtn.setToolTipText("Visit previous page");
         forwardBtn.setToolTipText("Visit next page");
         reloadBtn.setToolTipText("Reload current page");
-        newTabBtn.setToolTipText("Add a new tab");
         evBtn.setToolTipText("Display page event viewer");
     }
 
@@ -136,8 +138,6 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         navBar.add(reloadBtn);
         navBar.add(Box.createRigidArea(new Dimension(5, 0)));
         navBar.add(urlBarContainer);
-        navBar.add(Box.createRigidArea(new Dimension(5, 0)));
-        navBar.add(newTabBtn);
 
         menuBar.add(fileMenu);
 
@@ -164,12 +164,12 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         }
     }
 
-    private void addPage(String urlString, boolean externalInput) {
+    void addPage(String urlString, boolean externalInput) {
         currentPage = new Page(this);
         pages.add(currentPage);
-        tabbedPane.addTab("Loading", currentPage.getScrollPane());
-        tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-1);
-        tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(), new CustomTabComponent(this, tabbedPane));
+        tabbedPane.insertTab("Loading", null, currentPage.getScrollPane(), "Loading page", tabbedPane.getTabCount()-1); // Minus 1 because although the last tab is actually the add tab button, this tab hasn't been added yet
+        tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-2); // Minus 2 because the last tab is actually the add tab button
+        tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(), new PageTabComponent(this, tabbedPane));
         currentPage.navigate(urlString, externalInput);
     }
 
@@ -181,6 +181,8 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
             int newIndex = tabbedPane.getSelectedIndex() % (pages.size());
             tabbedPane.setSelectedIndex(newIndex);
             currentPage = pages.get(newIndex);
+        } else {
+            System.exit(0);
         }
     }
 
@@ -217,8 +219,6 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
             currentPage.reload();
         } else if (source == goBtn) {
             currentPage.navigate(urlBar.getText(), true);
-        } else if (source == newTabBtn) {
-            addPage(HOMEPAGE, true);
         } else if (source == evBtn) {
             currentPage.showEventViewer();
         }
@@ -248,9 +248,11 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
             if (index >= 0 && index < pages.size()) {
                 currentPage = pages.get(index);
                 setUrlBar(currentPage.getUrl());
-            } else {
-                System.exit(0);
             }
         }
+    }
+
+    public String getHomepage() {
+        return HOMEPAGE;
     }
 }

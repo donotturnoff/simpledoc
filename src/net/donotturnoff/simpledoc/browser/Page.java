@@ -18,7 +18,6 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.List;
 
 public class Page {
 
@@ -58,8 +57,8 @@ public class Page {
             if (SwingUtilities.isDescendingFrom(panel, tabbedPane.getComponentAt(i))) {
                 browser.setTitle(i, title);
                 Component tabComponent = tabbedPane.getTabComponentAt(i);
-                if (tabComponent instanceof CustomTabComponent) {
-                    ((CustomTabComponent) tabComponent).updateSize();
+                if (tabComponent instanceof PageTabComponent) {
+                    ((PageTabComponent) tabComponent).updateSize();
                 }
                 break;
             }

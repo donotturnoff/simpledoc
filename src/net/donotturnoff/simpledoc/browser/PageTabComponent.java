@@ -5,13 +5,13 @@ import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;
 import java.awt.event.*;
 
-public class CustomTabComponent extends JPanel  {
+public class PageTabComponent extends JPanel  {
 
     private final SDTPBrowser browser;
     private final JTabbedPane pane;
     private final JLabel label;
 
-    public CustomTabComponent(final SDTPBrowser browser, final JTabbedPane pane)  {
+    public PageTabComponent(final SDTPBrowser browser, final JTabbedPane pane)  {
         //unset default FlowLayout' gaps
         super(new FlowLayout(FlowLayout.LEFT, 0, 0));
         if (pane == null) {
@@ -24,7 +24,7 @@ public class CustomTabComponent extends JPanel  {
         //make JLabel read titles from JTabbedPane
         label = new JLabel() {
             public String getText() {
-                int i = pane.indexOfTabComponent(CustomTabComponent.this);
+                int i = pane.indexOfTabComponent(PageTabComponent.this);
                 if (i != -1) {
                     return pane.getTitleAt(i);
                 }
@@ -63,7 +63,7 @@ public class CustomTabComponent extends JPanel  {
         }
 
         public void actionPerformed(ActionEvent e) {
-            int i = pane.indexOfTabComponent(CustomTabComponent.this);
+            int i = pane.indexOfTabComponent(PageTabComponent.this);
             if (i != -1) {
                 browser.removePage(i);
             }
