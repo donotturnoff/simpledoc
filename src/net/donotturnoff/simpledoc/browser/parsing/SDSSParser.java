@@ -3,6 +3,7 @@ package net.donotturnoff.simpledoc.browser.parsing;
 import net.donotturnoff.simpledoc.browser.Page;
 import net.donotturnoff.simpledoc.browser.Style;
 import net.donotturnoff.simpledoc.browser.element.Element;
+import net.donotturnoff.simpledoc.browser.element.ElementState;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -22,9 +23,12 @@ public class SDSSParser {
         NonTerminal ntAttrs = new NonTerminal("attrs");
         NonTerminal ntAttrList = new NonTerminal("attr_list");
         NonTerminal ntAttr = new NonTerminal("attr");
+        NonTerminal ntPseudo = new NonTerminal("pseudo");
 
         Terminal<Void> tLparen = new Terminal<>("LPAREN");
         Terminal<Void> tRparen = new Terminal<>("RPAREN");
+        Terminal<Void> tLangle = new Terminal<>("LANGLE");
+        Terminal<Void> tRangle = new Terminal<>("RANGLE");
         Terminal<Void> tLbrace = new Terminal<>("LBRACE");
         Terminal<Void> tRbrace = new Terminal<>("RBRACE");
         Terminal<Void> tEquals = new Terminal<>("EQUALS");
@@ -38,6 +42,8 @@ public class SDSSParser {
 
         symbols.add(tLparen);
         symbols.add(tRparen);
+        symbols.add(tLangle);
+        symbols.add(tRangle);
         symbols.add(tLbrace);
         symbols.add(tRbrace);
         symbols.add(tEquals);
@@ -57,6 +63,7 @@ public class SDSSParser {
         symbols.add(ntAttrs);
         symbols.add(ntAttrList);
         symbols.add(ntAttr);
+        symbols.add(ntPseudo);
 
         Set<Production> productions = new HashSet<>();
         productions.add(new Production(ntStart, List.of(ntElementList)));
@@ -66,6 +73,10 @@ public class SDSSParser {
         productions.add(new Production(ntElement, List.of(ntSelector, ntAttrs, ntBlock)));
         productions.add(new Production(ntElement, List.of(ntSelector, tAsterisk, ntBlock)));
         productions.add(new Production(ntElement, List.of(ntSelector, ntAttrs, tAsterisk, ntBlock)));
+        productions.add(new Production(ntElement, List.of(ntSelector, ntPseudo, ntBlock)));
+        productions.add(new Production(ntElement, List.of(ntSelector, ntAttrs, ntPseudo, ntBlock)));
+        productions.add(new Production(ntElement, List.of(ntSelector, tAsterisk, ntPseudo, ntBlock)));
+        productions.add(new Production(ntElement, List.of(ntSelector, ntAttrs, tAsterisk, ntPseudo, ntBlock)));
         productions.add(new Production(ntSelector, List.of(tIdent)));
         productions.add(new Production(ntSelector, List.of(tQMark)));
         productions.add(new Production(ntAttrs, List.of(tLparen, ntAttrList, tRparen)));
@@ -73,6 +84,7 @@ public class SDSSParser {
         productions.add(new Production(ntAttrList, List.of(ntAttr)));
         productions.add(new Production(ntAttrList, List.of(ntAttr, tComma, ntAttrList)));
         productions.add(new Production(ntAttr, List.of(tIdent, tEquals, tString)));
+        productions.add(new Production(ntPseudo, List.of(tLangle, tIdent, tRangle)));
         productions.add(new Production(ntBlock, List.of(tLbrace, ntElemsAndProps, tRbrace)));
         productions.add(new Production(ntElemsAndProps, List.of(ntElement)));
         productions.add(new Production(ntElemsAndProps, List.of(ntProperty)));
@@ -95,7 +107,7 @@ public class SDSSParser {
         elementList(t.getChildren().get(0));
     }
 
-    private void elementList(Node elemList) {
+    private void elementList(Node elemList) throws ParsingException {
         while (elemList.getChildren().size() == 2) {
             Node elem = elemList.getChildren().get(0);
             elemList = elemList.getChildren().get(1);
@@ -105,14 +117,32 @@ public class SDSSParser {
         element(elem, page.getAllElements(), 1);
     }
 
-    private void element(Node node, Set<Element> selectedElements, int priority) {
+    private void element(Node node, Set<Element> selectedElements, int priority) throws ParsingException {
         List<Node> c = node.getChildren();
         Node selector = c.get(0);
         Map<String, String> attrs = attributes(node);
         Node block = c.get(c.size()-1);
-        boolean star = c.get(c.size()-2).getSymbol().getName().equals("ASTERISK");
+        boolean star = c.get(c.size()-2).getSymbol().getName().equals("ASTERISK") || (c.size() >= 3 && c.get(c.size()-3).getSymbol().getName().equals("ASTERISK"));
+        ElementState pseudo = pseudo(node);
         Set<Element> filteredElements = filter(selectedElements, selector, attrs, star);
-        applyStyles(filteredElements, block, priority);
+        applyStyles(filteredElements, block, pseudo, priority);
+    }
+
+    private ElementState pseudo(Node node) throws ParsingException {
+        ElementState state = ElementState.BASE;
+        List<Node> c = node.getChildren();
+        Node pseudoNode = c.get(c.size() - 2);
+        boolean isPseudo = pseudoNode.getSymbol().getName().equals("pseudo");
+        if (isPseudo) {
+            String stateName = (String) ((Terminal<?>) pseudoNode.getChildren().get(1).getSymbol()).getToken().getValue();
+            switch (stateName) {
+                case "base": break;
+                case "hover": state = ElementState.HOVER; break;
+                case "active": state = ElementState.ACTIVE; break;
+                default: throw new ParsingException("Invalid pseudoelement: " + stateName);
+            }
+        }
+        return state;
     }
 
     private Map<String, String> attributes(Node n) {
@@ -155,7 +185,7 @@ public class SDSSParser {
         return filteredElements;
     }
 
-    public void applyStyles(Set<Element> selectedElements, Node block, int priority) {
+    public void applyStyles(Set<Element> selectedElements, Node block, ElementState pseudo, int priority) throws ParsingException {
         Style s = new Style();
         Node elemsAndProps = block.getChildren().get(1);
         while (elemsAndProps.getChildren().size() == 2) {
@@ -178,7 +208,7 @@ public class SDSSParser {
             s.set(key, value, priority);
         }
         for (Element e: selectedElements) {
-            e.getStyle().setAll(s);
+            e.addStyles(pseudo, s);
         }
     }
 

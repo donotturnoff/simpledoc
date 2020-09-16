@@ -29,7 +29,9 @@ public class ImgElement extends BoxElement {
         if (isHidden()) {
             return null;
         } else {
-            return new JImagePanel();
+            JImagePanel panel = new JImagePanel();
+            panel.addMouseListener(this);
+            return panel;
         }
     }
 

@@ -1,6 +1,7 @@
 package net.donotturnoff.simpledoc.browser.element;
 
 import net.donotturnoff.simpledoc.browser.Page;
+import net.donotturnoff.simpledoc.browser.Style;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,6 +28,7 @@ public class TextElement extends Element {
 
     @Override
     public void render(Page page, JPanel parentPanel) {
+        Style style = getStyle();
         Font font = style.getFont();
         Color colour = style.getColour();
 
@@ -38,6 +40,7 @@ public class TextElement extends Element {
 
     @Override
     public void refresh(Page page) {
+        Style style = getStyle();
         Font font = style.getFont();
         Color colour = style.getColour();
 

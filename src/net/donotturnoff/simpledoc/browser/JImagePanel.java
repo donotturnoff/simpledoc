@@ -1,4 +1,4 @@
-package net.donotturnoff.simpledoc.browser.element;
+package net.donotturnoff.simpledoc.browser;
 
 import javax.swing.*;
 import java.awt.*;
@@ -7,10 +7,18 @@ import java.awt.image.BufferedImage;
 public class JImagePanel extends JPanel {
     private BufferedImage img;
 
-public class ImagePanel extends JPanel {
-    private final BufferedImage img;
+    public JImagePanel() {}
 
-    public ImagePanel(BufferedImage img) {
+    public JImagePanel(BufferedImage img) {
+        setImage(img);
+    }
+
+    @Override
+    public Dimension getMaximumSize() {
+        return getPreferredSize();
+    }
+
+    public void setImage(BufferedImage img) {
         this.img = img;
         setPreferredSize(new Dimension(img.getWidth(), img.getHeight()));
     }
@@ -22,11 +30,5 @@ public class ImagePanel extends JPanel {
             // Paint the background image
             g.drawImage(img, 0, 0, img.getWidth(), img.getHeight(), this);
         }
-        if (h > pnlH) {
-            h = pnlH;
-            w = (int) (h*aspect);
-        }
-
-        g.drawImage(img, 0, 0, w, h, this);
     }
 }

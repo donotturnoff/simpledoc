@@ -1,6 +1,7 @@
 package net.donotturnoff.simpledoc.browser.element;
 
 import net.donotturnoff.simpledoc.browser.Page;
+import net.donotturnoff.simpledoc.browser.Style;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -15,8 +16,8 @@ public abstract class BoxElement extends Element {
 
     public BoxElement(Page page, String name, Map<String, String> attributes, List<Element> children) {
         super(page, name, attributes, children);
-        style.setDefault("cursor", "default");
-        style.setDefault("background_colour", "#FFFFFF");
+        setDefault("cursor", "default");
+        setDefault("background_colour", "#FFFFFF");
     }
 
     protected boolean isHidden() {
@@ -27,23 +28,25 @@ public abstract class BoxElement extends Element {
         if (isHidden()) {
             return null;
         } else {
-            return new JPanel() {
+            JPanel panel = new JPanel() {
                 @Override
                 public Dimension getMaximumSize() {
                     return getPreferredSize();
                 }
             };
+            panel.addMouseListener(this);
+            return panel;
         }
     }
 
     public void style(JPanel panel) {
         if (panel != null) {
-            LayoutManager layout = style.getLayoutManager(panel);
-            Cursor cursor = style.getCursor();
-            Color backgroundColour = style.getBackgroundColour();
-            Border padding = style.getPadding();
-            Border border = style.getBorder();
-            Border margin = style.getMargin();
+            LayoutManager layout = getStyle().getLayoutManager(panel);
+            Cursor cursor = getStyle().getCursor();
+            Color backgroundColour = getStyle().getBackgroundColour();
+            Border padding = getStyle().getPadding();
+            Border border = getStyle().getBorder();
+            Border margin = getStyle().getMargin();
             CompoundBorder surroundings = BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(margin, border), padding);
 
             panel.setLayout(layout);

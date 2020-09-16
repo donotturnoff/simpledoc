@@ -22,6 +22,12 @@ public class SDSSLexer extends Lexer {
                 case ')':
                     t = new Terminal<Void>("RPAREN", line, column); getChar();
                     break;
+                case '<':
+                    t = new Terminal<Void>("LANGLE", line, column); getChar();
+                    break;
+                case '>':
+                    t = new Terminal<Void>("RANGLE", line, column); getChar();
+                    break;
                 case '{':
                     t = new Terminal<Void>("LBRACE", line, column); getChar();
                     break;

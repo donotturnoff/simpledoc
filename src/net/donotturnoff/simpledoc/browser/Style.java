@@ -8,19 +8,20 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Style {
-    private static final Set<String> inheritableProperties = new HashSet<>();
+    private static final Set<String> INHERITABLE = new HashSet<>();
 
     static {
-        inheritableProperties.add("font_family");
-        inheritableProperties.add("font_size");
-        inheritableProperties.add("font_style");
-        inheritableProperties.add("underline");
-        inheritableProperties.add("colour");
-        inheritableProperties.add("background_colour");
-        inheritableProperties.add("cursor");
-        inheritableProperties.add("bullet_style");
+        INHERITABLE.add("font_family");
+        INHERITABLE.add("font_size");
+        INHERITABLE.add("font_style");
+        INHERITABLE.add("underline");
+        INHERITABLE.add("colour");
+        INHERITABLE.add("background_colour");
+        INHERITABLE.add("cursor");
+        INHERITABLE.add("bullet_style");
     }
 
     private final Map<String, String> defaultProperties;
@@ -42,6 +43,13 @@ public class Style {
         this.priorities = new HashMap<>(existingStyle.priorities);
     }
 
+    public Style(Map<String, String> properties, Map<String, Integer> priorities, Map<String, String> defaultProperties, Map<String, Integer> defaultPriorities) {
+        this.properties = properties;
+        this.priorities = priorities;
+        this.defaultProperties = defaultProperties;
+        this.defaultPriorities = defaultPriorities;
+    }
+
     public void set(String key, String value) {
         set(key, value, 0);
     }
@@ -54,21 +62,11 @@ public class Style {
     }
 
     public void setDefault(String key, String value) {
-        if (0 >= defaultPriorities.getOrDefault(key, Integer.MIN_VALUE)) {
-            defaultProperties.put(key, value);
-            defaultPriorities.put(key, 0);
-        }
+        setDefault(key, value, 0);
     }
 
-    public void inherit(String key, String value, int priority) {
-        if (inheritableProperties.contains(key) && priority >= priorities.getOrDefault(key, Integer.MIN_VALUE)) {
-            properties.put(key, value);
-            priorities.put(key, priority);
-        }
-    }
-
-    public void inheritDefault(String key, String value, int priority) {
-        if (inheritableProperties.contains(key) && priority >= defaultPriorities.getOrDefault(key, Integer.MIN_VALUE)) {
+    public void setDefault(String key, String value, int priority) {
+        if (priority >= defaultPriorities.getOrDefault(key, Integer.MIN_VALUE)) {
             defaultProperties.put(key, value);
             defaultPriorities.put(key, priority);
         }
@@ -88,16 +86,16 @@ public class Style {
         }
     }
 
-    public void inheritAll(Style style, int priority) {
+    public void setAll(Style style, int priority) {
         for (Map.Entry<String, String> rule: style.properties.entrySet()) {
             String key = rule.getKey();
             String value = rule.getValue();
-            inherit(key, value, priority);
+            set(key, value, priority);
         }
         for (Map.Entry<String, String> rule: style.defaultProperties.entrySet()) {
             String key = rule.getKey();
             String value = rule.getValue();
-            inheritDefault(key, value, priority);
+            setDefault(key, value, priority);
         }
     }
 
@@ -112,6 +110,18 @@ public class Style {
 
     public String getOrDefault(String key, String defaultValue) {
         return properties.getOrDefault(key, defaultProperties.getOrDefault(key, defaultValue));
+    }
+
+    private <T> Map<String, T> getInheritable(Map<String, T> map) {
+        return map.entrySet().stream().filter(m -> INHERITABLE.contains(m.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    public Style getInheritable() {
+        Map<String, String> inheritableProperties = getInheritable(properties);
+        Map<String, Integer> inheritablePriorities = getInheritable(priorities);
+        Map<String, String> inheritableDefaultProperties = getInheritable(defaultProperties);
+        Map<String, Integer> inheritableDefaultPriorities = getInheritable(defaultPriorities);
+        return new Style(inheritableProperties, inheritablePriorities, inheritableDefaultProperties, inheritableDefaultPriorities);
     }
 
     public boolean containsProperty(String key) {

@@ -8,14 +8,13 @@ import java.util.List;
 import java.util.Map;
 
 public class LiElement extends BoxElement {
-    private TextElement bullet;
+    private final TextElement bullet;
     public LiElement(Page page, Map<String, String> attributes, List<Element> children) {
         super(page, "li", attributes, children);
-        style.setDefault("cursor", "text");
+        setDefault("cursor", "text");
 
-        String bulletText = style.getBulletText();
+        String bulletText = getStyle().getBulletText();
         bullet = new TextElement(page, bulletText);
-        bullet.style = new Style(style);
         children.add(0, bullet);
     }
 
@@ -30,9 +29,8 @@ public class LiElement extends BoxElement {
     @Override
     public void refresh(Page page) {
         style(panel);
-        String bulletText = style.getBulletText();
+        String bulletText = getStyle().getBulletText();
         bullet.setText(bulletText);
-        bullet.style = new Style(style);
 
         if (panel != null) {
             panel.revalidate();
