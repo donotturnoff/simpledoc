@@ -46,6 +46,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
     // Non-GUI
     private final List<Page> pages;
     private Page currentPage;
+    private boolean keyDown;
 
     public static void main(String[] args) {
         URL.setURLStreamHandlerFactory(new SDTPURLStreamHandlerFactory());
@@ -55,6 +56,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
 
     private SDTPBrowser() {
         pages = new ArrayList<>();
+        keyDown = false;
     }
 
     private void run() {
@@ -113,6 +115,17 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         gui.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         gui.setMinimumSize(new Dimension(800, 600));
         gui.setIconImage(ICON);
+
+        KeyboardFocusManager.getCurrentKeyboardFocusManager()
+                .addKeyEventDispatcher(e -> {
+                    int id = e.getID();
+                    if (id == KeyEvent.KEY_PRESSED) {
+                        keyPressed(e);
+                    } else if (id == KeyEvent.KEY_RELEASED) {
+                        keyReleased(e);
+                    }
+                    return false;
+                });
 
         openFileMenuItem.addActionListener(this);
         reloadMenuItem.addActionListener(this);
@@ -278,14 +291,38 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
 
     @Override
     public void keyPressed(KeyEvent keyEvent) {
-        if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
-            currentPage.navigate(urlBar.getText(), true);
+        if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER && keyEvent.getSource() == urlBar) {
+            if (!keyDown) {
+                keyDown = true;
+                currentPage.navigate(urlBar.getText(), true);
+            }
+        } else if (keyEvent.getKeyCode() == KeyEvent.VK_R) {
+            if (keyEvent.isControlDown()) {
+                if (!keyDown) {
+                    keyDown = true;
+                    currentPage.reload();
+                }
+            }
+        } else if (keyEvent.getKeyCode() == KeyEvent.VK_TAB) {
+            if (keyEvent.isControlDown()) {
+                int index;
+                if (keyEvent.isShiftDown()) {
+                    index = (tabbedPane.getSelectedIndex()-1+pages.size())%pages.size(); // Add pages.size() to keep index positive
+                } else {
+                    index = (tabbedPane.getSelectedIndex()+1)%pages.size();
+                }
+                if (!keyDown) {
+                    keyDown = true;
+                    tabbedPane.setSelectedIndex(index);
+                    currentPage = pages.get(index);
+                }
+            }
         }
     }
 
     @Override
     public void keyReleased(KeyEvent keyEvent) {
-
+        keyDown = false;
     }
 
     @Override
