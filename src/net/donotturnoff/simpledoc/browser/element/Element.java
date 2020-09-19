@@ -18,7 +18,6 @@ public abstract class Element implements MouseListener {
     private static final Set<String> generalAttrs = Set.of("id", "class", "description", "title", "accesskey", "lang",
             "dir", "hidden", "style", "tabindex");
     private static final Map<String, Set<String>> tagSpecificAttrs = new HashMap<>();
-    private static final Set<String> allAttrs = new HashSet<>();
     private static final Map<String, Class<? extends Element>> tagClasses = new HashMap<>();
 
     static {
@@ -29,9 +28,6 @@ public abstract class Element implements MouseListener {
         tagSpecificAttrs.put("base", Set.of("href"));
         tagSpecificAttrs.put("link", Set.of("href"));
         tagSpecificAttrs.put("res", Set.of("src", "type", "rel"));
-
-        allAttrs.addAll(generalAttrs);
-        tagSpecificAttrs.values().forEach(allAttrs::addAll);
 
         String packageName = "net.donotturnoff.simpledoc.browser.element.";
         tags.forEach(t -> {
@@ -48,12 +44,8 @@ public abstract class Element implements MouseListener {
         return tags.contains(tag);
     }
 
-    public static boolean isLegalAttribute(String attr) {
-        return allAttrs.contains(attr);
-    }
-
     public static boolean isLegalAttribute(String tag, String attr) {
-        return allAttrs.contains(attr) || (tagSpecificAttrs.containsKey(tag) && tagSpecificAttrs.get(tag).contains(attr));
+        return generalAttrs.contains(attr) || (tagSpecificAttrs.containsKey(tag) && tagSpecificAttrs.get(tag).contains(attr));
     }
 
     public static Class<? extends Element> getTagClass(String tag) {

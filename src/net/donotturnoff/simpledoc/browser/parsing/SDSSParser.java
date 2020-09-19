@@ -23,7 +23,7 @@ public class SDSSParser {
         NonTerminal ntAttrs = new NonTerminal("attrs");
         NonTerminal ntAttrList = new NonTerminal("attr_list");
         NonTerminal ntAttr = new NonTerminal("attr");
-        NonTerminal ntPseudo = new NonTerminal("pseudo");
+        NonTerminal ntState = new NonTerminal("state");
 
         Terminal<Void> tLparen = new Terminal<>("LPAREN");
         Terminal<Void> tRparen = new Terminal<>("RPAREN");
@@ -63,7 +63,7 @@ public class SDSSParser {
         symbols.add(ntAttrs);
         symbols.add(ntAttrList);
         symbols.add(ntAttr);
-        symbols.add(ntPseudo);
+        symbols.add(ntState);
 
         Set<Production> productions = new HashSet<>();
         productions.add(new Production(ntStart, List.of(ntElementList)));
@@ -73,10 +73,10 @@ public class SDSSParser {
         productions.add(new Production(ntElement, List.of(ntSelector, ntAttrs, ntBlock)));
         productions.add(new Production(ntElement, List.of(ntSelector, tAsterisk, ntBlock)));
         productions.add(new Production(ntElement, List.of(ntSelector, ntAttrs, tAsterisk, ntBlock)));
-        productions.add(new Production(ntElement, List.of(ntSelector, ntPseudo, ntBlock)));
-        productions.add(new Production(ntElement, List.of(ntSelector, ntAttrs, ntPseudo, ntBlock)));
-        productions.add(new Production(ntElement, List.of(ntSelector, tAsterisk, ntPseudo, ntBlock)));
-        productions.add(new Production(ntElement, List.of(ntSelector, ntAttrs, tAsterisk, ntPseudo, ntBlock)));
+        productions.add(new Production(ntElement, List.of(ntSelector, ntState, ntBlock)));
+        productions.add(new Production(ntElement, List.of(ntSelector, ntAttrs, ntState, ntBlock)));
+        productions.add(new Production(ntElement, List.of(ntSelector, tAsterisk, ntState, ntBlock)));
+        productions.add(new Production(ntElement, List.of(ntSelector, ntAttrs, tAsterisk, ntState, ntBlock)));
         productions.add(new Production(ntSelector, List.of(tIdent)));
         productions.add(new Production(ntSelector, List.of(tQMark)));
         productions.add(new Production(ntAttrs, List.of(tLparen, ntAttrList, tRparen)));
@@ -84,7 +84,7 @@ public class SDSSParser {
         productions.add(new Production(ntAttrList, List.of(ntAttr)));
         productions.add(new Production(ntAttrList, List.of(ntAttr, tComma, ntAttrList)));
         productions.add(new Production(ntAttr, List.of(tIdent, tEquals, tString)));
-        productions.add(new Production(ntPseudo, List.of(tLangle, tIdent, tRangle)));
+        productions.add(new Production(ntState, List.of(tLangle, tIdent, tRangle)));
         productions.add(new Production(ntBlock, List.of(tLbrace, ntElemsAndProps, tRbrace)));
         productions.add(new Production(ntElemsAndProps, List.of(ntElement)));
         productions.add(new Production(ntElemsAndProps, List.of(ntProperty)));
@@ -120,32 +120,37 @@ public class SDSSParser {
     private void element(Node node, Set<Element> selectedElements, int priority) throws ParsingException {
         List<Node> c = node.getChildren();
         Node selector = c.get(0);
-        Map<String, String> attrs = attributes(node);
+        Terminal<?> tagType = ((Terminal<?>) selector.getChildren().get(0).getSymbol());
+        String tag;
+        if (!tagType.getName().equals("QMARK") && !Element.isLegalTag(tag = (String) tagType.getToken().getValue())) {
+            throw new ParsingException("Illegal tag: " + tag);
+        }
+        Map<String, String> attrs = attributes(node, tagType);
         Node block = c.get(c.size()-1);
         boolean star = c.get(c.size()-2).getSymbol().getName().equals("ASTERISK") || (c.size() >= 3 && c.get(c.size()-3).getSymbol().getName().equals("ASTERISK"));
-        ElementState pseudo = pseudo(node);
-        Set<Element> filteredElements = filter(selectedElements, selector, attrs, star);
-        applyStyles(filteredElements, block, pseudo, priority);
+        ElementState state = state(node);
+        Set<Element> filteredElements = filter(selectedElements, tagType, attrs, star);
+        applyStyles(filteredElements, block, state, priority);
     }
 
-    private ElementState pseudo(Node node) throws ParsingException {
+    private ElementState state(Node node) throws ParsingException {
         ElementState state = ElementState.BASE;
         List<Node> c = node.getChildren();
-        Node pseudoNode = c.get(c.size() - 2);
-        boolean isPseudo = pseudoNode.getSymbol().getName().equals("pseudo");
-        if (isPseudo) {
-            String stateName = (String) ((Terminal<?>) pseudoNode.getChildren().get(1).getSymbol()).getToken().getValue();
+        Node stateNode = c.get(c.size() - 2);
+        boolean isState = stateNode.getSymbol().getName().equals("state");
+        if (isState) {
+            String stateName = (String) ((Terminal<?>) stateNode.getChildren().get(1).getSymbol()).getToken().getValue();
             switch (stateName) {
                 case "base": break;
                 case "hover": state = ElementState.HOVER; break;
                 case "active": state = ElementState.ACTIVE; break;
-                default: throw new ParsingException("Invalid pseudoelement: " + stateName);
+                default: throw new ParsingException("Illegal state: " + stateName);
             }
         }
         return state;
     }
 
-    private Map<String, String> attributes(Node n) {
+    private Map<String, String> attributes(Node n, Terminal<?> tagType) throws ParsingException {
         List<Node> c = n.getChildren();
         Node a;
         if (c.size() == 1 || !(a = c.get(1)).getSymbol().getName().equals("attrs") || a.getChildren().size() == 2) { //No attributes or children OR no attributes OR empty attributes
@@ -156,23 +161,27 @@ public class SDSSParser {
             while (attrList.getChildren().size() == 3) {
                 Node attr = attrList.getChildren().get(0);
                 attrList = attrList.getChildren().get(2);
-                addAttribute(attr, attrs);
+                addAttribute(attr, attrs, tagType);
             }
             Node attr = attrList.getChildren().get(0);
-            addAttribute(attr, attrs);
+            addAttribute(attr, attrs, tagType);
             return attrs;
         }
     }
 
-    private void addAttribute(Node attr, Map<String, String> attrs) {
+    private void addAttribute(Node attr, Map<String, String> attrs, Terminal<?> tagType) throws ParsingException {
         String key = (String) ((Terminal<?>) attr.getChildren().get(0).getSymbol()).getToken().getValue();
         String value = (String) ((Terminal<?>) attr.getChildren().get(2).getSymbol()).getToken().getValue();
-        attrs.put(key, value);
+        String tag;
+        if (!tagType.getName().equals("QMARK") && !Element.isLegalAttribute(tag = (String) tagType.getToken().getValue(), key)) {
+            throw new ParsingException("Illegal attribute for tag " + tag + ": " + key);
+        } else {
+            attrs.put(key, value);
+        }
     }
 
-    public Set<Element> filter(Set<Element> selectedElements, Node selector, Map<String, String> attrs, boolean star) {
+    public Set<Element> filter(Set<Element> selectedElements, Terminal<?> tagType, Map<String, String> attrs, boolean star) {
         Set<Element> filteredElements;
-        Terminal<?> tagType = ((Terminal<?>) selector.getChildren().get(0).getSymbol());
         String tag = "?";
         if (!tagType.getName().equals("QMARK")) {
             tag = (String) tagType.getToken().getValue();
@@ -185,7 +194,7 @@ public class SDSSParser {
         return filteredElements;
     }
 
-    public void applyStyles(Set<Element> selectedElements, Node block, ElementState pseudo, int priority) throws ParsingException {
+    public void applyStyles(Set<Element> selectedElements, Node block, ElementState state, int priority) throws ParsingException {
         Style s = new Style();
         Node elemsAndProps = block.getChildren().get(1);
         while (elemsAndProps.getChildren().size() == 2) {
@@ -208,7 +217,7 @@ public class SDSSParser {
             s.set(key, value, priority);
         }
         for (Element e: selectedElements) {
-            e.addStyles(pseudo, s);
+            e.addStyles(state, s);
         }
     }
 

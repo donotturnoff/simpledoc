@@ -81,20 +81,23 @@ public class SDMLParser {
         return start(t);
     }
 
-    private Element start(Node n) {
+    private Element start(Node n) throws ParsingException {
         return element(n.getChildren().get(0));
     }
 
-    private Element element(Node n) {
+    private Element element(Node n) throws ParsingException {
         List<Node> c = n.getChildren();
         Symbol<?> fst = c.get(0).getSymbol();
         String tag = (String) ((Terminal<?>) fst).getToken().getValue();
         if (fst.getName().equals("STRING")) {
             return new TextElement(page, tag);
         }
-        Map<String, String> attrs = attributes(n);
-        List<Element> children = children(n);
+        if (!Element.isLegalTag(tag)) {
+            throw new ParsingException("Illegal tag: " + tag);
+        }
         Class<? extends Element> tagClass = Element.getTagClass(tag);
+        Map<String, String> attrs = attributes(n, tag);
+        List<Element> children = children(n);
         try {
             Element e = tagClass.getConstructor(Page.class, Map.class, List.class).newInstance(page, attrs, children);
             page.addElement(e);
@@ -105,7 +108,7 @@ public class SDMLParser {
         }
     }
 
-    private Map<String, String> attributes(Node n) {
+    private Map<String, String> attributes(Node n, String tag) throws ParsingException {
         List<Node> c = n.getChildren();
         Node a;
         if (c.size() == 1 || !(a = c.get(1)).getSymbol().getName().equals("attrs") || a.getChildren().size() == 2) { //No attributes or children OR no attributes OR empty attributes
@@ -116,21 +119,26 @@ public class SDMLParser {
             while (attrList.getChildren().size() == 3) {
                 Node attr = attrList.getChildren().get(0);
                 attrList = attrList.getChildren().get(2);
-                addAttribute(attr, attrs);
+                addAttribute(attr, attrs, tag);
             }
             Node attr = attrList.getChildren().get(0);
-            addAttribute(attr, attrs);
+            addAttribute(attr, attrs, tag);
             return attrs;
         }
     }
 
-    private void addAttribute(Node attr, Map<String, String> attrs) {
+    private void addAttribute(Node attr, Map<String, String> attrs, String tag) throws ParsingException {
+        Class<? extends Element> tagClass = Element.getTagClass(tag);
         String key = (String) ((Terminal<?>) attr.getChildren().get(0).getSymbol()).getToken().getValue();
         String value = (String) ((Terminal<?>) attr.getChildren().get(2).getSymbol()).getToken().getValue();
-        attrs.put(key, value);
+        if (!Element.isLegalAttribute(tag, key)) {
+            throw new ParsingException("Illegal attribute for tag " + tag + ": " + key);
+        } else {
+            attrs.put(key, value);
+        }
     }
 
-    private List<Element> children(Node n) {
+    private List<Element> children(Node n) throws ParsingException {
         List<Node> c = n.getChildren();
         Node b;
         //No attributes or children OR attributes and no children OR empty children
