@@ -34,7 +34,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
     // Menus
     private JMenuBar menuBar;
     private JMenu fileMenu, bookmarksMenu, devMenu;
-    private JMenuItem openFileMenuItem, navigateMenuItem, newTabMenuItem, historyMenuItem, savePageMenuItem, settingsMenuItem, exitMenuItem, viewAllBookmarksMenuItem, evMenuItem, sourcesMenuItem, networkMenuItem;
+    private JMenuItem openFileMenuItem, reloadMenuItem, newTabMenuItem, historyMenuItem, savePageMenuItem, settingsMenuItem, exitMenuItem, viewAllBookmarksMenuItem, evMenuItem, sourcesMenuItem, networkMenuItem;
 
     // Inputs
     private JButton backBtn, forwardBtn, reloadBtn, goBtn, evBtn;
@@ -86,7 +86,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         devMenu = new JMenu("Developer");
 
         openFileMenuItem = new JMenuItem("Open file");
-        navigateMenuItem = new JMenuItem("Navigate to page");
+        reloadMenuItem = new JMenuItem("Reload page");
         newTabMenuItem = new JMenuItem("New tab");
         historyMenuItem = new JMenuItem("History");
         savePageMenuItem = new JMenuItem("Save page");
@@ -113,6 +113,18 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         gui.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         gui.setMinimumSize(new Dimension(800, 600));
         gui.setIconImage(ICON);
+
+        openFileMenuItem.addActionListener(this);
+        reloadMenuItem.addActionListener(this);
+        newTabMenuItem.addActionListener(this);
+        historyMenuItem.addActionListener(this);
+        savePageMenuItem.addActionListener(this);
+        settingsMenuItem.addActionListener(this);
+        exitMenuItem.addActionListener(this);
+        viewAllBookmarksMenuItem.addActionListener(this);
+        evMenuItem.addActionListener(this);
+        sourcesMenuItem.addActionListener(this);
+        networkMenuItem.addActionListener(this);
 
         navBar.setBorder(new CompoundBorder(navBar.getBorder(), new EmptyBorder(5, 5, 5, 5)));
         urlBar.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -154,7 +166,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         navBar.add(Box.createRigidArea(new Dimension(5, 0)));
         navBar.add(urlBarContainer);
 
-        fileMenu.add(navigateMenuItem);
+        fileMenu.add(reloadMenuItem);
         fileMenu.add(openFileMenuItem);
         fileMenu.add(newTabMenuItem);
         fileMenu.add(historyMenuItem);
@@ -241,17 +253,21 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        JButton source = (JButton) actionEvent.getSource();
+        Object source = actionEvent.getSource();
         if (source == backBtn) {
             currentPage.back();
         } else if (source == forwardBtn) {
             currentPage.forward();
-        } else if (source == reloadBtn) {
+        } else if (source == reloadBtn || source == reloadMenuItem) {
             currentPage.reload();
         } else if (source == goBtn) {
             currentPage.navigate(urlBar.getText(), true);
-        } else if (source == evBtn) {
+        } else if (source == evBtn || source == evMenuItem) {
             currentPage.showEventViewer();
+        } else if (source == exitMenuItem) {
+            System.exit(0);
+        } else if (source == newTabMenuItem) {
+            addPage(getHomepage(), true);
         }
     }
 
