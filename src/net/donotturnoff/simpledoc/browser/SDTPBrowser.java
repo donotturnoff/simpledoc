@@ -315,6 +315,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
                     keyDown = true;
                     tabbedPane.setSelectedIndex(index);
                     currentPage = pages.get(index);
+                    setUrlBar(currentPage.getUrl());
                 }
             }
         }
