@@ -33,7 +33,8 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
 
     // Menus
     private JMenuBar menuBar;
-    private JMenu fileMenu;
+    private JMenu fileMenu, bookmarksMenu, devMenu;
+    private JMenuItem openFileMenuItem, navigateMenuItem, newTabMenuItem, historyMenuItem, savePageMenuItem, settingsMenuItem, exitMenuItem, viewAllBookmarksMenuItem, evMenuItem, sourcesMenuItem, networkMenuItem;
 
     // Inputs
     private JButton backBtn, forwardBtn, reloadBtn, goBtn, evBtn;
@@ -81,6 +82,20 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
 
         menuBar = new JMenuBar();
         fileMenu = new JMenu("File");
+        bookmarksMenu = new JMenu("Bookmarks");
+        devMenu = new JMenu("Developer");
+
+        openFileMenuItem = new JMenuItem("Open file");
+        navigateMenuItem = new JMenuItem("Navigate to page");
+        newTabMenuItem = new JMenuItem("New tab");
+        historyMenuItem = new JMenuItem("History");
+        savePageMenuItem = new JMenuItem("Save page");
+        settingsMenuItem = new JMenuItem("Settings");
+        exitMenuItem = new JMenuItem("Exit");
+        viewAllBookmarksMenuItem = new JMenuItem("View all bookmarks");
+        evMenuItem = new JMenuItem("Event viewer");
+        sourcesMenuItem = new JMenuItem("Sources");
+        networkMenuItem = new JMenuItem("Network");
 
         backBtn = new JButton("\u2b60");
         forwardBtn = new JButton("\u2b62");
@@ -139,7 +154,23 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         navBar.add(Box.createRigidArea(new Dimension(5, 0)));
         navBar.add(urlBarContainer);
 
+        fileMenu.add(navigateMenuItem);
+        fileMenu.add(openFileMenuItem);
+        fileMenu.add(newTabMenuItem);
+        fileMenu.add(historyMenuItem);
+        fileMenu.add(savePageMenuItem);
+        fileMenu.add(settingsMenuItem);
+        fileMenu.add(exitMenuItem);
+
+        bookmarksMenu.add(viewAllBookmarksMenuItem);
+
+        devMenu.add(sourcesMenuItem);
+        devMenu.add(networkMenuItem);
+        devMenu.add(evMenuItem);
+
         menuBar.add(fileMenu);
+        menuBar.add(bookmarksMenu);
+        menuBar.add(devMenu);
 
         statusBar.add(statusLabel, BorderLayout.LINE_START);
         statusBar.add(evBtn, BorderLayout.LINE_END);
