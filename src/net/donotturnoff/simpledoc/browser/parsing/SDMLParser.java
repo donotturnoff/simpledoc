@@ -71,9 +71,11 @@ public class SDMLParser {
     }
     
     private final Page page;
+    private final Set<String> ids;
     
     public SDMLParser(Page page) {
         this.page = page;
+        ids = new HashSet<>();
     }
     
     public Element parse(Queue<Terminal<?>> tokens) throws ParsingException {
@@ -134,6 +136,13 @@ public class SDMLParser {
         if (!Element.isLegalAttribute(tag, key)) {
             throw new ParsingException("Illegal attribute for tag " + tag + ": " + key);
         } else {
+            if (key.equals("id")) {
+                if (ids.contains(value)) {
+                    throw new ParsingException("Duplicate id detected: " + value);
+                } else {
+                    ids.add(value);
+                }
+            }
             attrs.put(key, value);
         }
     }
