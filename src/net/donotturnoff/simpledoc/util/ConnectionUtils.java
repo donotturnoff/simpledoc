@@ -89,7 +89,8 @@ public class ConnectionUtils {
         } catch (MalformedURLException e) {
             url = new URL(current, s);
         }
-        if (!url.getProtocol().equals("sdtp")) {
+        String scheme = url.getProtocol();
+        if (!(scheme.equals("sdtp") || scheme.equals("file"))) {
             throw new MalformedURLException("Scheme must be sdtp");
         }
         return url;

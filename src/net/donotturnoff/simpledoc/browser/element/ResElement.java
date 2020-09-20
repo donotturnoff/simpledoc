@@ -27,7 +27,7 @@ public class ResElement extends Element {
             url = ConnectionUtils.getURL(page.getUrl(), src);
             load();
         } catch (MalformedURLException e) {
-            page.error("Failed to load resource", e);
+            loadingFailure("Failed to load resource", e);
         }
     }
 
@@ -36,9 +36,14 @@ public class ResElement extends Element {
 
     }
 
+    public Void loadingFailure(String s, Exception e) {
+        page.warning(s + ": " + e.getMessage());
+        return null;
+    }
+
     private void load() {
         page.setStatus("Loading " + url);
-        ConnectionWorker worker = new ConnectionWorker(url, page, this::loaded);
+        ConnectionWorker worker = new ConnectionWorker(url, page, this::loaded, this::loadingFailure);
         worker.execute();
     }
 

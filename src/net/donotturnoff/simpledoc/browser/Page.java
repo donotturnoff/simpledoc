@@ -292,4 +292,9 @@ public class Page {
     public void showEventViewer() {
         ev.toggle();
     }
+
+    public Void errorHandler(String s, Exception e) {
+        error(s, e);
+        return null;
+    }
 }

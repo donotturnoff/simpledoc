@@ -46,21 +46,25 @@ public class ImgElement extends BoxElement {
                 url = ConnectionUtils.getURL(page.getUrl(), src);
                 load();
             } catch (MalformedURLException e) {
-                loadingFailure("Failed to load image: " + e.getMessage());
+                loadingFailure("Failed to load image", e);
             }
         }
     }
 
     private void loadingFailure(String s) {
         super.renderChildren(page, panel);
-        page.setStatus("Failed to load " + url);
+        page.warning(s);
         panel.repaint();
         panel.revalidate();
     }
 
+    public Void loadingFailure(String s, Exception e) {
+        loadingFailure(s + ": " + e.getMessage());
+        return null;
+    }
+
     private void load() {
-        page.setStatus("Loading " + url);
-        ConnectionWorker worker = new ConnectionWorker(url, page, this::loaded);
+        ConnectionWorker worker = new ConnectionWorker(url, page, this::loaded, this::loadingFailure);
         worker.execute();
     }
 
@@ -79,7 +83,7 @@ public class ImgElement extends BoxElement {
                 panel.revalidate();
                 page.setStatus("Loaded " + url);
             } catch (IOException e) {
-                loadingFailure("Failed to load image: " + e.getMessage());
+                loadingFailure("Failed to load image", e);
             }
         } else {
             loadingFailure("Failed to load image: image not found");
