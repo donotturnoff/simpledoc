@@ -45,7 +45,7 @@ public class StyleWorker extends SwingWorker<Void, Void> {
             SDSSParser parser = new SDSSParser(page);
             parser.parse(tokens);
         } catch (ParsingException e) {
-            page.error("Failed to parse stylesheet: " + e.getMessage());
+            page.warning("Failed to parse stylesheet: " + e.getMessage());
         }
     }
 

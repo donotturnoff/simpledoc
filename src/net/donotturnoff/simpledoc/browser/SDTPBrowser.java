@@ -266,6 +266,15 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         }
     }
 
+    private void openFile() {
+        fc.setDialogTitle("Open file");
+        int choice = fc.showOpenDialog(gui);
+        if (choice == JFileChooser.APPROVE_OPTION) {
+            File f = fc.getSelectedFile();
+            addPage("file://" + f.getPath(), true);
+        }
+    }
+
     public void setTitle(int index, String title) {
         gui.setTitle(title + " - Simpledoc browser v0.1");
         tabbedPane.setTitleAt(index, title);
@@ -307,6 +316,8 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
             addPage(getHomepage(), true);
         } else if (source == savePageMenuItem) {
             saveCurrentPage();
+        } else if (source == openFileMenuItem) {
+            openFile();
         }
     }
 
@@ -349,6 +360,13 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
                 if (!keyDown) {
                     keyDown = true;
                     saveCurrentPage();
+                }
+            }
+        } else if (keyEvent.getKeyCode() == KeyEvent.VK_O) {
+            if (keyEvent.isControlDown()) {
+                if (!keyDown) {
+                    keyDown = true;
+                    openFile();
                 }
             }
         }
