@@ -25,6 +25,7 @@ public class Page {
     private final JPanel panel;
     private final JScrollPane scrollPane;
     private URL url;
+    private String filename;
     private Response data;
     private final History history;
     private boolean revisiting;
@@ -40,6 +41,7 @@ public class Page {
         this.history = new History();
         this.revisiting = false;
         this.url = null;
+        this.filename = null;
         this.allElements = new HashSet<>();
         this.ev = new EventViewer(this);
         this.workers = new HashSet<>();
@@ -73,6 +75,10 @@ public class Page {
 
     public SDTPBrowser getBrowser() {
         return browser;
+    }
+
+    public String getFilename() {
+        return filename;
     }
 
     public URL getUrl() {
@@ -133,6 +139,16 @@ public class Page {
 
     private void load(URL url) {
         this.url = url;
+        try {
+            filename = Paths.get(new URI(url.toString()).getPath()).getFileName().toString();
+            if (filename == null) {
+                filename = url.getFile();
+            } else if (filename.isEmpty() || filename.equals("/")) {
+                filename = "index.sdml";
+            }
+        } catch (URISyntaxException e) {
+            filename = url.getFile();
+        }
         killWorkers();
         ev.updateTitle();
         browser.setUrlBar(url);
@@ -149,21 +165,12 @@ public class Page {
             browser.setBackButtonState(history.canGoBack());
             browser.setForwardButtonState(history.canGoForward());
         }
+        setTabTitle(filename);
         String type = response.getHeaders().get("type");
         String generalType = type.split("/")[0];
         if (generalType.equals("image")) {
             displayImage(data.getBody());
         } else if (type.equals("text/sdml")) {
-            try {
-                Path filename = Paths.get(new URI(url.toString()).getPath()).getFileName();
-                if (filename == null) {
-                    setTabTitle(url.getFile());
-                } else {
-                    setTabTitle(filename.toString());
-                }
-            } catch (URISyntaxException e) {
-                setTabTitle(url.getFile());
-            }
             Queue<Terminal<?>> tokens = lex(new String(data.getBody()));
             if (!tokens.isEmpty()) {
                 Element root = parse(tokens);

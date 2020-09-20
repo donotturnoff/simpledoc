@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,9 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
 
     // Labels
     private JLabel statusLabel;
+
+    // Dialogs
+    private JFileChooser fc;
 
     // Non-GUI
     private final List<Page> pages;
@@ -105,6 +109,8 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         goBtn = new JButton("Go");
         evBtn = new JButton("Log");
         urlBar = new JTextField();
+
+        fc = new JFileChooser();
 
         tabbedPane.add(new JPanel());
 
@@ -243,6 +249,23 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         }
     }
 
+    private void saveCurrentPage() {
+        Page p = currentPage;
+        fc.setDialogTitle("Save " + p.getFilename());
+        fc.setSelectedFile(new File(p.getFilename()));
+        int choice = fc.showSaveDialog(gui);
+        if (choice == JFileChooser.APPROVE_OPTION) {
+            File f = fc.getSelectedFile();
+            try {
+                OutputStream out = new FileOutputStream(f, false);
+                out.write(p.getData().getBody());
+                out.close();
+            } catch (IOException e) {
+                p.error("Failed to save file: " + e);
+            }
+        }
+    }
+
     public void setTitle(int index, String title) {
         gui.setTitle(title + " - Simpledoc browser v0.1");
         tabbedPane.setTitleAt(index, title);
@@ -282,6 +305,8 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
             System.exit(0);
         } else if (source == newTabMenuItem) {
             addPage(getHomepage(), true);
+        } else if (source == savePageMenuItem) {
+            saveCurrentPage();
         }
     }
 
@@ -317,6 +342,13 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
                     tabbedPane.setSelectedIndex(index);
                     currentPage = pages.get(index);
                     setUrlBar(currentPage.getUrl());
+                }
+            }
+        } else if (keyEvent.getKeyCode() == KeyEvent.VK_S) {
+            if (keyEvent.isControlDown()) {
+                if (!keyDown) {
+                    keyDown = true;
+                    saveCurrentPage();
                 }
             }
         }

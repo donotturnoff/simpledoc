@@ -130,7 +130,6 @@ public class SDMLParser {
     }
 
     private void addAttribute(Node attr, Map<String, String> attrs, String tag) throws ParsingException {
-        Class<? extends Element> tagClass = Element.getTagClass(tag);
         String key = (String) ((Terminal<?>) attr.getChildren().get(0).getSymbol()).getToken().getValue();
         String value = (String) ((Terminal<?>) attr.getChildren().get(2).getSymbol()).getToken().getValue();
         if (!Element.isLegalAttribute(tag, key)) {
