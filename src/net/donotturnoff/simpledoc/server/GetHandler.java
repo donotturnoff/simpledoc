@@ -93,17 +93,27 @@ class GetHandler {
 
     private static Response handleFile(Path p) throws IOException {
         byte[] body = Files.readAllBytes(p);
-        String bodyText = new String(body);
+        String ext = getFileExtension(p.toString());
         String protocol = SDTPServer.DEFAULT_PROTOCOL;
         Status status = Status.OK;
         HashMap<String, String> headers = new HashMap<>();
-        if (bodyText.matches("^doc\\(")) {
+        if (ext.equals("sdml")) {
             headers.put("type", "text/sdml");
+        } else if (ext.equals("sdss")) {
+            headers.put("type", "text/sdss");
         } else {
             String mime = Files.probeContentType(p);
             mime = (mime == null) ? SDTPServer.config.getProperty("default_mime") : mime;
             headers.put("type", mime);
         }
         return new Response(protocol, status, headers, body);
+    }
+
+    private static String getFileExtension(String name) {
+        int lastIndexOf = name.lastIndexOf(".");
+        if (lastIndexOf == -1) {
+            return ""; // empty extension
+        }
+        return name.substring(lastIndexOf+1);
     }
 }

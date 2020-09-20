@@ -169,9 +169,7 @@ public class Page {
         setTabTitle(filename);
         String type = response.getHeaders().get("type");
         String generalType = type.split("/")[0];
-        if (generalType.equals("image")) {
-            displayImage(data.getBody());
-        } else if (type.equals("text/sdml")) {
+        if (type.equals("text/sdml")) {
             Queue<Terminal<?>> tokens = lex(new String(data.getBody()));
             if (!tokens.isEmpty()) {
                 Element root = parse(tokens);
@@ -179,6 +177,10 @@ public class Page {
                     render();
                 }
             }
+        } else if (generalType.equals("image")) {
+            displayImage(data.getBody());
+        } else if (generalType.equals("text")) {
+            displayText(data.getBody());
         }
         return null;
     }
@@ -225,12 +227,20 @@ public class Page {
             panel.add(imgPanel);
             panel.repaint();
             panel.revalidate();
-            setTabTitle(Paths.get(new URI(url.toString()).getPath()).getFileName().toString());
         } catch (IOException e) {
             error("Failed to display image", e);
-        } catch (URISyntaxException e) {
-            setTabTitle(url.getFile());
         }
+    }
+
+    private void displayText(byte[] data) {
+        JTextArea ta = new JTextArea();
+        ta.setEditable(false);
+        ta.setText(new String(data));
+        ta.setFont(new Font(Font.MONOSPACED,Font.PLAIN,12)); // TODO: make customiseable
+        ta.setCursor(new Cursor(Cursor.TEXT_CURSOR));
+        panel.add(ta);
+        panel.repaint();
+        panel.revalidate();
     }
 
     public void close() {
