@@ -160,6 +160,7 @@ public class Page {
     public Void loaded(URL url, Response response) {
         data = response;
         allElements.clear();
+        panel.removeAll();
         if (!revisiting || !history.pageVisited(url)) {
             history.navigate(url);
             browser.setBackButtonState(history.canGoBack());
@@ -205,7 +206,6 @@ public class Page {
     }
 
     public void render() {
-        panel.removeAll();
         if (data != null) {
             RenderWorker worker = new RenderWorker(this, root);
             worker.execute();
