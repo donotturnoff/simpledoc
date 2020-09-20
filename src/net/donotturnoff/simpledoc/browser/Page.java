@@ -31,6 +31,7 @@ public class Page {
     private Element root;
     private final Set<Element> allElements;
     private final EventViewer ev;
+    private final Set<SwingWorker<?, ?>> workers;
 
     Page(SDTPBrowser browser) {
         this.browser = browser;
@@ -41,6 +42,7 @@ public class Page {
         this.url = null;
         this.allElements = new HashSet<>();
         this.ev = new EventViewer(this);
+        this.workers = new HashSet<>();
 
         browser.setBackButtonState(false);
         browser.setForwardButtonState(false);
@@ -131,6 +133,7 @@ public class Page {
 
     private void load(URL url) {
         this.url = url;
+        killWorkers();
         ev.updateTitle();
         browser.setUrlBar(url);
         setTabTitle("Loading");
@@ -203,7 +206,6 @@ public class Page {
     }
 
     private void displayImage(byte[] data) {
-        panel.removeAll();
         ByteArrayInputStream bais = new ByteArrayInputStream(data);
         BufferedImage img;
         try {
@@ -222,6 +224,21 @@ public class Page {
         } catch (URISyntaxException e) {
             setTabTitle(url.getFile());
         }
+    }
+
+    public void close() {
+        killWorkers();
+    }
+
+    public void addWorker(SwingWorker<?, ?> worker) {
+        workers.add(worker);
+    }
+
+    private void killWorkers() {
+        for (SwingWorker<?, ?> worker: workers) {
+            worker.cancel(true);
+        }
+        workers.clear();
     }
 
     public void info(String i) {

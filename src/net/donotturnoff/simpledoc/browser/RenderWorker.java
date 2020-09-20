@@ -14,6 +14,7 @@ public class RenderWorker extends SwingWorker<Void, Void> {
         this.page = page;
         this.root = root;
         this.panel = page.getPanel();
+        page.addWorker(this);
     }
 
     @Override

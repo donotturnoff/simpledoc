@@ -20,6 +20,7 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
         this.url = page.getUrl();
         this.page = page;
         this.callback = page::loaded;
+        page.addWorker(this);
     }
 
     ConnectionWorker(URL url, Page page) {

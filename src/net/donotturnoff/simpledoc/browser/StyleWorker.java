@@ -17,6 +17,7 @@ public class StyleWorker extends SwingWorker<Void, Void> {
         this.page = page;
         this.root = root;
         this.body = body;
+        page.addWorker(this);
     }
 
     @Override

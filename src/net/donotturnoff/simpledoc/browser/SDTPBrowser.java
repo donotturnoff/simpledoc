@@ -230,6 +230,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
     }
 
     public void removePage(int index) {
+        pages.get(index).close();
         pages.remove(index);
         tabbedPane.remove(index);
 
