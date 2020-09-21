@@ -1,6 +1,7 @@
 package net.donotturnoff.simpledoc.browser;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
@@ -39,7 +40,12 @@ public class EventViewer {
 
         JScrollPane scrollPane = new JScrollPane(table);
         table.setFillsViewportHeight(true);
-        gui.add(scrollPane);
+
+        JPanel container = new JPanel(new BorderLayout());
+        container.setBorder(new EmptyBorder(5, 5, 5, 5));
+        container.add(scrollPane);
+
+        gui.add(container);
     }
 
     public void addEvent(BrowserEvent event) {
