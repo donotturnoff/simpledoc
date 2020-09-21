@@ -121,14 +121,24 @@ public class SDSSParser {
         List<Node> c = node.getChildren();
         Node selector = c.get(0);
         Terminal<?> tagType = ((Terminal<?>) selector.getChildren().get(0).getSymbol());
+        String type = tagType.getName();
         String tag;
-        if (!tagType.getName().equals("QMARK") && !Element.isLegalTag(tag = (String) tagType.getToken().getValue())) {
+        if (!type.equals("QMARK") && !Element.isLegalTag(tag = (String) tagType.getToken().getValue())) {
             throw new ParsingException("Illegal tag: " + tag);
         }
+        if (type.equals("QMARK")) {
+            priority += 1;
+        } else {
+            priority += 2;
+        }
         Map<String, String> attrs = attributes(node, tagType);
+        priority += attrs.size()*2;
         Node block = c.get(c.size()-1);
         boolean star = c.get(c.size()-2).getSymbol().getName().equals("ASTERISK") || (c.size() >= 3 && c.get(c.size()-3).getSymbol().getName().equals("ASTERISK"));
         ElementState state = state(node);
+        if (state != ElementState.BASE) {
+            priority += 2;
+        }
         Set<Element> filteredElements = filter(selectedElements, tagType, attrs, star);
         applyStyles(filteredElements, block, state, priority);
     }
@@ -200,7 +210,7 @@ public class SDSSParser {
         while (elemsAndProps.getChildren().size() == 2) {
             Node elemOrProp = elemsAndProps.getChildren().get(0);
             if (elemOrProp.getSymbol().getName().equals("element")) {
-                element(elemOrProp, selectedElements, priority+1);
+                element(elemOrProp, selectedElements, priority);
             } else { // Handle property
                 String key = (String) ((Terminal<?>) elemOrProp.getChildren().get(0).getSymbol()).getToken().getValue();
                 String value = (String) ((Terminal<?>) elemOrProp.getChildren().get(2).getSymbol()).getToken().getValue();
@@ -210,7 +220,7 @@ public class SDSSParser {
         }
         Node elemOrProp = elemsAndProps.getChildren().get(0);
         if (elemOrProp.getSymbol().getName().equals("element")) {
-            element(elemOrProp, selectedElements, priority+1);
+            element(elemOrProp, selectedElements, priority);
         } else { // Handle property
             String key = (String) ((Terminal<?>) elemOrProp.getChildren().get(0).getSymbol()).getToken().getValue();
             String value = (String) ((Terminal<?>) elemOrProp.getChildren().get(2).getSymbol()).getToken().getValue();
