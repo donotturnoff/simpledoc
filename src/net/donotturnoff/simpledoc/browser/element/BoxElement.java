@@ -41,12 +41,13 @@ public abstract class BoxElement extends Element {
 
     public void style(JPanel panel) {
         if (panel != null) {
-            LayoutManager layout = getStyle().getLayoutManager(panel);
-            Cursor cursor = getStyle().getCursor();
-            Color backgroundColour = getStyle().getBackgroundColour();
-            Border padding = getStyle().getPadding();
-            Border border = getStyle().getBorder();
-            Border margin = getStyle().getMargin();
+            Style s = getStyle();
+            LayoutManager layout = s.getLayoutManager(panel);
+            Cursor cursor = s.getCursor();
+            Color backgroundColour = s.getBackgroundColour();
+            Border padding = s.getPadding();
+            Border border = s.getBorder();
+            Border margin = s.getMargin();
             CompoundBorder surroundings = BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(margin, border), padding);
 
             panel.setLayout(layout);

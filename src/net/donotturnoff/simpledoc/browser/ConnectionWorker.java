@@ -73,7 +73,7 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
                 byte[] data = Files.readAllBytes(p);
                 Map<String, String> headers = new HashMap<>();
                 String mime = FileUtils.getMime(p);
-                mime = (mime == null) ? "text/sdml" : mime; // TODO: make customiseable
+                mime = (mime == null) ? "text/plain" : mime; // TODO: make customiseable
                 headers.put("type", mime);
                 return new Response("file", Status.OK, headers, data);
             } catch (IOException e) {
@@ -91,6 +91,7 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
         try {
             Response response = get();
             if (response != null) {
+                page.addResource(url, response);
                 Status s = response.getStatus();
                 if (s.equals(Status.OK)) {
                     page.info("Loaded " + url + ": " + s);
@@ -102,6 +103,7 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
                 throw e;
             }
         } catch (Exception e) {
+            page.addResource(url, null);
             errorHandlerCallback.apply("Failed to load " + url, e);
         }
     }

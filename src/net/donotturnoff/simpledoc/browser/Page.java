@@ -3,6 +3,7 @@ package net.donotturnoff.simpledoc.browser;
 import net.donotturnoff.simpledoc.browser.element.Element;
 import net.donotturnoff.simpledoc.browser.parsing.*;
 import net.donotturnoff.simpledoc.util.ConnectionUtils;
+import net.donotturnoff.simpledoc.util.FileUtils;
 import net.donotturnoff.simpledoc.util.Response;
 
 import javax.imageio.ImageIO;
@@ -12,14 +13,32 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 public class Page {
+
+
+
+    public static JImagePanel getImagePanel(byte[] data) throws IOException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(data);
+        BufferedImage img = ImageIO.read(bais);
+        if (img == null) {
+            throw new IOException("No data or unrecognised image format");
+        }
+        JImagePanel imgPanel = new JImagePanel(img);
+        imgPanel.setBackground(Color.WHITE);
+        return imgPanel;
+    }
+
+    public static JTextArea getTextPanel(byte[] data) {
+        JTextArea ta = new JTextArea();
+        ta.setEditable(false);
+        ta.setText(new String(data));
+        ta.setFont(new Font(Font.MONOSPACED,Font.PLAIN,12)); // TODO: make customiseable
+        ta.setCursor(new Cursor(Cursor.TEXT_CURSOR));
+        return ta;
+    }
 
     private final SDTPBrowser browser;
     private final JPanel panel;
@@ -32,11 +51,12 @@ public class Page {
     private Element root;
     private final Set<Element> allElements;
     private final EventViewer ev;
+    private final ResourceViewer rv;
     private final Set<SwingWorker<?, ?>> workers;
 
     Page(SDTPBrowser browser) {
         this.browser = browser;
-        this.panel = new JPanel();
+        this.panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         this.scrollPane = new JScrollPane(panel);
         this.history = new History();
         this.revisiting = false;
@@ -44,6 +64,7 @@ public class Page {
         this.filename = null;
         this.allElements = new HashSet<>();
         this.ev = new EventViewer(this);
+        this.rv = new ResourceViewer(this);
         this.workers = new HashSet<>();
 
         browser.setBackButtonState(false);
@@ -53,6 +74,8 @@ public class Page {
         scrollPane.getHorizontalScrollBar().setUnitIncrement(10);
         scrollPane.getVerticalScrollBar().setBlockIncrement(40);
         scrollPane.getHorizontalScrollBar().setUnitIncrement(40);
+
+        panel.setBackground(Color.WHITE);
     }
 
     public void setTabTitle(String title) {
@@ -139,18 +162,11 @@ public class Page {
 
     private void load(URL url) {
         this.url = url;
-        try {
-            filename = Paths.get(new URI(url.toString()).getPath()).getFileName().toString();
-            if (filename == null) {
-                filename = url.getFile();
-            } else if (filename.isEmpty() || filename.equals("/")) {
-                filename = "index.sdml";
-            }
-        } catch (URISyntaxException e) {
-            filename = url.getFile();
-        }
+        filename = FileUtils.getFilename(url);
         killWorkers();
+        rv.clear();
         ev.updateTitle();
+        rv.updateTitle();
         browser.setUrlBar(url);
         setTabTitle("Loading");
         ConnectionWorker worker = new ConnectionWorker(url,this);
@@ -215,15 +231,8 @@ public class Page {
     }
 
     private void displayImage(byte[] data) {
-        ByteArrayInputStream bais = new ByteArrayInputStream(data);
-        BufferedImage img;
         try {
-            img = ImageIO.read(bais);
-            if (img == null) {
-                throw new IOException("No data or unrecognised image format");
-            }
-            JImagePanel imgPanel = new JImagePanel(img);
-            imgPanel.setBackground(Color.WHITE);
+            JImagePanel imgPanel = getImagePanel(data);
             panel.add(imgPanel);
             panel.repaint();
             panel.revalidate();
@@ -233,11 +242,7 @@ public class Page {
     }
 
     private void displayText(byte[] data) {
-        JTextArea ta = new JTextArea();
-        ta.setEditable(false);
-        ta.setText(new String(data));
-        ta.setFont(new Font(Font.MONOSPACED,Font.PLAIN,12)); // TODO: make customiseable
-        ta.setCursor(new Cursor(Cursor.TEXT_CURSOR));
+        JTextArea ta = getTextPanel(data);
         panel.add(ta);
         panel.repaint();
         panel.revalidate();
@@ -245,6 +250,8 @@ public class Page {
 
     public void close() {
         killWorkers();
+        ev.hide();
+        rv.hide();
     }
 
     public void addWorker(SwingWorker<?, ?> worker) {
@@ -281,6 +288,15 @@ public class Page {
         panel.removeAll();
     }
 
+    public Void errorHandler(String s, Exception e) {
+        error(s, e);
+        return null;
+    }
+
+    public void addResource(URL url, Response response) {
+        rv.addResource(url, response);
+    }
+
     public void addElement(Element e) {
         allElements.add(e);
     }
@@ -289,12 +305,11 @@ public class Page {
         return allElements;
     }
 
-    public void showEventViewer() {
+    public void toggleEventViewer() {
         ev.toggle();
     }
 
-    public Void errorHandler(String s, Exception e) {
-        error(s, e);
-        return null;
+    public void toggleResourceViewer() {
+        rv.toggle();
     }
 }

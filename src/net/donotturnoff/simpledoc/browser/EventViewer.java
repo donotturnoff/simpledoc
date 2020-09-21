@@ -55,6 +55,10 @@ public class EventViewer {
         gui.setVisible(!gui.isVisible());
     }
 
+    public void hide() {
+        gui.setVisible(false);
+    }
+
     public void updateTitle() {
         gui.setTitle("Event viewer for " + page.getUrl());
     }

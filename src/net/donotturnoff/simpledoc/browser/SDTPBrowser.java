@@ -35,7 +35,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
     // Menus
     private JMenuBar menuBar;
     private JMenu fileMenu, bookmarksMenu, devMenu;
-    private JMenuItem openFileMenuItem, reloadMenuItem, newTabMenuItem, historyMenuItem, savePageMenuItem, settingsMenuItem, exitMenuItem, viewAllBookmarksMenuItem, evMenuItem, sourcesMenuItem, networkMenuItem;
+    private JMenuItem openFileMenuItem, reloadMenuItem, newTabMenuItem, historyMenuItem, savePageMenuItem, settingsMenuItem, exitMenuItem, viewAllBookmarksMenuItem, evMenuItem, rvMenuItem, networkMenuItem;
 
     // Inputs
     private JButton backBtn, forwardBtn, reloadBtn, goBtn, evBtn;
@@ -100,7 +100,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         exitMenuItem = new JMenuItem("Exit");
         viewAllBookmarksMenuItem = new JMenuItem("View all bookmarks");
         evMenuItem = new JMenuItem("Event viewer");
-        sourcesMenuItem = new JMenuItem("Sources");
+        rvMenuItem = new JMenuItem("Resources");
         networkMenuItem = new JMenuItem("Network");
 
         backBtn = new JButton("\u2b60");
@@ -142,7 +142,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         exitMenuItem.addActionListener(this);
         viewAllBookmarksMenuItem.addActionListener(this);
         evMenuItem.addActionListener(this);
-        sourcesMenuItem.addActionListener(this);
+        rvMenuItem.addActionListener(this);
         networkMenuItem.addActionListener(this);
 
         navBar.setBorder(new CompoundBorder(navBar.getBorder(), new EmptyBorder(5, 5, 5, 5)));
@@ -195,7 +195,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
 
         bookmarksMenu.add(viewAllBookmarksMenuItem);
 
-        devMenu.add(sourcesMenuItem);
+        devMenu.add(rvMenuItem);
         devMenu.add(networkMenuItem);
         devMenu.add(evMenuItem);
 
@@ -309,7 +309,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         } else if (source == goBtn) {
             currentPage.navigate(urlBar.getText(), true);
         } else if (source == evBtn || source == evMenuItem) {
-            currentPage.showEventViewer();
+            currentPage.toggleEventViewer();
         } else if (source == exitMenuItem) {
             System.exit(0);
         } else if (source == newTabMenuItem) {
@@ -318,6 +318,8 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
             saveCurrentPage();
         } else if (source == openFileMenuItem) {
             openFile();
+        } else if (source == rvMenuItem) {
+            currentPage.toggleResourceViewer();
         }
     }
 
