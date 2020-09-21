@@ -371,6 +371,13 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
                     openFile();
                 }
             }
+        } else if (keyEvent.getKeyCode() == KeyEvent.VK_W) {
+            if (keyEvent.isControlDown()) {
+                if (!keyDown) {
+                    keyDown = true;
+                    removePage(tabbedPane.getSelectedIndex());
+                }
+            }
         }
     }
 
