@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 public class Style {
     private static final Set<String> INHERITABLE = new HashSet<>();
+    private static final Map<String, Color> COLOUR_MAP = new HashMap<>();
 
     static {
         INHERITABLE.add("font_family");
@@ -22,6 +23,20 @@ public class Style {
         INHERITABLE.add("background_colour");
         INHERITABLE.add("cursor");
         INHERITABLE.add("bullet_style");
+
+        COLOUR_MAP.put("black", Color.BLACK);
+        COLOUR_MAP.put("dark_grey", Color.DARK_GRAY);
+        COLOUR_MAP.put("grey", Color.GRAY);
+        COLOUR_MAP.put("light_grey", Color.LIGHT_GRAY);
+        COLOUR_MAP.put("white", Color.WHITE);
+        COLOUR_MAP.put("red", Color.RED);
+        COLOUR_MAP.put("orange", Color.ORANGE);
+        COLOUR_MAP.put("yellow", Color.YELLOW);
+        COLOUR_MAP.put("green", Color.GREEN);
+        COLOUR_MAP.put("cyan", Color.CYAN);
+        COLOUR_MAP.put("blue", Color.BLUE);
+        COLOUR_MAP.put("magenta", Color.MAGENTA);
+        COLOUR_MAP.put("pink", Color.PINK);
     }
 
     private final Map<String, String> defaultProperties;
@@ -159,7 +174,7 @@ public class Style {
         try {
             return Color.decode(getOrDefault("background_colour", "#FFFFFF"));
         } catch (NumberFormatException e) {
-            return Color.BLACK;
+            return COLOUR_MAP.get(get("background_colour"));
         }
     }
 
@@ -235,7 +250,7 @@ public class Style {
         try {
             return Color.decode(getOrDefault("border_colour", "#000000"));
         } catch (NumberFormatException e) {
-            return Color.BLACK;
+            return COLOUR_MAP.get(get("border_colour"));
         }
     }
 
@@ -307,7 +322,7 @@ public class Style {
         try {
             return Color.decode(getOrDefault("colour", "#000000"));
         } catch (NumberFormatException e) {
-            return Color.BLACK;
+            return COLOUR_MAP.get(get("colour"));
         }
     }
 
