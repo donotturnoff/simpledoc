@@ -32,61 +32,66 @@ public class ResourceViewer {
     }
 
     public void addResource(URL url, Response r) {
-        Map<String, String> headers = r.getHeaders();
-
         JPanel infoPanel = new JPanel();
-        infoPanel.setBackground(Color.WHITE);
-        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
 
-        String[][] headersForTable = new String[headers.size()+3][2];
-
-        headersForTable[0][0] = "URL";
-        headersForTable[0][1] = url.toString();
-        headersForTable[1][0] = "Protocol";
-        headersForTable[1][1] = r.getProtocol();
-        headersForTable[2][0] = "Status";
-        headersForTable[2][1] = r.getStatus().toString();
-        int i = 3;
-        for (String key: headers.keySet()) {
-            headersForTable[i][0] = key;
-            headersForTable[i++][1] = headers.get(key);
-        }
-
-        JTable headersTable = new JTable(headersForTable, new String[]{"", ""});
-        headersTable.getTableHeader().setReorderingAllowed(false);
-        headersTable.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.GRAY));
-
-        TableColumnModel tcm = headersTable.getColumnModel();
-        tcm.getColumn(0).setPreferredWidth(100);
-        tcm.getColumn(1).setPreferredWidth(700);
-
-        String type = r.getHeaders().get("type");
-        String genericType = type.split("/")[0];
-        JComponent sourceComponent;
-        if (genericType.equals("text")) {
-            sourceComponent = Page.getTextPanel(r.getBody());
-        } else if (genericType.equals("image")) {
-            try {
-                sourceComponent = Page.getImagePanel(r.getBody());
-            } catch (IOException e) {
-                sourceComponent = new JLabel("Failed to display image: " + e.getMessage());
-            }
+        if (r == null) {
+            infoPanel.add(new JLabel("Loading failed"));
         } else {
-            sourceComponent = new JLabel("Resource of type " + type);
+            Map<String, String> headers = r.getHeaders();
+
+            infoPanel.setBackground(Color.WHITE);
+            infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
+
+            String[][] headersForTable = new String[headers.size() + 3][2];
+
+            headersForTable[0][0] = "URL";
+            headersForTable[0][1] = url.toString();
+            headersForTable[1][0] = "Protocol";
+            headersForTable[1][1] = r.getProtocol();
+            headersForTable[2][0] = "Status";
+            headersForTable[2][1] = r.getStatus().toString();
+            int i = 3;
+            for (String key : headers.keySet()) {
+                headersForTable[i][0] = key;
+                headersForTable[i++][1] = headers.get(key);
+            }
+
+            JTable headersTable = new JTable(headersForTable, new String[]{"", ""});
+            headersTable.getTableHeader().setReorderingAllowed(false);
+            headersTable.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.GRAY));
+
+            TableColumnModel tcm = headersTable.getColumnModel();
+            tcm.getColumn(0).setPreferredWidth(100);
+            tcm.getColumn(1).setPreferredWidth(700);
+
+            String type = r.getHeaders().get("type");
+            String genericType = type.split("/")[0];
+            JComponent sourceComponent;
+            if (genericType.equals("text")) {
+                sourceComponent = Page.getTextPanel(r.getBody());
+            } else if (genericType.equals("image")) {
+                try {
+                    sourceComponent = Page.getImagePanel(r.getBody());
+                } catch (IOException e) {
+                    sourceComponent = new JLabel("Failed to display image: " + e.getMessage());
+                }
+            } else {
+                sourceComponent = new JLabel("Resource of type " + type);
+            }
+            sourceComponent.setAlignmentX(Component.LEFT_ALIGNMENT);
+            sourceComponent.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+            JScrollPane scrollPane = new JScrollPane(sourceComponent);
+            scrollPane.getVerticalScrollBar().setUnitIncrement(10);
+            scrollPane.getHorizontalScrollBar().setUnitIncrement(10);
+            scrollPane.getVerticalScrollBar().setBlockIncrement(40);
+            scrollPane.getHorizontalScrollBar().setUnitIncrement(40);
+
+            infoPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+            infoPanel.add(headersTable);
+            infoPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+            infoPanel.add(scrollPane);
         }
-        sourceComponent.setAlignmentX(Component.LEFT_ALIGNMENT);
-        sourceComponent.setBorder(new EmptyBorder(5, 5, 5, 5));
-
-        JScrollPane scrollPane = new JScrollPane(sourceComponent);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(10);
-        scrollPane.getHorizontalScrollBar().setUnitIncrement(10);
-        scrollPane.getVerticalScrollBar().setBlockIncrement(40);
-        scrollPane.getHorizontalScrollBar().setUnitIncrement(40);
-
-        infoPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-        infoPanel.add(headersTable);
-        infoPanel.add(Box.createRigidArea(new Dimension(0,5)));
-        infoPanel.add(scrollPane);
 
         tabbedPane.addTab(FileUtils.getFilename(url), infoPanel);
     }
