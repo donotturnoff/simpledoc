@@ -4,6 +4,7 @@ import net.donotturnoff.simpledoc.browser.Page;
 import net.donotturnoff.simpledoc.browser.Style;
 import net.donotturnoff.simpledoc.browser.element.Element;
 import net.donotturnoff.simpledoc.browser.element.ElementState;
+import net.donotturnoff.lr0.*;
 
 import java.util.*;
 import java.util.stream.Collectors;

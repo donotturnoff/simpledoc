@@ -5,6 +5,7 @@ import net.donotturnoff.simpledoc.browser.parsing.*;
 import net.donotturnoff.simpledoc.util.ConnectionUtils;
 import net.donotturnoff.simpledoc.util.FileUtils;
 import net.donotturnoff.simpledoc.util.Response;
+import net.donotturnoff.lr0.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -17,8 +18,6 @@ import java.net.URL;
 import java.util.*;
 
 public class Page {
-
-
 
     public static JImagePanel getImagePanel(byte[] data) throws IOException {
         ByteArrayInputStream bais = new ByteArrayInputStream(data);

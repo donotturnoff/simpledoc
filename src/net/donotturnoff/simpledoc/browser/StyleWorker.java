@@ -2,6 +2,7 @@ package net.donotturnoff.simpledoc.browser;
 
 import net.donotturnoff.simpledoc.browser.element.Element;
 import net.donotturnoff.simpledoc.browser.parsing.*;
+import net.donotturnoff.lr0.*;
 
 import javax.swing.*;
 import java.util.LinkedList;

@@ -4,6 +4,7 @@ import net.donotturnoff.simpledoc.browser.Page;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import net.donotturnoff.lr0.*;
 
 public abstract class Lexer {
     protected final Page page;

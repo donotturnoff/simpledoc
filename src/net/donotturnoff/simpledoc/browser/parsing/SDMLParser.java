@@ -3,6 +3,7 @@ package net.donotturnoff.simpledoc.browser.parsing;
 import net.donotturnoff.simpledoc.browser.Page;
 import net.donotturnoff.simpledoc.browser.element.Element;
 import net.donotturnoff.simpledoc.browser.element.TextElement;
+import net.donotturnoff.lr0.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
