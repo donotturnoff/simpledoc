@@ -46,6 +46,7 @@ public class Page {
         ta.setText(new String(data));
         ta.setFont(font);
         ta.setCursor(new Cursor(Cursor.TEXT_CURSOR));
+        ta.setCaretPosition(0);
         return ta;
     }
 
