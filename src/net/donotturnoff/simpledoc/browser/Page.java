@@ -287,9 +287,10 @@ public class Page {
     }
 
     public void error(String prefix, Exception e) {
-        error(prefix + ": " + e.getMessage());
+        error(prefix + ": " + e);
         e.printStackTrace();
     }
+
     public void error(String e) {
         BrowserEvent event = new BrowserEvent(BrowserEvent.ERROR, e);
         ev.addEvent(event);
