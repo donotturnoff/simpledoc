@@ -69,24 +69,20 @@ public class ImgElement extends BoxElement {
     }
 
     public Void loaded(URL url, Response response) {
-        if (response.getStatus().equals(Status.OK)) {
-            byte[] data = response.getBody();
-            ByteArrayInputStream bais = new ByteArrayInputStream(data);
-            BufferedImage img;
-            try {
-                img = ImageIO.read(bais);
-                if (img == null) {
-                    throw new IOException("No data or unrecognised format");
-                }
-                ((JImagePanel) panel).setImage(img);
-                panel.repaint();
-                panel.revalidate();
-                page.setStatus("Loaded " + url);
-            } catch (IOException e) {
-                loadingFailure("Failed to load image", e);
+        byte[] data = response.getBody();
+        ByteArrayInputStream bais = new ByteArrayInputStream(data);
+        BufferedImage img;
+        try {
+            img = ImageIO.read(bais);
+            if (img == null) {
+                throw new IOException("No data or unrecognised format");
             }
-        } else {
-            loadingFailure("Failed to load image: image not found");
+            ((JImagePanel) panel).setImage(img);
+            panel.repaint();
+            panel.revalidate();
+            page.info("Loaded " + url + ": " + response.getStatus());
+        } catch (IOException e) {
+            loadingFailure("Failed to load image", e);
         }
         return null;
     }

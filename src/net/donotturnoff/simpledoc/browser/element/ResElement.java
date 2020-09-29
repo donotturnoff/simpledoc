@@ -48,11 +48,10 @@ public class ResElement extends Element {
     }
 
     public Void loaded(URL url, Response response) {
-        if (response.getStatus().equals(Status.OK)) {
-            String rel = attributes.getOrDefault("rel", "stylesheet");
-            if (rel.equals("stylesheet")) {
-                handleStylesheet(response);
-            }
+        String rel = attributes.getOrDefault("rel", "stylesheet");
+        page.info("Loaded " + url + ": " + response.getStatus());
+        if (rel.equals("stylesheet")) {
+            handleStylesheet(response);
         }
 
         return null;

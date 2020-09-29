@@ -184,6 +184,7 @@ public class Page {
     }
 
     public Void loaded(URL url, Response response) {
+        info("Loaded " + url + ": " + response.getStatus());
         data = response;
         allElements.clear();
         panel.removeAll();

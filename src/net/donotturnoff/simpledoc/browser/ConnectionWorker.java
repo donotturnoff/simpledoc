@@ -92,23 +92,21 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
 
     @Override
     public void done() {
+        Response response;
         try {
-            Response response = get();
+            response = get();
+            page.addResource(url, response);
             if (response != null) {
-                page.addResource(url, response);
                 Status s = response.getStatus();
                 if (s.equals(Status.OK)) {
-                    page.info("Loaded " + url + ": " + s);
+                    callback.apply(url, response);
                 } else {
-                    page.addResource(url, null);
-                    errorHandlerCallback.apply("Failed to load " + url, e);
+                    throw new SDTPException(s);
                 }
-                callback.apply(url, response);
             } else {
                 throw e;
             }
         } catch (Exception e) {
-            page.addResource(url, null);
             errorHandlerCallback.apply("Failed to load " + url, e);
         }
     }
