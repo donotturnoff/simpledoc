@@ -68,7 +68,7 @@ public class ResourceViewer {
             String genericType = type.split("/")[0];
             JComponent sourceComponent;
             if (genericType.equals("text")) {
-                sourceComponent = Page.getTextPanel(r.getBody());
+                sourceComponent = Page.getTextPanel(r.getBody(), page.getBrowser().getConfig());
             } else if (genericType.equals("image")) {
                 try {
                     sourceComponent = Page.getImagePanel(r.getBody());

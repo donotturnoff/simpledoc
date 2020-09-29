@@ -31,11 +31,14 @@ public class FileUtils {
     public static String getFilename(URL url) {
         String filename;
         try {
-            filename = Paths.get(new URI(url.toString()).getPath()).getFileName().toString();
-            if (filename == null) {
+            Path filenamePath = Paths.get(new URI(url.toString()).getPath()).getFileName();
+            if (filenamePath == null) {
                 filename = url.getFile();
-            } else if (filename.isEmpty() || filename.equals("/")) {
-                filename = "index.sdml";
+            } else {
+                filename = filenamePath.toString();
+                if (filename.isEmpty() || filename.equals("/")) {
+                    filename = "index.sdml";
+                }
             }
         } catch (URISyntaxException e) {
             filename = url.getFile();

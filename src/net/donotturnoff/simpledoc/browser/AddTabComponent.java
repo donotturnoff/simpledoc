@@ -36,7 +36,7 @@ public class AddTabComponent extends JPanel  {
         }
 
         public void actionPerformed(ActionEvent e) {
-            browser.addPage(browser.getHomepage(), true);
+            browser.addPage(browser.getConfig().getProperty("homepage"));
         }
 
         //we don't want to update UI for this button

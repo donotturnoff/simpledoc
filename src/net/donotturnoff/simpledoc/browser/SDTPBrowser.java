@@ -14,11 +14,11 @@ import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener {
 
-    //TODO: add as configuration option
-    private static final String HOMEPAGE = "sdtp://localhost";
+    private static final String CONFIG_PATH = "simpledoc.conf";
     public static final Image ICON;
 
     static {
@@ -51,6 +51,8 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
     private final List<Page> pages;
     private Page currentPage;
     private boolean keyDown;
+    private final Properties config;
+    private final SettingsEditor settingsEditor;
 
     public static void main(String[] args) {
         URL.setURLStreamHandlerFactory(new SDTPURLStreamHandlerFactory());
@@ -61,6 +63,16 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
     private SDTPBrowser() {
         pages = new ArrayList<>();
         keyDown = false;
+
+        config = new Properties();
+
+        config.setProperty("homepage", "sdtp://localhost");
+        config.setProperty("default_mime_type", "text/plain");
+        config.setProperty("plain_text_font_family", "monospaced");
+        config.setProperty("plain_text_font_size", "12");
+
+        loadConfig();
+        settingsEditor = new SettingsEditor(this);
     }
 
     private void run() {
@@ -74,7 +86,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         configureWidgets();
         constructGUI();
         showGUI();
-        addPage(HOMEPAGE, true);
+        addPage(config.getProperty("homepage"));
     }
 
     private void createWidgets() {
@@ -226,13 +238,13 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         }
     }
 
-    void addPage(String urlString, boolean externalInput) {
+    void addPage(String urlString) {
         currentPage = new Page(this);
         pages.add(currentPage);
         tabbedPane.insertTab("Loading", null, currentPage.getScrollPane(), "Loading page", tabbedPane.getTabCount()-1); // Minus 1 because although the last tab is actually the add tab button, this tab hasn't been added yet
         tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-2); // Minus 2 because the last tab is actually the add tab button
         tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(), new PageTabComponent(this, tabbedPane));
-        currentPage.navigate(urlString, externalInput);
+        currentPage.navigate(urlString, true);
     }
 
     public void removePage(int index) {
@@ -271,7 +283,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         int choice = fc.showOpenDialog(gui);
         if (choice == JFileChooser.APPROVE_OPTION) {
             File f = fc.getSelectedFile();
-            addPage("file://" + f.getPath(), true);
+            addPage("file://" + f.getPath());
         }
     }
 
@@ -297,6 +309,30 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         return tabbedPane;
     }
 
+    public Properties getConfig() {
+        return config;
+    }
+
+    void loadConfig() {
+        try {
+            FileInputStream in = new FileInputStream(CONFIG_PATH);
+            config.load(in);
+            in.close();
+        } catch (IOException e) {
+            System.out.println("Failed to read config file: " + e.getMessage());
+        }
+    }
+
+    public void saveConfig() {
+        try {
+            FileOutputStream out = new FileOutputStream(CONFIG_PATH);
+            config.store(out, "Configuration for SDTPBrowser");
+            out.close();
+        } catch (IOException e) {
+            System.out.println("Failed to save config file: " + e.getMessage());
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         Object source = actionEvent.getSource();
@@ -313,13 +349,15 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         } else if (source == exitMenuItem) {
             System.exit(0);
         } else if (source == newTabMenuItem) {
-            addPage(getHomepage(), true);
+            addPage(config.getProperty("homepage"));
         } else if (source == savePageMenuItem) {
             saveCurrentPage();
         } else if (source == openFileMenuItem) {
             openFile();
         } else if (source == rvMenuItem) {
             currentPage.toggleResourceViewer();
+        } else if (source == settingsMenuItem) {
+            settingsEditor.toggle();
         }
     }
 
@@ -395,9 +433,5 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
                 setUrlBar(currentPage.getUrl());
             }
         }
-    }
-
-    public String getHomepage() {
-        return HOMEPAGE;
     }
 }

@@ -30,11 +30,21 @@ public class Page {
         return imgPanel;
     }
 
-    public static JTextArea getTextPanel(byte[] data) {
+    public static JTextArea getTextPanel(byte[] data, Properties config) {
+        int fontSize;
+        try {
+            fontSize = Integer.parseInt(config.getProperty("plain_text_font_size"));
+            if (fontSize < 1) {
+                throw new NumberFormatException();
+            }
+        } catch (NumberFormatException e) {
+            fontSize = 11;
+        }
+        Font font = new Font(config.getProperty("plain_text_font_family"), Font.PLAIN, fontSize);
         JTextArea ta = new JTextArea();
         ta.setEditable(false);
         ta.setText(new String(data));
-        ta.setFont(new Font(Font.MONOSPACED,Font.PLAIN,12)); // TODO: make customiseable
+        ta.setFont(font);
         ta.setCursor(new Cursor(Cursor.TEXT_CURSOR));
         return ta;
     }
@@ -241,7 +251,7 @@ public class Page {
     }
 
     private void displayText(byte[] data) {
-        JTextArea ta = getTextPanel(data);
+        JTextArea ta = getTextPanel(data, browser.getConfig());
         panel.add(ta);
         panel.repaint();
         panel.revalidate();

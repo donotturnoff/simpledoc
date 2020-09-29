@@ -19,12 +19,14 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
     private final Page page;
     private final URL url;
     private final BiFunction<URL, Response, Void> callback;
+    private final SDTPBrowser browser;
     private Exception e;
-    private BiFunction<String, Exception, Void> errorHandlerCallback;
+    private final BiFunction<String, Exception, Void> errorHandlerCallback;
 
     ConnectionWorker(Page page) {
         this.url = page.getUrl();
         this.page = page;
+        this.browser = page.getBrowser();
         this.callback = page::loaded;
         this.errorHandlerCallback = page::errorHandler;
         page.addWorker(this);
@@ -33,6 +35,7 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
     ConnectionWorker(URL url, Page page) {
         this.url = url;
         this.page = page;
+        this.browser = page.getBrowser();
         this.callback = page::loaded;
         this.errorHandlerCallback = page::errorHandler;
     }
@@ -40,6 +43,7 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
     public ConnectionWorker(URL url, Page page, BiFunction<URL, Response, Void> callback, BiFunction<String, Exception, Void> errorHandlerCallback) {
         this.url = url;
         this.page = page;
+        this.browser = page.getBrowser();
         this.callback = callback;
         this.errorHandlerCallback = errorHandlerCallback;
     }
@@ -73,7 +77,7 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
                 byte[] data = Files.readAllBytes(p);
                 Map<String, String> headers = new HashMap<>();
                 String mime = FileUtils.getMime(p);
-                mime = (mime == null) ? "text/plain" : mime; // TODO: make customiseable
+                mime = (mime == null) ? browser.getConfig().getProperty("default_mime_type") : mime;
                 headers.put("type", mime);
                 return new Response("file", Status.OK, headers, data);
             } catch (IOException e) {
@@ -96,7 +100,8 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
                 if (s.equals(Status.OK)) {
                     page.info("Loaded " + url + ": " + s);
                 } else {
-                    page.error("Failed to load " + url + ": " + s);
+                    page.addResource(url, null);
+                    errorHandlerCallback.apply("Failed to load " + url, e);
                 }
                 callback.apply(url, response);
             } else {
