@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
 import java.util.function.BiFunction;
 
 public class ConnectionWorker extends SwingWorker<Response, Void> {
@@ -38,6 +39,7 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
         this.browser = page.getBrowser();
         this.callback = page::loaded;
         this.errorHandlerCallback = page::errorHandler;
+        page.addWorker(this);
     }
 
     public ConnectionWorker(URL url, Page page, BiFunction<URL, Response, Void> callback, BiFunction<String, Exception, Void> errorHandlerCallback) {
@@ -46,6 +48,7 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
         this.browser = page.getBrowser();
         this.callback = callback;
         this.errorHandlerCallback = errorHandlerCallback;
+        page.addWorker(this);
     }
 
     @Override
@@ -95,17 +98,14 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
         Response response;
         try {
             response = get();
-            page.addResource(url, response);
             if (response != null) {
                 Status s = response.getStatus();
-                if (s.equals(Status.OK)) {
-                    callback.apply(url, response);
-                } else {
-                    throw new SDTPException(s);
-                }
+                callback.apply(url, response);
             } else {
                 throw e;
             }
+        } catch (CancellationException e) {
+            page.info("Loading of " + url + " cancelled");
         } catch (Exception e) {
             errorHandlerCallback.apply("Failed to load " + url, e);
         }

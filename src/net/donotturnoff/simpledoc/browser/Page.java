@@ -6,6 +6,7 @@ import net.donotturnoff.simpledoc.util.ConnectionUtils;
 import net.donotturnoff.simpledoc.util.FileUtils;
 import net.donotturnoff.simpledoc.util.Response;
 import net.donotturnoff.lr0.*;
+import net.donotturnoff.simpledoc.util.Status;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -60,9 +61,13 @@ public class Page {
     private boolean revisiting;
     private Element root;
     private final Set<Element> allElements;
+    private final Set<URL> pendingResources;
     private final EventViewer ev;
     private final ResourceViewer rv;
     private final Set<SwingWorker<?, ?>> workers;
+    private String title;
+    private ImageIcon favicon, pendingFavicon;
+    private boolean pendingFaviconIsGif;
 
     Page(SDTPBrowser browser) {
         this.browser = browser;
@@ -73,9 +78,13 @@ public class Page {
         this.url = null;
         this.filename = null;
         this.allElements = new HashSet<>();
+        this.pendingResources = new HashSet<>();
         this.ev = new EventViewer(this);
         this.rv = new ResourceViewer(this);
         this.workers = new HashSet<>();
+        setTitle("New tab");
+        setFavicon(SDTPBrowser.ICON_FAVICON, true);
+        offerFavicon(SDTPBrowser.ICON_FAVICON, true);
 
         browser.setBackButtonState(false);
         browser.setForwardButtonState(false);
@@ -88,14 +97,36 @@ public class Page {
         panel.setBackground(Color.WHITE);
     }
 
-    public void setTabTitle(String title) {
+    public void setTitle(String title) {
+        this.title = title;
+        updateTab();
+    }
+
+    private void setFavicon(ImageIcon favicon, boolean gif) {
+        this.favicon = SDTPBrowser.scaleFavicon(favicon, gif);
+        updateTab();
+    }
+
+    public void offerFavicon(ImageIcon favicon, boolean gif) {
+        this.pendingFavicon = favicon;
+        this.pendingFaviconIsGif = gif;
+        if (pendingResources.isEmpty()) {
+            applyOfferedFavicon();
+        }
+    }
+
+    private void applyOfferedFavicon() {
+        setFavicon(this.pendingFavicon, this.pendingFaviconIsGif);
+    }
+
+    private void updateTab() {
         JTabbedPane tabbedPane = browser.getTabbedPane();
         for (int i = 0; i < tabbedPane.getTabCount(); i++) {
             if (SwingUtilities.isDescendingFrom(panel, tabbedPane.getComponentAt(i))) {
                 browser.setTitle(i, title);
                 Component tabComponent = tabbedPane.getTabComponentAt(i);
                 if (tabComponent instanceof PageTabComponent) {
-                    ((PageTabComponent) tabComponent).updateSize();
+                    ((PageTabComponent) tabComponent).updateLabel();
                 }
                 break;
             }
@@ -132,6 +163,14 @@ public class Page {
 
     public Element getRoot() {
         return root;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public Icon getFavicon() {
+        return favicon;
     }
 
     public void back() {
@@ -174,17 +213,27 @@ public class Page {
         this.url = url;
         filename = FileUtils.getFilename(url);
         killWorkers();
+        pendingResources.clear();
+        offerFavicon(SDTPBrowser.ICON_FAVICON, true);
+        setFavicon(SDTPBrowser.SPINNER_FAVICON, true);
         rv.clear();
         ev.updateTitle();
         rv.updateTitle();
         browser.setUrlBar(url);
-        setTabTitle("Loading");
+        setTitle("Loading");
+        addPendingResource(url);
         ConnectionWorker worker = new ConnectionWorker(url,this);
         worker.execute();
     }
 
     public Void loaded(URL url, Response response) {
-        info("Loaded " + url + ": " + response.getStatus());
+        Status s = response.getStatus();
+        if (s == Status.OK) {
+            info("Loaded " + url + ": " + s);
+        } else {
+            error("Failed to load " + url, new SDTPException(s));
+        }
+        setTitle(filename);
         data = response;
         allElements.clear();
         panel.removeAll();
@@ -193,7 +242,6 @@ public class Page {
             browser.setBackButtonState(history.canGoBack());
             browser.setForwardButtonState(history.canGoForward());
         }
-        setTabTitle(filename);
         String type = response.getHeaders().get("type");
         String generalType = type.split("/")[0];
         if (type.equals("text/sdml")) {
@@ -295,7 +343,8 @@ public class Page {
         BrowserEvent event = new BrowserEvent(BrowserEvent.ERROR, e);
         ev.addEvent(event);
         setStatus(e);
-        setTabTitle("Error");
+        setTitle("Error");
+        setFavicon(SDTPBrowser.ERROR_FAVICON, true);
         System.out.println(event);
         panel.removeAll();
     }
@@ -305,7 +354,15 @@ public class Page {
         return null;
     }
 
-    public void addResource(URL url, Response response) {
+    public void addPendingResource(URL url) {
+        pendingResources.add(url);
+    }
+
+    public void removePendingResource(URL url, Response response) {
+        pendingResources.remove(url);
+        if (pendingResources.isEmpty()) {
+            applyOfferedFavicon();
+        }
         rv.addResource(url, response);
     }
 

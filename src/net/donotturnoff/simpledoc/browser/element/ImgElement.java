@@ -3,6 +3,7 @@ package net.donotturnoff.simpledoc.browser.element;
 import net.donotturnoff.simpledoc.browser.ConnectionWorker;
 import net.donotturnoff.simpledoc.browser.JImagePanel;
 import net.donotturnoff.simpledoc.browser.Page;
+import net.donotturnoff.simpledoc.browser.SDTPException;
 import net.donotturnoff.simpledoc.util.ConnectionUtils;
 import net.donotturnoff.simpledoc.util.Response;
 import net.donotturnoff.simpledoc.util.Status;
@@ -64,25 +65,32 @@ public class ImgElement extends BoxElement {
     }
 
     private void load() {
+        page.addPendingResource(url);
         ConnectionWorker worker = new ConnectionWorker(url, page, this::loaded, this::loadingFailure);
         worker.execute();
     }
 
     public Void loaded(URL url, Response response) {
-        byte[] data = response.getBody();
-        ByteArrayInputStream bais = new ByteArrayInputStream(data);
-        BufferedImage img;
-        try {
-            img = ImageIO.read(bais);
-            if (img == null) {
-                throw new IOException("No data or unrecognised format");
+        Status s = response.getStatus();
+        if (s == Status.OK) {
+            byte[] data = response.getBody();
+            ByteArrayInputStream bais = new ByteArrayInputStream(data);
+            BufferedImage img;
+            try {
+                img = ImageIO.read(bais);
+                if (img == null) {
+                    throw new IOException("No data or unrecognised format");
+                }
+                ((JImagePanel) panel).setImage(img);
+                panel.repaint();
+                panel.revalidate();
+                page.info("Loaded " + url + ": " + response.getStatus());
+                page.removePendingResource(url, response);
+            } catch (IOException e) {
+                loadingFailure("Failed to load " + url, e);
             }
-            ((JImagePanel) panel).setImage(img);
-            panel.repaint();
-            panel.revalidate();
-            page.info("Loaded " + url + ": " + response.getStatus());
-        } catch (IOException e) {
-            loadingFailure("Failed to load image", e);
+        } else {
+            loadingFailure("Failed to load " + url, new SDTPException(s));
         }
         return null;
     }

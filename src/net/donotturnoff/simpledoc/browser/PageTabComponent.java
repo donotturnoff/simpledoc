@@ -11,40 +11,41 @@ public class PageTabComponent extends JPanel  {
     private final JTabbedPane pane;
     private final JLabel label;
 
-    public PageTabComponent(final SDTPBrowser browser, final JTabbedPane pane)  {
+    public PageTabComponent(final SDTPBrowser browser, final JTabbedPane pane, final Page page)  {
         //unset default FlowLayout' gaps
         super(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        if (pane == null) {
-            throw new NullPointerException("TabbedPane is null");
-        }
         this.pane = pane;
         this.browser = browser;
         setOpaque(false);
 
-        //make JLabel read titles from JTabbedPane
         label = new JLabel() {
             public String getText() {
-                int i = pane.indexOfTabComponent(PageTabComponent.this);
-                if (i != -1) {
-                    return pane.getTitleAt(i);
-                }
-                return null;
+                return page.getTitle();
+            }
+
+            public Icon getIcon() {
+                return page.getFavicon();
             }
         };
 
-        updateSize();
         add(label);
+        updateLabel();
+
         //add more space between the label and the button
         label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
+
         //tab button
         JButton button = new TabButton();
         add(button);
+
         //add more space to the top of the component
         setBorder(BorderFactory.createEmptyBorder(4, 0, 0, 0));
     }
 
-    public void updateSize() {
+    public void updateLabel() {
         label.setSize(label.getPreferredSize());
+        label.revalidate();
+        label.repaint();
     }
 
     private class TabButton extends JButton implements ActionListener {

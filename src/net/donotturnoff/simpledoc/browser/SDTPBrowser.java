@@ -1,5 +1,8 @@
 package net.donotturnoff.simpledoc.browser;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -10,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
@@ -19,12 +23,34 @@ import java.util.Properties;
 public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener {
 
     private static final String CONFIG_PATH = "simpledoc.conf";
+    private static final int FAVICON_WIDTH = 16;
+    private static final int FAVICON_HEIGHT = 16;
     public static final Image ICON;
+    public static final ImageIcon ICON_FAVICON, SPINNER_FAVICON, ERROR_FAVICON;
 
     static {
-        URL url = ClassLoader.getSystemResource("net/donotturnoff/simpledoc/browser/icon.png");
         Toolkit kit = Toolkit.getDefaultToolkit();
-        ICON = kit.createImage(url);
+        URL iconUrl = ClassLoader.getSystemResource("net/donotturnoff/simpledoc/browser/icon.png");
+        ICON = kit.createImage(iconUrl);
+
+        URL iconFaviconUrl = ClassLoader.getSystemResource("net/donotturnoff/simpledoc/browser/icon.gif");
+        ICON_FAVICON = new ImageIcon(iconFaviconUrl);
+
+        URL spinnerFaviconUrl = ClassLoader.getSystemResource("net/donotturnoff/simpledoc/browser/spinner.gif");
+        SPINNER_FAVICON = new ImageIcon(spinnerFaviconUrl);
+
+        URL errorFaviconUrl = ClassLoader.getSystemResource("net/donotturnoff/simpledoc/browser/error.gif");
+        ERROR_FAVICON = new ImageIcon(errorFaviconUrl);
+    }
+
+    public static ImageIcon scaleFavicon(ImageIcon favicon, boolean gif) {
+        if (favicon == null) {
+            return null;
+        }
+
+        int scaling = gif ? Image.SCALE_DEFAULT : Image.SCALE_SMOOTH;
+        Image scaled = favicon.getImage().getScaledInstance(FAVICON_WIDTH, FAVICON_HEIGHT, scaling);
+        return new ImageIcon(scaled);
     }
 
     // Containers
@@ -241,9 +267,9 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
     void addPage(String urlString) {
         currentPage = new Page(this);
         pages.add(currentPage);
-        tabbedPane.insertTab("Loading", null, currentPage.getScrollPane(), "Loading page", tabbedPane.getTabCount()-1); // Minus 1 because although the last tab is actually the add tab button, this tab hasn't been added yet
+        tabbedPane.insertTab("New tab", null, currentPage.getScrollPane(), "New tab", tabbedPane.getTabCount()-1); // Minus 1 because although the last tab is actually the add tab button, this tab hasn't been added yet
         tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-2); // Minus 2 because the last tab is actually the add tab button
-        tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(), new PageTabComponent(this, tabbedPane));
+        tabbedPane.setTabComponentAt(tabbedPane.getSelectedIndex(), new PageTabComponent(this, tabbedPane, currentPage));
         currentPage.navigate(urlString, true);
     }
 

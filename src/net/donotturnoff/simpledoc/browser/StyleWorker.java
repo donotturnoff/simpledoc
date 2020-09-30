@@ -3,8 +3,10 @@ package net.donotturnoff.simpledoc.browser;
 import net.donotturnoff.simpledoc.browser.element.Element;
 import net.donotturnoff.simpledoc.browser.parsing.*;
 import net.donotturnoff.lr0.*;
+import net.donotturnoff.simpledoc.util.Response;
 
 import javax.swing.*;
+import java.net.URL;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -13,11 +15,15 @@ public class StyleWorker extends SwingWorker<Void, Void> {
     private final Page page;
     private final Element root;
     private final String body;
+    private final URL url;
+    private final Response response;
 
-    public StyleWorker(Page page, Element root, String body) {
+    public StyleWorker(Page page, Element root, String body, URL url, Response response) {
         this.page = page;
         this.root = root;
         this.body = body;
+        this.url = url;
+        this.response = response;
         page.addWorker(this);
     }
 
@@ -56,5 +62,6 @@ public class StyleWorker extends SwingWorker<Void, Void> {
         root.refresh(page);
         page.getPanel().repaint();
         page.getPanel().revalidate();
+        page.removePendingResource(url, response);
     }
 }
