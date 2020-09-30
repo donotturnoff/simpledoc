@@ -19,6 +19,7 @@ public class RenderWorker extends SwingWorker<Void, Void> {
 
     @Override
     protected Void doInBackground() {
+        page.info("Rendering " + page.getUrl());
         root.render(page, panel);
         return null;
     }
@@ -28,5 +29,6 @@ public class RenderWorker extends SwingWorker<Void, Void> {
         root.cascadeStyles();
         root.refresh(page);
         page.removePendingResource(page.getUrl(), page.getData());
+        page.info("Rendered " + page.getUrl());
     }
 }

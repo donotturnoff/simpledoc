@@ -29,6 +29,7 @@ public class StyleWorker extends SwingWorker<Void, Void> {
 
     @Override
     protected Void doInBackground() {
+        page.info("Applying stylesheet " + url);
         Queue<Terminal<?>> tokens = lexStylesheet(body);
         if (!tokens.isEmpty()) {
             parseStylesheet(tokens);
@@ -63,5 +64,6 @@ public class StyleWorker extends SwingWorker<Void, Void> {
         page.getPanel().repaint();
         page.getPanel().revalidate();
         page.removePendingResource(url, response);
+        page.info("Applied stylesheet " + url);
     }
 }
