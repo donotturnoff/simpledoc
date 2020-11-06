@@ -332,7 +332,7 @@ public class Page {
         setStatus(e);
         setTitle("Error");
         setFavicon(SDTPBrowser.ERROR_FAVICON, true);
-        System.out.println(event);
+        System.err.println(event);
         panel.removeAll();
     }
 
