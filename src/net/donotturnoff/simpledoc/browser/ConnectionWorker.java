@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 public class ConnectionWorker extends SwingWorker<Response, Void> {
 
@@ -22,7 +23,7 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
     private final BiFunction<URL, Response, Void> callback;
     private final SDTPBrowser browser;
     private Exception e;
-    private final BiFunction<String, Exception, Void> errorHandlerCallback;
+    private final Consumer<Exception> errorHandlerCallback;
 
     ConnectionWorker(Page page) {
         this.url = page.getUrl();
@@ -42,7 +43,7 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
         page.addWorker(this);
     }
 
-    public ConnectionWorker(URL url, Page page, BiFunction<URL, Response, Void> callback, BiFunction<String, Exception, Void> errorHandlerCallback) {
+    public ConnectionWorker(URL url, Page page, BiFunction<URL, Response, Void> callback, Consumer<Exception> errorHandlerCallback) {
         this.url = url;
         this.page = page;
         this.browser = page.getBrowser();
@@ -99,7 +100,6 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
         try {
             response = get();
             if (response != null) {
-                Status s = response.getStatus();
                 callback.apply(url, response);
             } else {
                 throw e;
@@ -107,7 +107,7 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
         } catch (CancellationException e) {
             page.info("Loading of " + url + " cancelled");
         } catch (Exception e) {
-            errorHandlerCallback.apply("Failed to load " + url, e);
+            errorHandlerCallback.accept(e);
         }
     }
 }

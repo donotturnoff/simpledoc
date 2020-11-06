@@ -1,7 +1,6 @@
 package net.donotturnoff.simpledoc.browser;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class BrowserEvent {
     public final static int ERROR = 0, WARNING = 1, INFO = 2;

@@ -1,7 +1,6 @@
 package net.donotturnoff.simpledoc.browser.element;
 
 import net.donotturnoff.simpledoc.browser.Page;
-import net.donotturnoff.simpledoc.browser.Style;
 import net.donotturnoff.simpledoc.util.ConnectionUtils;
 
 import javax.swing.*;

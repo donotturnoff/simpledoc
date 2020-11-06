@@ -1,7 +1,6 @@
 package net.donotturnoff.simpledoc.browser.element;
 
 import net.donotturnoff.simpledoc.browser.Page;
-import net.donotturnoff.simpledoc.browser.Style;
 
 import java.awt.*;
 import java.util.List;

@@ -3,14 +3,25 @@ package net.donotturnoff.simpledoc.browser;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.function.Consumer;
 
 public class JImagePanel extends JPanel {
     private BufferedImage img;
+    private final Runnable callback;
+    private final Consumer<Exception> errorHandlerCallback;
 
-    public JImagePanel() {}
+    public JImagePanel(Runnable callback, Consumer<Exception> errorHandlerCallback) {
+        this.callback = callback;
+        this.errorHandlerCallback = errorHandlerCallback;
+        setBackground(Color.WHITE);
+        img = null;
+    }
 
-    public JImagePanel(BufferedImage img) {
-        setImage(img);
+    public JImagePanel(byte[] data, Runnable callback, Consumer<Exception> errorHandlerCallback) {
+        this.callback = callback;
+        this.errorHandlerCallback = errorHandlerCallback;
+        setBackground(Color.WHITE);
+        setImage(data);
     }
 
     @Override
@@ -18,9 +29,9 @@ public class JImagePanel extends JPanel {
         return getPreferredSize();
     }
 
-    public void setImage(BufferedImage img) {
-        this.img = img;
-        setPreferredSize(new Dimension(img.getWidth(), img.getHeight()));
+    public void setImage(byte[] data) {
+        ImageRenderWorker worker = new ImageRenderWorker(data, this::rendered, errorHandlerCallback);
+        worker.execute();
     }
 
     @Override
@@ -30,5 +41,13 @@ public class JImagePanel extends JPanel {
             // Paint the background image
             g.drawImage(img, 0, 0, img.getWidth(), img.getHeight(), this);
         }
+    }
+
+    public void rendered(BufferedImage img) {
+        this.img = img;
+        setPreferredSize(new Dimension(img.getWidth(), img.getHeight()));
+        repaint();
+        revalidate();
+        callback.run();
     }
 }

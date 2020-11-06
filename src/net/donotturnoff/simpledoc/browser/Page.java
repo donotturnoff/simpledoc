@@ -8,28 +8,13 @@ import net.donotturnoff.simpledoc.util.Response;
 import net.donotturnoff.lr0.*;
 import net.donotturnoff.simpledoc.util.Status;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
 public class Page {
-
-    public static JImagePanel getImagePanel(byte[] data) throws IOException {
-        ByteArrayInputStream bais = new ByteArrayInputStream(data);
-        BufferedImage img = ImageIO.read(bais);
-        if (img == null) {
-            throw new IOException("No data or unrecognised image format");
-        }
-        JImagePanel imgPanel = new JImagePanel(img);
-        imgPanel.setBackground(Color.WHITE);
-        return imgPanel;
-    }
 
     public static JTextArea getTextPanel(byte[] data, Properties config) {
         int fontSize;
@@ -57,7 +42,7 @@ public class Page {
     private URL url;
     private String filename;
     private Response data;
-    private final History history;
+    private final TempHistory history;
     private boolean revisiting;
     private Element root;
     private final Set<Element> allElements;
@@ -73,7 +58,7 @@ public class Page {
         this.browser = browser;
         this.panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         this.scrollPane = new JScrollPane(panel);
-        this.history = new History();
+        this.history = new TempHistory();
         this.revisiting = false;
         this.url = null;
         this.filename = null;
@@ -253,9 +238,9 @@ public class Page {
                 }
             }
         } else if (generalType.equals("image")) {
-            displayImage(data.getBody());
+            displayImage(url, data);
         } else if (generalType.equals("text")) {
-            displayText(data.getBody());
+            displayText(url, data);
         }
         return null;
     }
@@ -289,22 +274,25 @@ public class Page {
         }
     }
 
-    private void displayImage(byte[] data) {
-        try {
-            JImagePanel imgPanel = getImagePanel(data);
-            panel.add(imgPanel);
-            panel.repaint();
-            panel.revalidate();
-        } catch (IOException e) {
-            error("Failed to display image", e);
-        }
+    private void displayImage(URL url, Response response) {
+        byte[] data = response.getBody();
+        Status status = response.getStatus();
+        JImagePanel imgPanel = new JImagePanel(data, () -> info("Loaded " + url + ": " + status), (Exception e) -> error("Failed to load " + url, e));
+        panel.add(imgPanel);
+        panel.repaint();
+        panel.revalidate();
+        removePendingResource(url, response);
     }
 
-    private void displayText(byte[] data) {
+    private void displayText(URL url, Response response) {
+        byte[] data = response.getBody();
+        Status status = response.getStatus();
         JTextArea ta = getTextPanel(data, browser.getConfig());
         panel.add(ta);
         panel.repaint();
         panel.revalidate();
+        info("Loaded " + url + ": " + status);
+        removePendingResource(url, response);
     }
 
     public void close() {
@@ -349,9 +337,8 @@ public class Page {
         panel.removeAll();
     }
 
-    public Void errorHandler(String s, Exception e) {
-        error(s, e);
-        return null;
+    public void errorHandler(Exception e) {
+        error("Failed to load " + url, e);
     }
 
     public void addPendingResource(URL url) {

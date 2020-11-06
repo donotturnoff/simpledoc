@@ -4,11 +4,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-class History {
+class TempHistory {
     private List<URL> docs;
     private int current;
 
-    History() {
+    TempHistory() {
         docs = new ArrayList<>();
         current = -1;
     }

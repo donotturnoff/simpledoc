@@ -34,7 +34,7 @@ public class SDTPServer {
         defaultConfig.setProperty("listdir", "no");
         config = new Properties(defaultConfig);
         try {
-            InputStream propStream = new FileInputStream("/etc/sdtp/server.conf");
+            InputStream propStream = new FileInputStream("sdtpserver.conf");
             config.load(propStream);
         } catch (IOException e) {
             logger.log(Level.WARNING, "Failed to open config file");

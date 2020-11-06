@@ -1,7 +1,6 @@
 package net.donotturnoff.simpledoc.browser;
 
 import javax.swing.*;
-import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -22,7 +21,7 @@ public class SettingsEditor implements ActionListener {
         this.gui = new JFrame("Settings editor");
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        JPanel generalPanel = new JPanel(new GridLayout(2, 2, 5, 5));
+        JPanel generalPanel = new JPanel(new GridLayout(3, 2, 5, 5));
         generalPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         generalPanel.add(new JLabel("Homepage"));
         JTextField homepageEntry = new JTextField();
@@ -31,7 +30,13 @@ public class SettingsEditor implements ActionListener {
         generalPanel.add(new JLabel("Default MIME type"));
         JTextField defaultMimeTypeEntry = new JTextField();
         componentPropertyMap.put(defaultMimeTypeEntry, "default_mime_type");
-        generalPanel.add(defaultMimeTypeEntry);
+        generalPanel.add(new JLabel("History file"));
+        JTextField historyFile = new JTextField();
+        componentPropertyMap.put(historyFile, "history_file");
+        generalPanel.add(new JLabel("Bookmarks file"));
+        JTextField bookmarksFile = new JTextField();
+        componentPropertyMap.put(historyFile, "bookmarks_file");
+        generalPanel.add(historyFile);
 
         JPanel networkPanel = new JPanel();
 

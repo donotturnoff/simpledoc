@@ -26,7 +26,7 @@ public class ResElement extends Element {
             url = ConnectionUtils.getURL(page.getUrl(), src);
             load();
         } catch (MalformedURLException e) {
-            loadingFailure("Failed to load resource", e);
+            loadingFailure("Failed to load " + src, e);
         }
     }
 
@@ -35,9 +35,12 @@ public class ResElement extends Element {
 
     }
 
-    public Void loadingFailure(String s, Exception e) {
+    public void loadingFailure(String s, Exception e) {
         page.warning(s + ": " + e.getMessage());
-        return null;
+    }
+
+    public void loadingFailure(Exception e) {
+        loadingFailure("Failed to load " + url, e);
     }
 
     private void load() {

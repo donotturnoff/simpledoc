@@ -7,9 +7,9 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
-import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class ResourceViewer {
 
@@ -70,10 +70,10 @@ public class ResourceViewer {
             if (genericType.equals("text")) {
                 sourceComponent = Page.getTextPanel(r.getBody(), page.getBrowser().getConfig());
             } else if (genericType.equals("image")) {
-                try {
-                    sourceComponent = Page.getImagePanel(r.getBody());
-                } catch (IOException e) {
-                    sourceComponent = new JLabel("Failed to display image: " + e.getMessage());
+                AtomicReference<String> error = new AtomicReference<>("");
+                sourceComponent = new JImagePanel(r.getBody(), () -> {}, (Exception e) -> error.set("Failed to display image: " + e.getMessage()));
+                if (!error.get().isBlank()) {
+                    sourceComponent = new JLabel(error.get());
                 }
             } else {
                 sourceComponent = new JLabel("Resource of type " + type);
@@ -95,7 +95,6 @@ public class ResourceViewer {
 
         tabbedPane.addTab(FileUtils.getFilename(url), infoPanel);
     }
-
     public void toggle() {
         gui.setVisible(!gui.isVisible());
     }

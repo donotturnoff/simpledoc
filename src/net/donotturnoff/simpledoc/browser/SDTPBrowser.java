@@ -1,8 +1,5 @@
 package net.donotturnoff.simpledoc.browser;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -13,7 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
@@ -22,7 +18,7 @@ import java.util.Properties;
 
 public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener {
 
-    private static final String CONFIG_PATH = "simpledoc.conf";
+    private static final String CONFIG_PATH = "sdtpbrowser.conf";
     private static final int FAVICON_WIDTH = 16;
     private static final int FAVICON_HEIGHT = 16;
     public static final Image ICON;
@@ -78,7 +74,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
     private Page currentPage;
     private boolean keyDown;
     private final Properties config;
-    private final SettingsEditor settingsEditor;
+    private SettingsEditor settingsEditor;
 
     public static void main(String[] args) {
         URL.setURLStreamHandlerFactory(new SDTPURLStreamHandlerFactory());
@@ -94,11 +90,12 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
 
         config.setProperty("homepage", "sdtp://localhost");
         config.setProperty("default_mime_type", "text/plain");
+        config.setProperty("history_file", "history");
+        config.setProperty("bookmarks_file", "bookmarks");
         config.setProperty("plain_text_font_family", "monospaced");
         config.setProperty("plain_text_font_size", "12");
 
         loadConfig();
-        settingsEditor = new SettingsEditor(this);
     }
 
     private void run() {
@@ -108,6 +105,8 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
     private void init() {
         UIManager.put("swing.boldMetal", false);
 
+        settingsEditor = new SettingsEditor(this);
+        
         createWidgets();
         configureWidgets();
         constructGUI();

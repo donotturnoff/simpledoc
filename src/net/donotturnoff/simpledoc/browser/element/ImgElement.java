@@ -1,18 +1,11 @@
 package net.donotturnoff.simpledoc.browser.element;
 
-import net.donotturnoff.simpledoc.browser.ConnectionWorker;
-import net.donotturnoff.simpledoc.browser.JImagePanel;
-import net.donotturnoff.simpledoc.browser.Page;
-import net.donotturnoff.simpledoc.browser.SDTPException;
+import net.donotturnoff.simpledoc.browser.*;
 import net.donotturnoff.simpledoc.util.ConnectionUtils;
 import net.donotturnoff.simpledoc.util.Response;
 import net.donotturnoff.simpledoc.util.Status;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -21,6 +14,7 @@ import java.util.Map;
 public class ImgElement extends BoxElement {
 
     private URL url;
+    private Response response;
 
     public ImgElement(Page page, Map<String, String> attributes, List<Element> children) {
         super(page, "img", attributes, children);
@@ -30,7 +24,7 @@ public class ImgElement extends BoxElement {
         if (isHidden()) {
             return null;
         } else {
-            JImagePanel panel = new JImagePanel();
+            JImagePanel panel = new JImagePanel(this::rendered, this::loadingFailure);
             panel.addMouseListener(this);
             return panel;
         }
@@ -47,21 +41,20 @@ public class ImgElement extends BoxElement {
                 url = ConnectionUtils.getURL(page.getUrl(), src);
                 load();
             } catch (MalformedURLException e) {
-                loadingFailure("Failed to load image", e);
+                loadingFailure("Failed to load " + src, e);
             }
         }
     }
 
-    private void loadingFailure(String s) {
+    private void loadingFailure(String msg, Exception e) {
         super.renderChildren(page, panel);
-        page.warning(s);
+        page.warning(msg + ": " + e.getMessage());
         panel.repaint();
         panel.revalidate();
     }
 
-    public Void loadingFailure(String s, Exception e) {
-        loadingFailure(s + ": " + e.getMessage());
-        return null;
+    public void loadingFailure(Exception e) {
+        loadingFailure("Failed to load " + url, e);
     }
 
     private void load() {
@@ -71,27 +64,19 @@ public class ImgElement extends BoxElement {
     }
 
     public Void loaded(URL url, Response response) {
+        this.response = response;
         Status s = response.getStatus();
         if (s == Status.OK) {
             byte[] data = response.getBody();
-            ByteArrayInputStream bais = new ByteArrayInputStream(data);
-            BufferedImage img;
-            try {
-                img = ImageIO.read(bais);
-                if (img == null) {
-                    throw new IOException("No data or unrecognised format");
-                }
-                ((JImagePanel) panel).setImage(img);
-                panel.repaint();
-                panel.revalidate();
-                page.info("Loaded " + url + ": " + response.getStatus());
-                page.removePendingResource(url, response);
-            } catch (IOException e) {
-                loadingFailure("Failed to load " + url, e);
-            }
+            ((JImagePanel) panel).setImage(data);
         } else {
             loadingFailure("Failed to load " + url, new SDTPException(s));
         }
         return null;
+    }
+
+    public void rendered() {
+        page.info("Loaded " + url + ": " + response.getStatus());
+        page.removePendingResource(url, response);
     }
 }
