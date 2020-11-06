@@ -211,7 +211,7 @@ public class Page {
         worker.execute();
     }
 
-    public Void loaded(URL url, Response response) {
+    public void loaded(URL url, Response response) {
         Status s = response.getStatus();
         if (s == Status.OK) {
             info("Loaded " + url + ": " + s);
@@ -242,7 +242,6 @@ public class Page {
         } else if (generalType.equals("text")) {
             displayText(url, data);
         }
-        return null;
     }
 
     private Queue<Terminal<?>> lex(String body) {

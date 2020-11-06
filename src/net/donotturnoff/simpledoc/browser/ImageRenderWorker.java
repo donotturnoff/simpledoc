@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class ImageRenderWorker extends SwingWorker<BufferedImage, Void> {
 

@@ -13,14 +13,14 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
-import java.util.function.BiFunction;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class ConnectionWorker extends SwingWorker<Response, Void> {
 
     private final Page page;
     private final URL url;
-    private final BiFunction<URL, Response, Void> callback;
+    private final BiConsumer<URL, Response> callback;
     private final SDTPBrowser browser;
     private Exception e;
     private final Consumer<Exception> errorHandlerCallback;
@@ -43,7 +43,7 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
         page.addWorker(this);
     }
 
-    public ConnectionWorker(URL url, Page page, BiFunction<URL, Response, Void> callback, Consumer<Exception> errorHandlerCallback) {
+    public ConnectionWorker(URL url, Page page, BiConsumer<URL, Response> callback, Consumer<Exception> errorHandlerCallback) {
         this.url = url;
         this.page = page;
         this.browser = page.getBrowser();
@@ -100,7 +100,7 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
         try {
             response = get();
             if (response != null) {
-                callback.apply(url, response);
+                callback.accept(url, response);
             } else {
                 throw e;
             }

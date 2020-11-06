@@ -63,7 +63,7 @@ public class ImgElement extends BoxElement {
         worker.execute();
     }
 
-    public Void loaded(URL url, Response response) {
+    public void loaded(URL url, Response response) {
         this.response = response;
         Status s = response.getStatus();
         if (s == Status.OK) {
@@ -72,7 +72,6 @@ public class ImgElement extends BoxElement {
         } else {
             loadingFailure("Failed to load " + url, new SDTPException(s));
         }
-        return null;
     }
 
     public void rendered() {

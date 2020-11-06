@@ -49,7 +49,7 @@ public class ResElement extends Element {
         worker.execute();
     }
 
-    public Void loaded(URL url, Response response) {
+    public void loaded(URL url, Response response) {
         Status s = response.getStatus();
         if (s == Status.OK) {
             String rel = attributes.getOrDefault("rel", "stylesheet");
@@ -62,8 +62,6 @@ public class ResElement extends Element {
         } else {
             loadingFailure("Failed to load " + url, new SDTPException(s));
         }
-
-        return null;
     }
 
     private void handleStylesheet(Response response) {
