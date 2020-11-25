@@ -23,20 +23,26 @@ public class SettingsEditor implements ActionListener {
 
         JPanel generalPanel = new JPanel(new GridLayout(3, 2, 5, 5));
         generalPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+
         generalPanel.add(new JLabel("Homepage"));
         JTextField homepageEntry = new JTextField();
         componentPropertyMap.put(homepageEntry, "homepage");
         generalPanel.add(homepageEntry);
+
         generalPanel.add(new JLabel("Default MIME type"));
         JTextField defaultMimeTypeEntry = new JTextField();
-        componentPropertyMap.put(defaultMimeTypeEntry, "default_mime_type");
+        componentPropertyMap.put(defaultMimeTypeEntry, "default_mime");
+        generalPanel.add(defaultMimeTypeEntry);
+
         generalPanel.add(new JLabel("History file"));
-        JTextField historyFile = new JTextField();
-        componentPropertyMap.put(historyFile, "history_file");
+        JTextField historyFileEntry = new JTextField();
+        componentPropertyMap.put(historyFileEntry, "history_file");
+        generalPanel.add(historyFileEntry);
+
         generalPanel.add(new JLabel("Bookmarks file"));
-        JTextField bookmarksFile = new JTextField();
-        componentPropertyMap.put(historyFile, "bookmarks_file");
-        generalPanel.add(historyFile);
+        JTextField bookmarksFileEntry = new JTextField();
+        componentPropertyMap.put(bookmarksFileEntry, "bookmarks_file");
+        generalPanel.add(bookmarksFileEntry);
 
         JPanel networkPanel = new JPanel();
 

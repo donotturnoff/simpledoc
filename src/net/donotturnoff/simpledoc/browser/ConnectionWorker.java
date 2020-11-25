@@ -81,7 +81,7 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
                 byte[] data = Files.readAllBytes(p);
                 Map<String, String> headers = new HashMap<>();
                 String mime = FileUtils.getMime(p);
-                mime = (mime == null) ? browser.getConfig().getProperty("default_mime_type") : mime;
+                mime = (mime == null) ? browser.getConfig().getProperty("default_mime") : mime;
                 headers.put("type", mime);
                 return new Response("file", Status.OK, headers, data);
             } catch (IOException e) {

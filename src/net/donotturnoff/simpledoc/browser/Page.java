@@ -224,6 +224,7 @@ public class Page {
         panel.removeAll();
         if (!revisiting || !history.pageVisited(url)) {
             history.navigate(url);
+            browser.addToHistory(this, url);
             browser.setBackButtonState(history.canGoBack());
             browser.setForwardButtonState(history.canGoForward());
         }

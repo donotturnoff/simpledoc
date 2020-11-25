@@ -75,6 +75,8 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
     private boolean keyDown;
     private final Properties config;
     private SettingsEditor settingsEditor;
+    private HistoryStorageHandler historyHandler;
+    private HistoryViewer historyViewer;
 
     public static void main(String[] args) {
         URL.setURLStreamHandlerFactory(new SDTPURLStreamHandlerFactory());
@@ -89,7 +91,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         config = new Properties();
 
         config.setProperty("homepage", "sdtp://localhost");
-        config.setProperty("default_mime_type", "text/plain");
+        config.setProperty("default_mime", "text/sdml");
         config.setProperty("history_file", "sdtpbrowser.hist");
         config.setProperty("bookmarks_file", "sdtpbrowser.bkmk");
         config.setProperty("plain_text_font_family", "monospaced");
@@ -106,6 +108,8 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         UIManager.put("swing.boldMetal", false);
 
         settingsEditor = new SettingsEditor(this);
+        historyHandler = new HistoryStorageHandler(this);
+        historyViewer = new HistoryViewer(this, historyHandler);
         
         createWidgets();
         configureWidgets();
@@ -358,6 +362,15 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         }
     }
 
+    public void addToHistory(Page page, URL url) {
+        try {
+            historyHandler.add(url);
+            historyViewer.refresh();
+        } catch (IOException e) {
+            page.info("Failed to write " + url + " to history file: " + e.getMessage());
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         Object source = actionEvent.getSource();
@@ -383,6 +396,8 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
             currentPage.toggleResourceViewer();
         } else if (source == settingsMenuItem) {
             settingsEditor.toggle();
+        } else if (source == historyMenuItem) {
+            historyViewer.toggle();
         }
     }
 
