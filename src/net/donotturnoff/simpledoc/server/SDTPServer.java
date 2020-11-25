@@ -51,18 +51,20 @@ public class SDTPServer {
     }
 
     public static void main(String[] args) {
+        int port = 5000;
         if (args.length == 1) {
             try {
-                SDTPServer server = new SDTPServer(Integer.parseInt(args[0]));
-                server.run();
+                port = Integer.parseInt(args[0]);
             } catch (IllegalArgumentException e) {
                 logger.log(Level.SEVERE, "Invalid port number", e);
                 System.exit(3);
             }
         } else {
-            logger.log(Level.SEVERE, "One argument required: port number");
+            logger.log(Level.SEVERE, "One optional argument: port number");
             System.exit(2);
         }
+        SDTPServer server = new SDTPServer(port);
+        server.run();
     }
 
     private SDTPServer(int port) throws IllegalArgumentException {
