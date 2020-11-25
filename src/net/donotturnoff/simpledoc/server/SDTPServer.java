@@ -25,13 +25,13 @@ public class SDTPServer {
     private final Set<ServerWorker> workers;
 
     static {
-        defaultConfig.setProperty("docroot", "/var/sdtp/sdml/");
-        defaultConfig.setProperty("log", "log.txt");
+        defaultConfig.setProperty("doc_root", "sdml/");
+        defaultConfig.setProperty("log", "sdtpserver.log");
         defaultConfig.setProperty("server", "SDTPServer 0.1");
         defaultConfig.setProperty("follow_symlinks", "no");
         defaultConfig.setProperty("default_mime", "text/sdml");
         defaultConfig.setProperty("index_pages", "index.sdml");
-        defaultConfig.setProperty("listdir", "no");
+        defaultConfig.setProperty("list_dir", "no");
         config = new Properties(defaultConfig);
         try {
             InputStream propStream = new FileInputStream("sdtpserver.conf");
@@ -41,10 +41,13 @@ public class SDTPServer {
         }
 
         try {
-            FileHandler fileHandler = new FileHandler("log.txt", true);
-            fileHandler.setFormatter(new SimpleFormatter());
-            fileHandler.setLevel(Level.INFO);
-            logger.addHandler(fileHandler);
+            String logFile = config.getProperty("log");
+            if (!logFile.isBlank()) {
+                FileHandler fileHandler = new FileHandler(logFile, true);
+                fileHandler.setFormatter(new SimpleFormatter());
+                fileHandler.setLevel(Level.INFO);
+                logger.addHandler(fileHandler);
+            }
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Failed to open log file", e);
         }
