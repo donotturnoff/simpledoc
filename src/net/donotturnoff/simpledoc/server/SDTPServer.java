@@ -26,7 +26,7 @@ public class SDTPServer {
 
     static {
         defaultConfig.setProperty("doc_root", "sdml/");
-        defaultConfig.setProperty("log", "sdtpserver.log");
+        defaultConfig.setProperty("log_file", "sdtpserver.log");
         defaultConfig.setProperty("server", "SDTPServer 0.1");
         defaultConfig.setProperty("follow_symlinks", "no");
         defaultConfig.setProperty("default_mime", "text/sdml");
@@ -41,7 +41,7 @@ public class SDTPServer {
         }
 
         try {
-            String logFile = config.getProperty("log");
+            String logFile = config.getProperty("log_file");
             if (!logFile.isBlank()) {
                 FileHandler fileHandler = new FileHandler(logFile, true);
                 fileHandler.setFormatter(new SimpleFormatter());
@@ -62,7 +62,7 @@ public class SDTPServer {
                 logger.log(Level.SEVERE, "Invalid port number", e);
                 System.exit(3);
             }
-        } else {
+        } else if (args.length > 1) {
             logger.log(Level.SEVERE, "One optional argument: port number");
             System.exit(2);
         }

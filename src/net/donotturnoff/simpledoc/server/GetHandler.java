@@ -17,7 +17,7 @@ class GetHandler {
             if (SDTPServer.config.getProperty("follow_symlinks").equals("yes")) {
                 opts = new LinkOption[]{};
             }
-            Path fullPath = Path.of(SDTPServer.config.getProperty("docroot") + docPath).toRealPath(opts);
+            Path fullPath = Path.of(SDTPServer.config.getProperty("doc_root") + docPath).toRealPath(opts);
             File f = fullPath.toFile();
             return (f.isDirectory()) ? handleDirectory(fullPath, docPath) : handleFile(fullPath);
         } catch (NoSuchFileException e) {
@@ -31,7 +31,7 @@ class GetHandler {
 
     private static Response handleDirectory(Path p, String docPath) throws IOException {
         String[] indexFiles = SDTPServer.config.getProperty("index_pages").split("\\s,\\s");
-        boolean listdir = SDTPServer.config.getProperty("listdir").equals("yes");
+        boolean listdir = SDTPServer.config.getProperty("list_dir").equals("yes");
 
         for (String index: indexFiles) {
             Path p2 = Path.of(p.toString(), index);
