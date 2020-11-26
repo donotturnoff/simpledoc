@@ -47,6 +47,7 @@ public class ImgElement extends BoxElement {
     }
 
     private void loadingFailure(String msg, Exception e) {
+        page.removePendingResource(url, response);
         super.renderChildren(page, panel);
         page.warning(msg + ": " + e.getMessage());
         panel.repaint();

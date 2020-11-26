@@ -13,6 +13,7 @@ import java.util.Map;
 
 public class ResElement extends Element {
     private URL url;
+    private Response response;
 
     public ResElement(Page page, Map<String, String> attributes, List<Element> children) {
         super(page,"res", attributes, children);
@@ -36,6 +37,7 @@ public class ResElement extends Element {
     }
 
     public void loadingFailure(String s, Exception e) {
+        page.removePendingResource(url, response);
         page.warning(s + ": " + e.getMessage());
     }
 
@@ -50,27 +52,28 @@ public class ResElement extends Element {
     }
 
     public void loaded(URL url, Response response) {
+        this.response = response;
         Status s = response.getStatus();
         if (s == Status.OK) {
             String rel = attributes.getOrDefault("rel", "stylesheet");
             page.info("Loaded " + url + ": " + response.getStatus());
             if (rel.equals("stylesheet")) {
-                handleStylesheet(response);
+                handleStylesheet();
             } else if (rel.equals("favicon")) {
-                handleFavicon(response);
+                handleFavicon();
             }
         } else {
             loadingFailure("Failed to load " + url, new SDTPException(s));
         }
     }
 
-    private void handleStylesheet(Response response) {
+    private void handleStylesheet() {
         String body = new String(response.getBody());
         StyleWorker worker = new StyleWorker(page, page.getRoot(), body, url, response);
         worker.execute();
     }
 
-    private void handleFavicon(Response response) {
+    private void handleFavicon() {
         byte[] body = response.getBody();
         ImageIcon favicon = new ImageIcon(body);
         page.offerFavicon(favicon, response.getHeaders().getOrDefault("type", "image/png").endsWith("gif"));
