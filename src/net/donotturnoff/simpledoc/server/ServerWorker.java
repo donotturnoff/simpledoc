@@ -13,17 +13,6 @@ class ServerWorker implements Runnable {
 
     private static final Logger logger = Logger.getLogger(SDTPServer.class.getName());
 
-    static {
-        try {
-            FileHandler fileHandler = new FileHandler("log.txt", true);
-            fileHandler.setFormatter(new SimpleFormatter());
-            fileHandler.setLevel(Level.INFO);
-            logger.addHandler(fileHandler);
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, "Failed to open log file", e);
-        }
-    }
-
     private final SDTPServer server;
     private final Socket c;
     private final InputStream in;
