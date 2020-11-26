@@ -1,0 +1,26 @@
+doc(version="SDML/1.0", charset="UTF-8", author="donotturnoff", description="simpledoc homepage") {
+    head {
+        title {"simpledoc"}
+        res(type="text/sdss", rel="stylesheet", src="/styles/main.sdss")
+        res(type="image/png", rel="favicon", src="/images/logo.png")
+    }
+    body {
+        img(src="images/banner.png", title="Welcome") {
+            img(src="images/logo.png") {"Failed to load"}
+        }
+        div(id="intro") {
+            p {"simpledoc is a system for transferring and viewing simple hypertext documents."}
+            p {"Resources are transferred using SDTP (Simple Document Transfer Protocol), pages are marked up using SDML (Simple Document Markup Language) and styling is applied using SDSS (Simple Document Style Sheets)."}
+            p {"There is no client-side scripting: the focus is on simple, static content, much like in the early days of the web."}
+        }
+        p {
+            "Click "
+            link(href="about.sdml", title="About simpledoc") {"here"}
+            " for more information about the system"
+        }
+        link(href="todo.sdml", title="To do list") {"Upcoming changes"}
+        link(href="images", title="View images") {"Images"}
+        link(href="styles", title="View styles") {"Styles"}
+        
+    }
+}

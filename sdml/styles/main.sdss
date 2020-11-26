@@ -1,0 +1,56 @@
+p {
+    font_size="14"
+    link <hover> {
+        colour="#FF0000"
+    }
+}
+
+li {
+    font_size="14"
+}
+
+?(class="important") {
+    colour="#A52A2A"
+    font_style="bold"
+}
+
+div(id="intro") {
+    margin_top="10"
+    margin_bottom="10"
+}
+
+link(href="images") {
+    font_size="10"
+}
+link(href="styles") {
+    font_size="10"
+}
+
+link {
+    font_size="14"
+}
+
+link <hover> {
+    background_colour="#CCCCCC"
+}
+
+link <active> {
+    colour="red"
+}
+
+h1 {
+    underline="single"
+    font_family="sans_serif"
+}
+
+h2 {
+    font_family="sans_serif"
+}
+
+h3 {
+    font_family="sans_serif"
+}
+
+h4 {
+    font_family="sans_serif"
+}

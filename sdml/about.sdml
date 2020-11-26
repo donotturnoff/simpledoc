@@ -1,0 +1,15 @@
+doc(version="SDML/1.0", charset="UTF-8", author="Isaac Dixon", description="About simpledoc") {
+    head {
+        title {"About simpledoc"}
+        res(type="text/css", rel="stylesheet", src="/styles/main.sdss")
+    }
+    body {
+        h1 {"simpledoc"}
+        h2 {"SDTP"}
+        p {"SDTP is a simple file transfer protocol for SDML and other formats."}
+        h2 {"SDML"}
+        p {"SDML is a simple markup language."}
+        h2 {"SDSS"}
+        p {"SDSS is a simple styling language."}
+    }
+}

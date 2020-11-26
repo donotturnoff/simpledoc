@@ -1,0 +1,75 @@
+doc(version="SDML/1.0", charset="UTF-8", author="Isaac Dixon", description="Upcoming improvements to Simpledoc") {
+    head {
+        title {"To do"}
+        res(type="text/sdss", rel="stylesheet", src="/styles/main.sdss")
+        res(type="image/png", rel="favicon", src="/images/logo.png")
+    }
+    body {
+        h1 {"To do"}
+        h2 {"Server"}
+        p {"Nothing as of yet"}
+        h2 {"Browser"}
+        h3 {"Lexing and parsing"}
+        ul {
+            li {"Attempt to recover from slightly incorrect SDML/SDSS"}
+            li {"Provide more informative errors"}
+            li {"Handle invalid attribute values and invalid styles"}
+        }
+        h3 {"Interface"}
+        ul {
+            li(class="important") {"Log source and cause of each event"}
+            li(class="important") {"Handle local directories"}
+            li(class="important") {"Allow for sapces in URLs"}
+            li(class="important") {"Ensure main page is the first tab in the sources viewer"}
+            li {"Source viewer syntax and element highlighting"}
+            li {"History search"}
+            li {"Make title attribute apply to child elements when " code{"img"} " doesn't load"}
+        }
+        h3 {"SDML"}
+        ul {
+            li {"Video"}
+            li {"Change bullet style on nested lists"}
+            li {"Ordered lists"}
+            li {"Dictionary lists"}
+            li {"Audio"}
+            li {"Maths"}
+            li {"Display newlines in strings"}
+            li {"br and hr"}
+            li {"Link anchors"}
+            li {"Use " code {"res"} " type information"}
+        }
+        h3 {"Features"}
+        ul {
+            li {"Strict vs relaxed mode"}
+            li(class="important") {"Bookmarks"}
+            li(class="important") {"History"}
+            li(class="important") {"Network viewer"}
+            li {"HTML and CSS support"}
+        }
+        h3 {"Styles"}
+        ul {
+            li(class="important") {"Width and height"}
+            li {"Shorthand rules"}
+            li {"Line height"}
+            li {"Different colours for each side of a border"}
+            li {"Different border styles"}
+            li {"Different underline styles"}
+            li {"More text decorations"}
+            li {"More control over font weight"}
+            li {"More states"}
+            li {"Distance between bullet and text"}
+            li {"Combined states"}
+            li {"Permit no layout manager"}
+            li {"Apply text styling on " code {"li"} " to bullets"}
+            li {"More named colours"}
+            li(class="important") {"Combined selectors (e.g. \"" code {"p, link, h1"} "\")"}
+            li {"User-defined stylesheets"}
+        }
+        h3 {"Performance"}
+        ul {
+            li {"Caching"}
+            li {"Display images in separate thread"}
+            li {"Optimise loading code"}
+        }
+    }
+}
