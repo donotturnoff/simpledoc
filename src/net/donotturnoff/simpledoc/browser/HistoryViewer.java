@@ -112,10 +112,12 @@ public class HistoryViewer implements ActionListener, MouseListener {
 
     public void toggle() {
         gui.setVisible(!gui.isVisible());
+        refresh();
     }
 
     public void show() {
         gui.setVisible(true);
+        refresh();
     }
 
     @Override
