@@ -317,7 +317,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
     }
 
     public void setTitle(int index, String title) {
-        gui.setTitle(title + " - Simpledoc browser v0.1");
+        gui.setTitle(title + " - simpledoc browser v0.1");
         tabbedPane.setTitleAt(index, title);
         tabbedPane.setToolTipTextAt(index, title);
     }
@@ -454,6 +454,13 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
                 if (!keyDown) {
                     keyDown = true;
                     removePage(tabbedPane.getSelectedIndex());
+                }
+            }
+        } else if (keyEvent.getKeyCode() == KeyEvent.VK_T) {
+            if (keyEvent.isControlDown()) {
+                if (!keyDown) {
+                    keyDown = true;
+                    addPage(config.getProperty("homepage"));
                 }
             }
         }

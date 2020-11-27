@@ -3,6 +3,7 @@ package net.donotturnoff.simpledoc.browser;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Date;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -28,16 +29,27 @@ public class HistoryStorageHandler {
         bw.close();
     }
 
+    private int getEntryCount() throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(browser.getConfig().getProperty("history_file")));
+        int entries = 0;
+        while (br.readLine() != null) {
+            entries++;
+        }
+        br.close();
+        return entries;
+    }
+
     public SortedMap<Date, URL> get(int start, int len) throws IOException {
-        SortedMap<Date, URL> visits = new TreeMap<>();
+        SortedMap<Date, URL> visits = new TreeMap<>(Collections.reverseOrder());
 
         File historyFile = new File(browser.getConfig().getProperty("history_file"));
         BufferedReader br = new BufferedReader(new FileReader(historyFile));
+        int entries = getEntryCount();
         String line;
         int i = 0;
         while ((line = br.readLine()) != null) {
-            if (i >= start) {
-                if (i >= start+len) {
+            if (i >= entries - (start + len)) {
+                if (i >= entries - start) {
                     break;
                 }
                 if (!line.isBlank()) {
