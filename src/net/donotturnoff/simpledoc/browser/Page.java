@@ -10,6 +10,8 @@ import net.donotturnoff.simpledoc.util.Status;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -277,7 +279,13 @@ public class Page {
     private void displayImage(URL url, Response response) {
         byte[] data = response.getBody();
         Status status = response.getStatus();
-        JImagePanel imgPanel = new JImagePanel(data, () -> info("Loaded " + url + ": " + status), (Exception e) -> error("Failed to load " + url, e));
+        JImagePanel imgPanel = new JImagePanel(data, () -> info("Loaded " + url + ": " + status), (Exception e) -> error("Failed to load " + url, e), true);
+        imgPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                imgPanel.toggleScaled();
+            }
+        });
         panel.add(imgPanel);
         panel.repaint();
         panel.revalidate();
