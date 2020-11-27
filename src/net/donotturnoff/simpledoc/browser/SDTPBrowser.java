@@ -382,8 +382,6 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
             currentPage.reload();
         } else if (source == goBtn) {
             currentPage.navigate(urlBar.getText(), true);
-        } else if (source == evBtn || source == evMenuItem) {
-            currentPage.toggleEventViewer();
         } else if (source == exitMenuItem) {
             System.exit(0);
         } else if (source == newTabMenuItem) {
@@ -392,12 +390,16 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
             saveCurrentPage();
         } else if (source == openFileMenuItem) {
             openFile();
+        } else if (source == evBtn) {
+            currentPage.toggleEventViewer();
+        } else if (source == evMenuItem) {
+            currentPage.showEventViewer();
         } else if (source == rvMenuItem) {
-            currentPage.toggleResourceViewer();
+            currentPage.showResourceViewer();
         } else if (source == settingsMenuItem) {
-            settingsEditor.toggle();
+            settingsEditor.show();
         } else if (source == historyMenuItem) {
-            historyViewer.toggle();
+            historyViewer.show();
         }
     }
 

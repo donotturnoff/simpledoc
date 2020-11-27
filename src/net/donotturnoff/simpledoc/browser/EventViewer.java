@@ -61,6 +61,10 @@ public class EventViewer {
         gui.setVisible(!gui.isVisible());
     }
 
+    public void show() {
+        gui.setVisible(true);
+    }
+
     public void hide() {
         gui.setVisible(false);
     }

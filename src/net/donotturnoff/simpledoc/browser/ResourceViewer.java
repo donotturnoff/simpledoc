@@ -95,8 +95,13 @@ public class ResourceViewer {
 
         tabbedPane.addTab(FileUtils.getFilename(url), infoPanel);
     }
+
     public void toggle() {
         gui.setVisible(!gui.isVisible());
+    }
+
+    public void show() {
+        gui.setVisible(true);
     }
 
     public void hide() {

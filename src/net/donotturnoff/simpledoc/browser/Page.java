@@ -376,4 +376,12 @@ public class Page {
     public void toggleResourceViewer() {
         rv.toggle();
     }
+
+    public void showEventViewer() {
+        ev.show();
+    }
+
+    public void showResourceViewer() {
+        rv.show();
+    }
 }

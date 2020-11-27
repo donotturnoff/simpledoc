@@ -118,6 +118,10 @@ public class SettingsEditor implements ActionListener {
         gui.setVisible(notVis);
     }
 
+    public void show() {
+        gui.setVisible(true);
+    }
+
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         Object source = actionEvent.getSource();

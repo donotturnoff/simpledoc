@@ -62,54 +62,60 @@ public class HistoryViewer implements ActionListener, MouseListener {
     }
 
     public void refresh() {
-        int lastPage = (handler.getHistoryLength()-1)/RESULTS_PER_PAGE;
-        pageNo = Math.max(pageNo, 0);
-        pageNo = Math.min(lastPage, pageNo);
-        prevBtn.setEnabled(pageNo > 0);
-        nextBtn.setEnabled(pageNo < lastPage);
 
-        infoPanel.removeAll();
+        if (gui.isVisible()) {
+            int lastPage = (handler.getHistoryLength()-1)/RESULTS_PER_PAGE;
+            pageNo = Math.max(pageNo, 0);
+            pageNo = Math.min(lastPage, pageNo);
+            prevBtn.setEnabled(pageNo > 0);
+            nextBtn.setEnabled(pageNo < lastPage);
 
-        try {
-            SortedMap<Date, URL> results = handler.get(RESULTS_PER_PAGE*pageNo, RESULTS_PER_PAGE);
+            infoPanel.removeAll();
 
-            String[][] tableValues = new String[RESULTS_PER_PAGE][2];
+            try {
+                SortedMap<Date, URL> results = handler.get(RESULTS_PER_PAGE*pageNo, RESULTS_PER_PAGE);
 
-            int i = 0;
-            for (Date datetime : results.keySet()) {
-                String timestamp = DATE_FORMAT.format(datetime);
+                String[][] tableValues = new String[RESULTS_PER_PAGE][2];
 
-                tableValues[i][0] = timestamp;
-                tableValues[i++][1] = results.get(datetime).toString();
+                int i = 0;
+                for (Date datetime : results.keySet()) {
+                    String timestamp = DATE_FORMAT.format(datetime);
+
+                    tableValues[i][0] = timestamp;
+                    tableValues[i++][1] = results.get(datetime).toString();
+                }
+
+                historyTable = new JTable(tableValues, new String[]{"Timestamp", "URL"});
+                historyTable.getTableHeader().setReorderingAllowed(false);
+                historyTable.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.GRAY));
+                historyTable.addMouseListener(this);
+
+                TableColumnModel tcm = historyTable.getColumnModel();
+                tcm.getColumn(0).setPreferredWidth(200);
+                tcm.getColumn(1).setPreferredWidth(600);
+
+                JScrollPane scrollPane = new JScrollPane(historyTable);
+                scrollPane.getVerticalScrollBar().setUnitIncrement(10);
+                scrollPane.getHorizontalScrollBar().setUnitIncrement(10);
+                scrollPane.getVerticalScrollBar().setBlockIncrement(40);
+                scrollPane.getHorizontalScrollBar().setUnitIncrement(40);
+
+                infoPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+                infoPanel.add(scrollPane);
+            } catch (IOException e) {
+                infoPanel.add(new JLabel("Failed to load history file: " + e.getMessage()));
             }
-
-            historyTable = new JTable(tableValues, new String[]{"Timestamp", "URL"});
-            historyTable.getTableHeader().setReorderingAllowed(false);
-            historyTable.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.GRAY));
-            historyTable.addMouseListener(this);
-
-            TableColumnModel tcm = historyTable.getColumnModel();
-            tcm.getColumn(0).setPreferredWidth(200);
-            tcm.getColumn(1).setPreferredWidth(600);
-
-            JScrollPane scrollPane = new JScrollPane(historyTable);
-            scrollPane.getVerticalScrollBar().setUnitIncrement(10);
-            scrollPane.getHorizontalScrollBar().setUnitIncrement(10);
-            scrollPane.getVerticalScrollBar().setBlockIncrement(40);
-            scrollPane.getHorizontalScrollBar().setUnitIncrement(40);
-
-            infoPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-            infoPanel.add(scrollPane);
-        } catch (IOException e) {
-            infoPanel.add(new JLabel("Failed to load history file: " + e.getMessage()));
+            gui.revalidate();
+            gui.repaint();
         }
-
-        gui.revalidate();
-        gui.repaint();
     }
 
     public void toggle() {
         gui.setVisible(!gui.isVisible());
+    }
+
+    public void show() {
+        gui.setVisible(true);
     }
 
     @Override
