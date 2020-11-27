@@ -9,7 +9,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -71,8 +70,6 @@ public class HistoryViewer implements ActionListener, MouseListener {
 
         infoPanel.removeAll();
 
-        //infoPanel.setBackground(Color.WHITE);
-
         try {
             SortedMap<Date, URL> results = handler.get(RESULTS_PER_PAGE*pageNo, RESULTS_PER_PAGE);
 
@@ -92,8 +89,8 @@ public class HistoryViewer implements ActionListener, MouseListener {
             historyTable.addMouseListener(this);
 
             TableColumnModel tcm = historyTable.getColumnModel();
-            tcm.getColumn(0).setPreferredWidth(100);
-            tcm.getColumn(1).setPreferredWidth(700);
+            tcm.getColumn(0).setPreferredWidth(200);
+            tcm.getColumn(1).setPreferredWidth(600);
 
             JScrollPane scrollPane = new JScrollPane(historyTable);
             scrollPane.getVerticalScrollBar().setUnitIncrement(10);
