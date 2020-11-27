@@ -58,7 +58,7 @@ public class Page {
 
     Page(SDTPBrowser browser) {
         this.browser = browser;
-        this.panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        this.panel = new JPanel();
         this.scrollPane = new JScrollPane(panel);
         this.history = new TempHistory();
         this.revisiting = false;
