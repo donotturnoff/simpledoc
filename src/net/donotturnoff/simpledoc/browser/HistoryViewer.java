@@ -88,7 +88,11 @@ public class HistoryViewer implements ActionListener, MouseListener {
                 SortedMap<Date, URL> results = handler.get(start, RESULTS_PER_PAGE);
                 int end = start + results.size();
 
-                locationLabel.setText("Showing entries " + (start+1) + " to " + end + " out of " + entries);
+                if (entries > 0) {
+                    locationLabel.setText("Showing entries " + (start + 1) + " to " + end + " out of " + entries);
+                } else {
+                    locationLabel.setText("History empty");
+                }
 
                 String[][] tableValues = new String[RESULTS_PER_PAGE][2];
 
