@@ -26,7 +26,8 @@ public class HistoryViewer implements ActionListener, MouseListener {
     private final JFrame gui;
     private final HistoryStorageHandler handler;
     private final JPanel infoPanel;
-    private final JButton prevBtn, nextBtn;
+    private final JButton prevBtn, clearBtn, nextBtn;
+    private final JLabel locationLabel;
     private JTable historyTable;
     private int pageNo;
 
@@ -41,16 +42,22 @@ public class HistoryViewer implements ActionListener, MouseListener {
 
         JPanel navPanel = new JPanel();
         prevBtn = new JButton("\u2b60");
+        locationLabel = new JLabel();
         nextBtn = new JButton("\u2b62");
+        clearBtn = new JButton("Clear");
 
         prevBtn.setToolTipText("More recent");
         nextBtn.setToolTipText("Further back");
+        clearBtn.setToolTipText("Clear history");
 
         prevBtn.addActionListener(this);
         nextBtn.addActionListener(this);
+        clearBtn.addActionListener(this);
 
         navPanel.add(prevBtn);
+        navPanel.add(locationLabel);
         navPanel.add(nextBtn);
+        navPanel.add(clearBtn);
 
         infoPanel = new JPanel();
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
@@ -64,16 +71,23 @@ public class HistoryViewer implements ActionListener, MouseListener {
     public void refresh() {
 
         if (gui.isVisible()) {
-            int lastPage = (handler.getHistoryLength()-1)/RESULTS_PER_PAGE;
+
+            int entries = handler.getHistoryLength();
+            int lastPage = (entries-1)/RESULTS_PER_PAGE;
             pageNo = Math.max(pageNo, 0);
             pageNo = Math.min(lastPage, pageNo);
             prevBtn.setEnabled(pageNo > 0);
             nextBtn.setEnabled(pageNo < lastPage);
+            clearBtn.setEnabled(entries > 0);
 
             infoPanel.removeAll();
 
             try {
-                SortedMap<Date, URL> results = handler.get(RESULTS_PER_PAGE*pageNo, RESULTS_PER_PAGE);
+                int start = RESULTS_PER_PAGE*pageNo;
+                SortedMap<Date, URL> results = handler.get(start, RESULTS_PER_PAGE);
+                int end = start + results.size();
+
+                locationLabel.setText("Showing entries " + (start+1) + " to " + end + " out of " + entries);
 
                 String[][] tableValues = new String[RESULTS_PER_PAGE][2];
 
@@ -126,6 +140,16 @@ public class HistoryViewer implements ActionListener, MouseListener {
         if (source == prevBtn) {
             pageNo--;
             refresh();
+        } else if (source == clearBtn) {
+            int choice = JOptionPane.showConfirmDialog(gui, "Are you sure you wish to clear your history file (" + browser.getConfig().getProperty("history_file") + ")? This operation cannot be undone.", "Clear history?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            if (choice == 0) {
+                try {
+                    handler.clear();
+                    refresh();
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(gui, "Failed to delete history file (" + browser.getConfig().getProperty("history_file") + ").", "Deletion failed", JOptionPane.ERROR_MESSAGE);
+                }
+            }
         } else if (source == nextBtn) {
             pageNo++;
             refresh();
@@ -136,7 +160,10 @@ public class HistoryViewer implements ActionListener, MouseListener {
     public void mouseClicked(MouseEvent mouseEvent) {
         int row = historyTable.rowAtPoint(mouseEvent.getPoint());
         int col = historyTable.columnAtPoint(mouseEvent.getPoint());
-        browser.addPage(historyTable.getValueAt(row, col).toString());
+        Object value = historyTable.getValueAt(row, col);
+        if (value != null) {
+            browser.addPage(value.toString());
+        }
     }
 
     @Override

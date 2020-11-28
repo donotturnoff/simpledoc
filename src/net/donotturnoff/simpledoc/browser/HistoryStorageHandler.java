@@ -29,14 +29,9 @@ public class HistoryStorageHandler {
         bw.close();
     }
 
-    private int getEntryCount() throws IOException {
-        BufferedReader br = new BufferedReader(new FileReader(browser.getConfig().getProperty("history_file")));
-        int entries = 0;
-        while (br.readLine() != null) {
-            entries++;
-        }
-        br.close();
-        return entries;
+    public void clear() throws FileNotFoundException {
+        PrintWriter pw = new PrintWriter(browser.getConfig().getProperty("history_file"));
+        pw.close();
     }
 
     public SortedMap<Date, URL> get(int start, int len) throws IOException {
@@ -44,7 +39,7 @@ public class HistoryStorageHandler {
 
         File historyFile = new File(browser.getConfig().getProperty("history_file"));
         BufferedReader br = new BufferedReader(new FileReader(historyFile));
-        int entries = getEntryCount();
+        int entries = getHistoryLength();
         String line;
         int i = 0;
         while ((line = br.readLine()) != null) {
