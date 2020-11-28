@@ -94,7 +94,7 @@ public class HistoryViewer implements ActionListener, MouseListener {
                     locationLabel.setText("History empty");
                 }
 
-                String[][] tableValues = new String[RESULTS_PER_PAGE][2];
+                String[][] tableValues = new String[results.size()][2];
 
                 int i = 0;
                 for (Date datetime : results.keySet()) {
