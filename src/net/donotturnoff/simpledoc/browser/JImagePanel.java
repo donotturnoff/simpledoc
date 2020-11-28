@@ -2,11 +2,11 @@ package net.donotturnoff.simpledoc.browser;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.function.Consumer;
 
 public class JImagePanel extends JPanel {
-    private BufferedImage img;
+    private Image img;
+    private final JLabel label;
     private final Runnable callback;
     private final Consumer<Exception> errorHandlerCallback;
     private boolean scaled;
@@ -16,24 +16,30 @@ public class JImagePanel extends JPanel {
         this.callback = callback;
         this.errorHandlerCallback = errorHandlerCallback;
         this.scaled = false;
+        this.label = new JLabel();
         setBackground(Color.WHITE);
         img = null;
+        add(label);
     }
 
     public JImagePanel(byte[] data, Runnable callback, Consumer<Exception> errorHandlerCallback) {
         this.callback = callback;
         this.errorHandlerCallback = errorHandlerCallback;
         this.scaled = false;
+        this.label = new JLabel();
         setBackground(Color.WHITE);
         setImage(data);
+        add(label);
     }
 
     public JImagePanel(byte[] data, Runnable callback, Consumer<Exception> errorHandlerCallback, boolean scaled) {
         this.callback = callback;
         this.errorHandlerCallback = errorHandlerCallback;
         this.scaled = scaled;
+        this.label = new JLabel();
         setBackground(Color.WHITE);
         setImage(data);
+        add(label);
     }
 
     @Override
@@ -48,16 +54,21 @@ public class JImagePanel extends JPanel {
 
     public void toggleScaled() {
         scaled = !scaled;
+        refresh();
+    }
+
+    private void refresh() {
         int[] size = getScaledSize();
         setPreferredSize(new Dimension(size[0], size[1]));
+        label.setIcon(new ImageIcon(img.getScaledInstance(size[0], size[1], Image.SCALE_DEFAULT)));
         repaint();
         revalidate();
     }
 
     private int[] getScaledSize() {
         if (scaled) {
-            int w = img.getWidth();
-            int h = img.getHeight();
+            int w = img.getWidth(null);
+            int h = img.getHeight(null);
             double ratio = ((double) h)/w;
             if (h > ph) {
                 h = ph-10;
@@ -69,7 +80,7 @@ public class JImagePanel extends JPanel {
             }
             return new int[]{w, h};
         } else {
-            return new int[]{img.getWidth(), img.getHeight()};
+            return new int[]{img.getWidth(this), img.getHeight(this)};
         }
     }
 
@@ -81,23 +92,14 @@ public class JImagePanel extends JPanel {
         }
     }
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        if (img != null) {
-            int[] size = getScaledSize();
-            // Paint the background image
-            g.drawImage(img, 0, 0, size[0], size[1], this);
-        }
-    }
-
-    public void rendered(BufferedImage img) {
+    public void rendered(Image img) {
         this.img = img;
         setParentDimensions();
-        int[] size = getScaledSize();
-        setPreferredSize(new Dimension(size[0], size[1]));
-        repaint();
-        revalidate();
+
+        // Hack to force image to calculate its dimensions so getSize doesn't return {-1, -1}
+        label.setIcon(new ImageIcon(img));
+
+        refresh();
         callback.run();
     }
 }
