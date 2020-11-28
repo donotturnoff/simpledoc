@@ -465,6 +465,13 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
                     addPage(config.getProperty("homepage"));
                 }
             }
+        } else if (keyEvent.getKeyCode() == KeyEvent.VK_H) {
+            if (keyEvent.isControlDown()) {
+                if (!keyDown) {
+                    keyDown = true;
+                    historyViewer.show();
+                }
+            }
         }
     }
 

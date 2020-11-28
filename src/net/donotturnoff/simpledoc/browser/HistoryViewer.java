@@ -18,7 +18,6 @@ import java.util.SortedMap;
 
 public class HistoryViewer implements ActionListener, MouseListener {
 
-    // TODO: add clear history button
     // TODO: make history storage optional
 
     private static final int RESULTS_PER_PAGE = 100; // TODO: make configurable
@@ -131,11 +130,6 @@ public class HistoryViewer implements ActionListener, MouseListener {
             gui.revalidate();
             gui.repaint();
         }
-    }
-
-    public void toggle() {
-        gui.setVisible(!gui.isVisible());
-        refresh();
     }
 
     public void show() {
