@@ -2,7 +2,9 @@ package net.donotturnoff.simpledoc.browser;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -99,7 +101,14 @@ public class HistoryViewer implements ActionListener, MouseListener {
                     tableValues[i++][1] = results.get(datetime).toString();
                 }
 
-                historyTable = new JTable(tableValues, new String[]{"Timestamp", "URL"});
+                TableModel tm = new DefaultTableModel(tableValues, new String[]{"Timestamp", "URL"}) {
+                    @Override
+                    public boolean isCellEditable(int row, int column){
+                        return false;
+                    }
+                };
+
+                historyTable = new JTable(tm);
                 historyTable.getTableHeader().setReorderingAllowed(false);
                 historyTable.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.GRAY));
                 historyTable.addMouseListener(this);
@@ -161,7 +170,7 @@ public class HistoryViewer implements ActionListener, MouseListener {
         int row = historyTable.rowAtPoint(mouseEvent.getPoint());
         int col = historyTable.columnAtPoint(mouseEvent.getPoint());
         Object value = historyTable.getValueAt(row, col);
-        if (value != null) {
+        if (value != null && col == 1) {
             browser.addPage(value.toString());
         }
     }
