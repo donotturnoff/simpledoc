@@ -28,7 +28,7 @@ public class RenderWorker extends SwingWorker<Void, Void> {
     protected void done() {
         root.cascadeStyles();
         root.refresh(page);
-        page.removePendingResource(page.getUrl(), page.getData());
+        page.removePendingResource(page.getUrl(), page.getData(), 0);
         page.info("Rendered " + page.getUrl());
     }
 }

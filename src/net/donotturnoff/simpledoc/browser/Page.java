@@ -289,7 +289,7 @@ public class Page {
         panel.add(imgPanel);
         panel.repaint();
         panel.revalidate();
-        removePendingResource(url, response);
+        removePendingResource(url, response, 0);
     }
 
     private void displayText(URL url, Response response) {
@@ -300,7 +300,7 @@ public class Page {
         panel.repaint();
         panel.revalidate();
         info("Loaded " + url + ": " + status);
-        removePendingResource(url, response);
+        removePendingResource(url, response, 0);
     }
 
     public void close() {
@@ -354,11 +354,15 @@ public class Page {
     }
 
     public void removePendingResource(URL url, Response response) {
+        removePendingResource(url, response, -1);
+    }
+
+    public void removePendingResource(URL url, Response response, int index) {
         pendingResources.remove(url);
         if (pendingResources.isEmpty()) {
             applyOfferedFavicon();
         }
-        rv.addResource(url, response);
+        rv.addResource(url, response, index);
     }
 
     public void addElement(Element e) {

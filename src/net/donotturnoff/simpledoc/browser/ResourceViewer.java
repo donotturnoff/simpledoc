@@ -32,6 +32,10 @@ public class ResourceViewer {
     }
 
     public void addResource(URL url, Response r) {
+        addResource(url, r, -1);
+    }
+
+    public void addResource(URL url, Response r, int index) {
         JPanel infoPanel = new JPanel();
 
         if (r == null) {
@@ -93,7 +97,12 @@ public class ResourceViewer {
             infoPanel.add(scrollPane);
         }
 
-        tabbedPane.addTab(FileUtils.getFilename(url), infoPanel);
+        String filename = FileUtils.getFilename(url);
+        if (index < 0) {
+            tabbedPane.addTab(filename, null, infoPanel, filename);
+        } else {
+            tabbedPane.insertTab(filename, null, infoPanel, filename, index);
+        }
     }
 
     public void toggle() {
