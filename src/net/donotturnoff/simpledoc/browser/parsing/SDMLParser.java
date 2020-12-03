@@ -2,6 +2,8 @@ package net.donotturnoff.simpledoc.browser.parsing;
 
 import net.donotturnoff.simpledoc.browser.Page;
 import net.donotturnoff.simpledoc.browser.element.Element;
+import net.donotturnoff.simpledoc.browser.element.ResElement;
+import net.donotturnoff.simpledoc.browser.element.StyleElement;
 import net.donotturnoff.simpledoc.browser.element.TextElement;
 import net.donotturnoff.lr0.*;
 
@@ -73,10 +75,13 @@ public class SDMLParser {
     
     private final Page page;
     private final Set<String> ids;
+    private int styleIndex;
+    private int resIndex;
     
     public SDMLParser(Page page) {
         this.page = page;
         ids = new HashSet<>();
+        styleIndex = resIndex = 0;
     }
     
     public Element parse(Queue<Terminal<?>> tokens) throws ParsingException {
@@ -102,7 +107,14 @@ public class SDMLParser {
         Map<String, String> attrs = attributes(n, tag);
         List<Element> children = children(n);
         try {
-            Element e = tagClass.getConstructor(Page.class, Map.class, List.class).newInstance(page, attrs, children);
+            Element e;
+            if (tag.equals("style")) {
+                e = new StyleElement(page, attrs, children, styleIndex++);
+            } else if (tag.equals("res")) {
+                e = new ResElement(page, attrs, children, resIndex++);
+            } else {
+                e = tagClass.getConstructor(Page.class, Map.class, List.class).newInstance(page, attrs, children);
+            }
             page.addElement(e);
             return e;
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {

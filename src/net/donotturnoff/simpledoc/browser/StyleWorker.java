@@ -17,19 +17,27 @@ public class StyleWorker extends SwingWorker<Void, Void> {
     private final String body;
     private final URL url;
     private final Response response;
+    private final StyleSource source;
+    private final int index;
 
-    public StyleWorker(Page page, Element root, String body, URL url, Response response) {
+    public StyleWorker(Page page, Element root, String body, URL url, Response response, StyleSource source, int index) {
         this.page = page;
         this.root = root;
         this.body = body;
         this.url = url;
         this.response = response;
+        this.source = source;
+        this.index = index;
         page.addWorker(this);
     }
 
     @Override
     protected Void doInBackground() {
-        page.info("Applying stylesheet " + url);
+        if (url == null) {
+            page.info("Applying internal stylesheet");
+        } else {
+            page.info("Applying stylesheet " + url);
+        }
         Queue<Terminal<?>> tokens = lexStylesheet(body);
         if (!tokens.isEmpty()) {
             parseStylesheet(tokens);
@@ -43,17 +51,25 @@ public class StyleWorker extends SwingWorker<Void, Void> {
             SDSSLexer lexer = new SDSSLexer(page);
             tokens = lexer.lex(body);
         } catch (LexingException e) {
-            page.warning("Failed to lex stylesheet: " + e.getMessage());
+            if (url == null) {
+                page.warning("Failed to lex internal stylesheet: " + e.getMessage());
+            } else {
+                page.warning("Failed to lex stylesheet " + url + ": " + e.getMessage());
+            }
         }
         return tokens;
     }
 
     private void parseStylesheet(Queue<Terminal<?>> tokens) {
         try {
-            SDSSParser parser = new SDSSParser(page);
+            SDSSParser parser = new SDSSParser(page, source, index);
             parser.parse(tokens);
         } catch (ParsingException e) {
-            page.warning("Failed to parse stylesheet: " + e.getMessage());
+            if (url == null) {
+                page.warning("Failed to parse internal stylesheet: " + e.getMessage());
+            } else {
+                page.warning("Failed to parse stylesheet " + url + ": " + e.getMessage());
+            }
         }
     }
 
@@ -64,6 +80,10 @@ public class StyleWorker extends SwingWorker<Void, Void> {
         page.getPanel().repaint();
         page.getPanel().revalidate();
         page.removePendingResource(url, response);
-        page.info("Applied stylesheet " + url);
+        if (url == null) {
+            page.info("Applied internal stylesheet");
+        } else {
+            page.info("Applied stylesheet " + url);
+        }
     }
 }

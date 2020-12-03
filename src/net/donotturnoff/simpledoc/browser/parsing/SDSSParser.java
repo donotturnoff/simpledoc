@@ -98,9 +98,13 @@ public class SDSSParser {
     }
 
     private final Page page;
+    private final StyleSource source;
+    private final int index;
 
-    public SDSSParser(Page page) {
+    public SDSSParser(Page page, StyleSource source, int index) {
         this.page = page;
+        this.source = source;
+        this.index = index;
     }
 
     public void parse(Queue<Terminal<?>> tokens) throws ParsingException {
@@ -215,7 +219,7 @@ public class SDSSParser {
             } else { // Handle property
                 String key = (String) ((Terminal<?>) elemOrProp.getChildren().get(0).getSymbol()).getToken().getValue();
                 String value = (String) ((Terminal<?>) elemOrProp.getChildren().get(2).getSymbol()).getToken().getValue();
-                s.set(key, value, priority);
+                s.set(key, value, source, index, priority);
             }
             elemsAndProps = elemsAndProps.getChildren().get(1);
         }
@@ -225,7 +229,7 @@ public class SDSSParser {
         } else { // Handle property
             String key = (String) ((Terminal<?>) elemOrProp.getChildren().get(0).getSymbol()).getToken().getValue();
             String value = (String) ((Terminal<?>) elemOrProp.getChildren().get(2).getSymbol()).getToken().getValue();
-            s.set(key, value, priority);
+            s.set(key, value, source, index, priority);
         }
         for (Element e: selectedElements) {
             e.addStyles(state, s);

@@ -1,13 +1,15 @@
 package net.donotturnoff.simpledoc.browser;
 
+import net.donotturnoff.simpledoc.browser.parsing.StyleSource;
+import net.donotturnoff.simpledoc.browser.parsing.StyleValue;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.font.TextAttribute;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 public class Style {
@@ -39,40 +41,33 @@ public class Style {
         COLOUR_MAP.put("pink", Color.PINK);
     }
 
-    private final Map<String, String> defaultProperties;
-    private final Map<String, Integer> defaultPriorities;
-    private final Map<String, String> properties;
-    private final Map<String, Integer> priorities;
+    // key -> source -> index -> priority -> value
+    private final ConcurrentMap<String, StyleValue> properties;
 
     public Style() {
-        this.defaultProperties = new HashMap<>();
-        this.defaultPriorities = new HashMap<>();
-        this.properties = new HashMap<>();
-        this.priorities = new HashMap<>();
+        this.properties = new ConcurrentHashMap<>();
     }
 
     public Style(Style existingStyle) {
-        this.defaultProperties = new HashMap<>(existingStyle.defaultProperties);
-        this.defaultPriorities = new HashMap<>(existingStyle.defaultPriorities);
-        this.properties = new HashMap<>(existingStyle.properties);
-        this.priorities = new HashMap<>(existingStyle.priorities);
+        this.properties = new ConcurrentHashMap<>(existingStyle.properties);
     }
 
-    public Style(Map<String, String> properties, Map<String, Integer> priorities, Map<String, String> defaultProperties, Map<String, Integer> defaultPriorities) {
+    public Style(ConcurrentMap<String, StyleValue> properties) {
         this.properties = properties;
-        this.priorities = priorities;
-        this.defaultProperties = defaultProperties;
-        this.defaultPriorities = defaultPriorities;
     }
 
     public void set(String key, String value) {
-        set(key, value, 0);
+        set(key, value, StyleSource.INLINE, 0, 0);
     }
 
-    public void set(String key, String value, int priority) {
-        if (priority >= priorities.getOrDefault(key, Integer.MIN_VALUE)) {
-            properties.put(key, value);
-            priorities.put(key, priority);
+    public void set(String key, String value, StyleSource source, int index, int priority) {
+        StyleValue sv = new StyleValue(value, source, index, priority);
+        set(key, sv);
+    }
+
+    public void set(String key, StyleValue sv) {
+        if (sv.compareTo(properties.get(key)) > 0) {
+            properties.put(key, sv);
         }
     }
 
@@ -81,71 +76,61 @@ public class Style {
     }
 
     public void setDefault(String key, String value, int priority) {
-        if (priority >= defaultPriorities.getOrDefault(key, Integer.MIN_VALUE)) {
-            defaultProperties.put(key, value);
-            defaultPriorities.put(key, priority);
-        }
+        set(key, value, StyleSource.DEFAULT, 0, priority);
     }
 
     public void setAll(Style style) {
-        for (Map.Entry<String, String> rule: style.properties.entrySet()) {
+        for (Map.Entry<String, StyleValue> rule: style.properties.entrySet()) {
             String key = rule.getKey();
-            String value = rule.getValue();
-            int priority = style.priorities.get(key);
-            set(key, value, priority);
-        }
-        for (Map.Entry<String, String> rule: style.defaultProperties.entrySet()) {
-            String key = rule.getKey();
-            String value = rule.getValue();
-            setDefault(key, value);
+            StyleValue sv = rule.getValue();
+            set(key, sv);
         }
     }
 
     public void setAll(Style style, int priority) {
-        for (Map.Entry<String, String> rule: style.properties.entrySet()) {
+        for (Map.Entry<String, StyleValue> rule: style.properties.entrySet()) {
             String key = rule.getKey();
-            String value = rule.getValue();
-            set(key, value, priority);
-        }
-        for (Map.Entry<String, String> rule: style.defaultProperties.entrySet()) {
-            String key = rule.getKey();
-            String value = rule.getValue();
-            setDefault(key, value, priority);
+            StyleValue sv = rule.getValue();
+            sv.setPriority(priority);
+            set(key, sv);
         }
     }
 
     public String get(String key) {
-        String v = properties.get(key);
-        if (v != null) {
-            return v;
-        } else {
-            return defaultProperties.get(key);
-        }
+        StyleValue v = properties.get(key);
+        return v.getValue();
     }
 
     public String getOrDefault(String key, String defaultValue) {
-        return properties.getOrDefault(key, defaultProperties.getOrDefault(key, defaultValue));
+        StyleValue sv = properties.get(key);
+        if (sv != null) {
+            return sv.getValue();
+        } else {
+            return defaultValue;
+        }
     }
 
-    private <T> Map<String, T> getInheritable(Map<String, T> map) {
-        return map.entrySet().stream().filter(m -> INHERITABLE.contains(m.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    private ConcurrentMap<String, StyleValue> getInheritable(Map<String, StyleValue> map) {
+        return map.entrySet().stream().filter(m -> INHERITABLE.contains(m.getKey())).collect(Collectors.toConcurrentMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     public Style getInheritable() {
-        Map<String, String> inheritableProperties = getInheritable(properties);
-        Map<String, Integer> inheritablePriorities = getInheritable(priorities);
-        Map<String, String> inheritableDefaultProperties = getInheritable(defaultProperties);
-        Map<String, Integer> inheritableDefaultPriorities = getInheritable(defaultPriorities);
-        return new Style(inheritableProperties, inheritablePriorities, inheritableDefaultProperties, inheritableDefaultPriorities);
+        ConcurrentMap<String, StyleValue> inheritableProperties = getInheritable(properties);
+        return new Style(inheritableProperties);
     }
 
     public boolean containsProperty(String key) {
-        return properties.containsKey(key) || defaultProperties.containsKey(key);
+        return properties.containsKey(key);
     }
 
     @Override
     public String toString() {
-        return "Style{properties=" + properties + ", priorities=" + priorities + ", defaultProperties=" + defaultProperties + ", defaultPriorities=" + defaultPriorities + "}";
+        StringBuilder s = new StringBuilder("Style{");
+        for (String key: properties.keySet()) {
+            s.append(key).append("=\"").append(properties.get(key).getValue()).append("\"");
+        }
+        s.append("}");
+        return s.toString();
     }
 
     public LayoutManager getLayoutManager(JComponent component) {

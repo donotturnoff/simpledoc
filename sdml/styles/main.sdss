@@ -1,5 +1,6 @@
 p {
     font_size="14"
+    colour="red"
     link <hover> {
         colour="#FF0000"
     }

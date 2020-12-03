@@ -314,7 +314,7 @@ public class Page {
     }
 
     private void killWorkers() {
-        for (SwingWorker<?, ?> worker: workers) {
+        for (SwingWorker<?, ?> worker : workers) {
             worker.cancel(true);
         }
         workers.clear();
@@ -362,7 +362,9 @@ public class Page {
         if (pendingResources.isEmpty()) {
             applyOfferedFavicon();
         }
-        rv.addResource(url, response, index);
+        if (response != null) { // Excludes internal resources
+            rv.addResource(url, response, index);
+        }
     }
 
     public void addElement(Element e) {

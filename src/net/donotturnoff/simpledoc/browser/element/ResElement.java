@@ -1,6 +1,7 @@
 package net.donotturnoff.simpledoc.browser.element;
 
 import net.donotturnoff.simpledoc.browser.*;
+import net.donotturnoff.simpledoc.browser.parsing.StyleSource;
 import net.donotturnoff.simpledoc.util.ConnectionUtils;
 import net.donotturnoff.simpledoc.util.Response;
 import net.donotturnoff.simpledoc.util.Status;
@@ -14,10 +15,15 @@ import java.util.Map;
 public class ResElement extends Element {
     private URL url;
     private Response response;
+    private final int index;
 
-    public ResElement(Page page, Map<String, String> attributes, List<Element> children) {
+    public ResElement(Page page, Map<String, String> attributes, List<Element> children, int index) {
         super(page,"res", attributes, children);
+        this.index = index;
+    }
 
+    public int getIndex() {
+        return index;
     }
 
     @Override
@@ -69,7 +75,7 @@ public class ResElement extends Element {
 
     private void handleStylesheet() {
         String body = new String(response.getBody());
-        StyleWorker worker = new StyleWorker(page, page.getRoot(), body, url, response);
+        StyleWorker worker = new StyleWorker(page, page.getRoot(), body, url, response, StyleSource.EXTERNAL, index);
         worker.execute();
     }
 
