@@ -7,18 +7,18 @@ import java.util.List;
 import java.util.Map;
 
 public class LiElement extends BoxElement {
-    private final TextElement bullet;
+    private TextElement bullet;
     public LiElement(Page page, Map<String, String> attributes, List<Element> children) {
         super(page, "li", attributes, children);
         setDefault("cursor", "text");
-
-        String bulletText = getStyle().getBulletText();
-        bullet = new TextElement(page, bulletText);
-        children.add(0, bullet);
     }
 
     @Override
     public void render(Page page, JPanel parentPanel) {
+        String bulletText = getStyle().getBulletText();
+        bullet = new TextElement(page, bulletText);
+        children.add(0, bullet);
+
         panel = getPanel();
         style(panel);
         addPanel(parentPanel, panel);
