@@ -1,8 +1,9 @@
 doc(version="SDML/1.0", charset="UTF-8", author="donotturnoff", description="simpledoc homepage") {
     head {
         title {"simpledoc"}
-        style { "p {colour=\"yellow\"}" }
+        style { "p { link {colour=\"blue\"}}" }
         res(type="text/sdss", rel="stylesheet", src="/styles/main.sdss")
+        res(type="text/sdss", rel="stylesheet", src="/styles/extra.sdss")
         res(type="image/png", rel="favicon", src="/images/logo.png")
     }
     body {
