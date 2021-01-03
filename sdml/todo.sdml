@@ -21,7 +21,6 @@ doc(version="SDML/1.0", charset="UTF-8", author="Isaac Dixon", description="Upco
             li(class="important") {"Log source and cause of each event"}
             li(class="important") {"Handle local directories"}
             li(class="important") {"Allow for spaces in URLs"}
-            li(class="important") {"Ensure main page is the first tab in the sources viewer"}
             li {"Source viewer syntax and element highlighting"}
             li {"History search"}
             li {"Make title attribute apply to child elements when " code{"img"} " doesn't load"}
