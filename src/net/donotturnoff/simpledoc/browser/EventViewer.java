@@ -48,7 +48,7 @@ public class EventViewer {
         gui.add(container);
     }
 
-    public void addEvent(BrowserEvent event) {
+    public synchronized void addEvent(BrowserEvent event) {
         tm.addRow(event.toTableRow());
 
         if (gui.isVisible()) {

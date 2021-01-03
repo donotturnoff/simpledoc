@@ -309,11 +309,11 @@ public class Page {
         rv.hide();
     }
 
-    public void addWorker(SwingWorker<?, ?> worker) {
+    public synchronized void addWorker(SwingWorker<?, ?> worker) {
         workers.add(worker);
     }
 
-    private void killWorkers() {
+    private synchronized void killWorkers() {
         for (SwingWorker<?, ?> worker : workers) {
             worker.cancel(true);
         }
