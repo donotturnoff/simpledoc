@@ -11,7 +11,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class SDMLParser {
-    private final static Parser p;
     private final static Grammar grammar;
 
     static {
@@ -69,17 +68,17 @@ public class SDMLParser {
         productions.add(new Production(ntAttr, List.of(tIdent, tEquals, tString)));
 
         grammar = new Grammar(symbols, productions, ntStart);
-
-        p = new Parser(grammar);
     }
     
     private final Page page;
+    private final Parser p;
     private final Set<String> ids;
     private int styleIndex;
     private int resIndex;
     
     public SDMLParser(Page page) {
         this.page = page;
+        p = new Parser(grammar);
         ids = new HashSet<>();
         styleIndex = resIndex = 0;
     }
