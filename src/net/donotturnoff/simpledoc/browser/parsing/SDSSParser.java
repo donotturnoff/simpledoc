@@ -10,8 +10,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class SDSSParser {
-    private final static Parser p;
-    private final static Grammar grammar;
+    private static final Grammar grammar;
 
     static {
         NonTerminal ntStart = new NonTerminal("start");
@@ -94,14 +93,16 @@ public class SDSSParser {
         productions.add(new Production(ntProperty, List.of(tIdent, tEquals, tString)));
 
         grammar = new Grammar(symbols, productions, ntStart);
-        p = new Parser(grammar);
     }
 
     private final Page page;
+    private final Parser p;
     private final StyleSource source;
     private final int index;
 
     public SDSSParser(Page page, StyleSource source, int index) {
+        p = new Parser(SDSSParser.grammar);
+
         this.page = page;
         this.source = source;
         this.index = index;
