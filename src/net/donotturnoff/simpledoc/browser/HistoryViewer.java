@@ -18,7 +18,6 @@ import java.util.SortedMap;
 
 public class HistoryViewer implements ActionListener, MouseListener {
 
-    private static final int RESULTS_PER_PAGE = 100; // TODO: make configurable
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy KK:mm:ss a");
 
     private final SDTPBrowser browser;
@@ -68,11 +67,15 @@ public class HistoryViewer implements ActionListener, MouseListener {
     }
 
     public void refresh() {
-
         if (gui.isVisible()) {
+            int entriesPerPage = 100;
+            try {
+                entriesPerPage = Integer.parseInt(browser.getConfig().getProperty("history_entries_per_page"));
+            } catch (NumberFormatException ignored) {
 
+            }
             int entries = handler.getHistoryLength();
-            int lastPage = (entries-1)/RESULTS_PER_PAGE;
+            int lastPage = (entries-1)/entriesPerPage;
             pageNo = Math.max(pageNo, 0);
             pageNo = Math.min(lastPage, pageNo);
             prevBtn.setEnabled(pageNo > 0);
@@ -82,8 +85,8 @@ public class HistoryViewer implements ActionListener, MouseListener {
             infoPanel.removeAll();
 
             try {
-                int start = RESULTS_PER_PAGE*pageNo;
-                SortedMap<Date, URL> results = handler.get(start, RESULTS_PER_PAGE);
+                int start = entriesPerPage*pageNo;
+                SortedMap<Date, URL> results = handler.get(start, entriesPerPage);
                 int end = start + results.size();
 
                 if (entries > 0) {

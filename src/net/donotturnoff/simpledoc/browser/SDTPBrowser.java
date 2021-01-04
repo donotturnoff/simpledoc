@@ -93,10 +93,12 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         config.setProperty("homepage", "sdtp://localhost");
         config.setProperty("default_mime", "text/sdml");
         config.setProperty("history_file", "sdtpbrowser.hist");
+        config.setProperty("store_history", "true");
+        config.setProperty("history_entries_per_page", "100");
         config.setProperty("bookmarks_file", "sdtpbrowser.bkmk");
+        config.setProperty("bookmark_entries_per_page", "100");
         config.setProperty("plain_text_font_family", "monospaced");
         config.setProperty("plain_text_font_size", "12");
-        config.setProperty("store_history", "true");
 
         loadConfig();
     }

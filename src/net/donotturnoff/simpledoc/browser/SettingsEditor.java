@@ -21,7 +21,7 @@ public class SettingsEditor implements ActionListener {
         this.gui = new JFrame("Settings editor");
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        JPanel generalPanel = new JPanel(new GridLayout(5, 2, 5, 5));
+        JPanel generalPanel = new JPanel(new GridLayout(7, 2, 5, 5));
         generalPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 
         generalPanel.add(new JLabel("Homepage"));
@@ -39,6 +39,12 @@ public class SettingsEditor implements ActionListener {
         componentPropertyMap.put(historyFileEntry, "history_file");
         generalPanel.add(historyFileEntry);
 
+        generalPanel.add(new JLabel("History entries per page"));
+        SpinnerModel historyEntriesPerPageEntryModel = new SpinnerNumberModel(100, 1, Integer.MAX_VALUE, 1);
+        JSpinner historyEntriesPerPageEntry = new JSpinner(historyEntriesPerPageEntryModel);
+        componentPropertyMap.put(historyEntriesPerPageEntry, "history_entries_per_page");
+        generalPanel.add(historyEntriesPerPageEntry);
+
         generalPanel.add(new JLabel("Store history?"));
         JCheckBox storeHistoryCheckbox = new JCheckBox();
         componentPropertyMap.put(storeHistoryCheckbox, "store_history");
@@ -49,16 +55,24 @@ public class SettingsEditor implements ActionListener {
         componentPropertyMap.put(bookmarksFileEntry, "bookmarks_file");
         generalPanel.add(bookmarksFileEntry);
 
+        generalPanel.add(new JLabel("Bookmark entries per page"));
+        SpinnerModel bookmarkEntriesPerPageEntryModel = new SpinnerNumberModel(100, 1, Integer.MAX_VALUE, 1);
+        JSpinner bookmarkEntriesPerPageEntry = new JSpinner(bookmarkEntriesPerPageEntryModel);
+        componentPropertyMap.put(bookmarkEntriesPerPageEntry, "bookmark_entries_per_page");
+        generalPanel.add(bookmarkEntriesPerPageEntry);
+
         JPanel networkPanel = new JPanel();
 
         JPanel stylePanel = new JPanel(new GridLayout(2, 2, 5, 5));
         stylePanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+
         stylePanel.add(new JLabel("Plain text font family"));
         JTextField plainTextFontFamilyEntry = new JTextField();
         componentPropertyMap.put(plainTextFontFamilyEntry, "plain_text_font_family");
         stylePanel.add(plainTextFontFamilyEntry);
+
         stylePanel.add(new JLabel("Plain text font size"));
-        SpinnerModel plainTextFontSizeEntryModel = new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1);
+        SpinnerModel plainTextFontSizeEntryModel = new SpinnerNumberModel(12, 1, Integer.MAX_VALUE, 1);
         JSpinner plainTextFontSizeEntry = new JSpinner(plainTextFontSizeEntryModel);
         componentPropertyMap.put(plainTextFontSizeEntry, "plain_text_font_size");
         stylePanel.add(plainTextFontSizeEntry);
