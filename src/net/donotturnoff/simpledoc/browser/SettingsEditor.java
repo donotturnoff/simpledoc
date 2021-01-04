@@ -21,7 +21,7 @@ public class SettingsEditor implements ActionListener {
         this.gui = new JFrame("Settings editor");
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        JPanel generalPanel = new JPanel(new GridLayout(4, 2, 5, 5));
+        JPanel generalPanel = new JPanel(new GridLayout(5, 2, 5, 5));
         generalPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 
         generalPanel.add(new JLabel("Homepage"));
@@ -38,6 +38,11 @@ public class SettingsEditor implements ActionListener {
         JTextField historyFileEntry = new JTextField();
         componentPropertyMap.put(historyFileEntry, "history_file");
         generalPanel.add(historyFileEntry);
+
+        generalPanel.add(new JLabel("Store history?"));
+        JCheckBox storeHistoryCheckbox = new JCheckBox();
+        componentPropertyMap.put(storeHistoryCheckbox, "store_history");
+        generalPanel.add(storeHistoryCheckbox);
 
         generalPanel.add(new JLabel("Bookmarks file"));
         JTextField bookmarksFileEntry = new JTextField();
@@ -93,6 +98,8 @@ public class SettingsEditor implements ActionListener {
                 } catch (NumberFormatException ignored) {
 
                 }
+            } else if (c instanceof JCheckBox) {
+                ((JCheckBox) c).setSelected(config.getProperty(componentPropertyMap.get(c)).equals("true"));
             }
         }
     }
@@ -105,6 +112,8 @@ public class SettingsEditor implements ActionListener {
                 config.setProperty(property, ((JTextField) c).getText());
             } else if (c instanceof JSpinner) {
                 config.setProperty(property, ((JSpinner) c).getValue().toString());
+            } else if (c instanceof JCheckBox) {
+                config.setProperty(property, ((JCheckBox) c).isSelected() ? "true" : "false");
             }
         }
         browser.saveConfig();

@@ -18,8 +18,6 @@ import java.util.SortedMap;
 
 public class HistoryViewer implements ActionListener, MouseListener {
 
-    // TODO: make history storage optional
-
     private static final int RESULTS_PER_PAGE = 100; // TODO: make configurable
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy KK:mm:ss a");
 

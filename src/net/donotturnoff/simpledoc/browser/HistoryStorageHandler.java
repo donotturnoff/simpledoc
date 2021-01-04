@@ -17,16 +17,18 @@ public class HistoryStorageHandler {
     }
 
     public void add(URL url) throws IOException {
-        Date datetime = new Date();
-        String timestamp = String.valueOf(datetime.getTime());
-        String historyEntry = timestamp + " " + url + "\n";
+        if (browser.getConfig().getProperty("store_history").equals("true")) {
+            Date datetime = new Date();
+            String timestamp = String.valueOf(datetime.getTime());
+            String historyEntry = timestamp + " " + url + "\n";
 
-        File historyFile = new File(browser.getConfig().getProperty("history_file"));
-        //noinspection ResultOfMethodCallIgnored
-        historyFile.createNewFile();
-        BufferedWriter bw = new BufferedWriter(new FileWriter(historyFile, true));
-        bw.write(historyEntry);
-        bw.close();
+            File historyFile = new File(browser.getConfig().getProperty("history_file"));
+            //noinspection ResultOfMethodCallIgnored
+            historyFile.createNewFile();
+            BufferedWriter bw = new BufferedWriter(new FileWriter(historyFile, true));
+            bw.write(historyEntry);
+            bw.close();
+        }
     }
 
     public void clear() throws FileNotFoundException {

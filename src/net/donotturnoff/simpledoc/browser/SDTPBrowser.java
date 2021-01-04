@@ -96,6 +96,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         config.setProperty("bookmarks_file", "sdtpbrowser.bkmk");
         config.setProperty("plain_text_font_family", "monospaced");
         config.setProperty("plain_text_font_size", "12");
+        config.setProperty("store_history", "true");
 
         loadConfig();
     }
