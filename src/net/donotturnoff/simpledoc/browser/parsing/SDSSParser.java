@@ -112,12 +112,8 @@ public class SDSSParser {
     }
 
     public void parse(Queue<Terminal<?>> tokens) throws ParsingException {
-        try {
-            Node t = p.parse(tokens);
-            elementList(t.getChildren().get(0));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Node t = p.parse(tokens);
+        elementList(t.getChildren().get(0));
     }
 
     private void elementList(Node elemList) throws ParsingException {
