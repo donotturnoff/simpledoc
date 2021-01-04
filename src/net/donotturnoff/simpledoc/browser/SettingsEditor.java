@@ -21,7 +21,7 @@ public class SettingsEditor implements ActionListener {
         this.gui = new JFrame("Settings editor");
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        JPanel generalPanel = new JPanel(new GridLayout(3, 2, 5, 5));
+        JPanel generalPanel = new JPanel(new GridLayout(4, 2, 5, 5));
         generalPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 
         generalPanel.add(new JLabel("Homepage"));
