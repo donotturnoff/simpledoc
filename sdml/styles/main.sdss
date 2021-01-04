@@ -20,10 +20,7 @@ div(id="intro") {
     margin_bottom="10"
 }
 
-link(href="images") {
-    font_size="10"
-}
-link(href="styles") {
+link(href="images"), link(href="styles") {
     font_size="10"
 }
 
@@ -41,17 +38,8 @@ link <active> {
 
 h1 {
     underline="single"
-    font_family="sans_serif"
 }
 
-h2 {
-    font_family="sans_serif"
-}
-
-h3 {
-    font_family="sans_serif"
-}
-
-h4 {
+h1, h2, h3, h4 {
     font_family="sans_serif"
 }

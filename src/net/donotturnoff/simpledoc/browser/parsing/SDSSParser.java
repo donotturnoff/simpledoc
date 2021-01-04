@@ -17,8 +17,9 @@ public class SDSSParser {
         NonTerminal ntElementList = new NonTerminal("element_list");
         NonTerminal ntBlock = new NonTerminal("block");
         NonTerminal ntElement = new NonTerminal("element");
+        NonTerminal ntSelectorList = new NonTerminal("selector_list");
         NonTerminal ntSelector = new NonTerminal("selector");
-        NonTerminal ntElemsAndProps = new NonTerminal("elems_and_props");
+        NonTerminal ntSelectorsAndProps = new NonTerminal("selectors_and_props");
         NonTerminal ntProperty = new NonTerminal("property");
         NonTerminal ntAttrs = new NonTerminal("attrs");
         NonTerminal ntAttrList = new NonTerminal("attr_list");
@@ -55,10 +56,11 @@ public class SDSSParser {
 
         symbols.add(ntStart);
         symbols.add(ntElementList);
+        symbols.add(ntSelectorList);
         symbols.add(ntBlock);
         symbols.add(ntElement);
         symbols.add(ntSelector);
-        symbols.add(ntElemsAndProps);
+        symbols.add(ntSelectorsAndProps);
         symbols.add(ntProperty);
         symbols.add(ntAttrs);
         symbols.add(ntAttrList);
@@ -67,31 +69,32 @@ public class SDSSParser {
 
         Set<Production> productions = new HashSet<>();
         productions.add(new Production(ntStart, List.of(ntElementList)));
-        productions.add(new Production(ntElementList, List.of(ntElement)));
-        productions.add(new Production(ntElementList, List.of(ntElement, ntElementList)));
-        productions.add(new Production(ntElement, List.of(ntSelector, ntBlock)));
-        productions.add(new Production(ntElement, List.of(ntSelector, ntAttrs, ntBlock)));
-        productions.add(new Production(ntElement, List.of(ntSelector, tAsterisk, ntBlock)));
-        productions.add(new Production(ntElement, List.of(ntSelector, ntAttrs, tAsterisk, ntBlock)));
-        productions.add(new Production(ntElement, List.of(ntSelector, ntState, ntBlock)));
-        productions.add(new Production(ntElement, List.of(ntSelector, ntAttrs, ntState, ntBlock)));
-        productions.add(new Production(ntElement, List.of(ntSelector, tAsterisk, ntState, ntBlock)));
-        productions.add(new Production(ntElement, List.of(ntSelector, ntAttrs, tAsterisk, ntState, ntBlock)));
-        productions.add(new Production(ntSelector, List.of(tIdent)));
-        productions.add(new Production(ntSelector, List.of(tQMark)));
+        productions.add(new Production(ntElementList, List.of(ntSelectorList, ntElementList)));
+        productions.add(new Production(ntElementList, List.of(ntSelectorList)));
+        productions.add(new Production(ntSelectorList, List.of(ntSelector, tComma, ntSelectorList)));
+        productions.add(new Production(ntSelectorList, List.of(ntSelector, ntBlock)));
+        productions.add(new Production(ntSelector, List.of(ntElement)));
+        productions.add(new Production(ntSelector, List.of(ntElement, ntAttrs)));
+        productions.add(new Production(ntSelector, List.of(ntElement, tAsterisk)));
+        productions.add(new Production(ntSelector, List.of(ntElement, ntAttrs, tAsterisk)));
+        productions.add(new Production(ntSelector, List.of(ntElement, ntState)));
+        productions.add(new Production(ntSelector, List.of(ntElement, ntAttrs, ntState)));
+        productions.add(new Production(ntSelector, List.of(ntElement, tAsterisk, ntState)));
+        productions.add(new Production(ntSelector, List.of(ntElement, ntAttrs, tAsterisk, ntState)));
+        productions.add(new Production(ntElement, List.of(tIdent)));
+        productions.add(new Production(ntElement, List.of(tQMark)));
         productions.add(new Production(ntAttrs, List.of(tLparen, ntAttrList, tRparen)));
         productions.add(new Production(ntAttrs, List.of(tLparen, tRparen)));
         productions.add(new Production(ntAttrList, List.of(ntAttr)));
         productions.add(new Production(ntAttrList, List.of(ntAttr, tComma, ntAttrList)));
         productions.add(new Production(ntAttr, List.of(tIdent, tEquals, tString)));
         productions.add(new Production(ntState, List.of(tLangle, tIdent, tRangle)));
-        productions.add(new Production(ntBlock, List.of(tLbrace, ntElemsAndProps, tRbrace)));
-        productions.add(new Production(ntElemsAndProps, List.of(ntElement)));
-        productions.add(new Production(ntElemsAndProps, List.of(ntProperty)));
-        productions.add(new Production(ntElemsAndProps, List.of(ntElement, ntElemsAndProps)));
-        productions.add(new Production(ntElemsAndProps, List.of(ntProperty, ntElemsAndProps)));
+        productions.add(new Production(ntBlock, List.of(tLbrace, ntSelectorsAndProps, tRbrace)));
+        productions.add(new Production(ntSelectorsAndProps, List.of(ntSelectorList)));
+        productions.add(new Production(ntSelectorsAndProps, List.of(ntProperty)));
+        productions.add(new Production(ntSelectorsAndProps, List.of(ntSelectorList, ntSelectorsAndProps)));
+        productions.add(new Production(ntSelectorsAndProps, List.of(ntProperty, ntSelectorsAndProps)));
         productions.add(new Production(ntProperty, List.of(tIdent, tEquals, tString)));
-
         grammar = new Grammar(symbols, productions, ntStart);
     }
 
@@ -109,24 +112,41 @@ public class SDSSParser {
     }
 
     public void parse(Queue<Terminal<?>> tokens) throws ParsingException {
-        Node t = p.parse(tokens);
-        elementList(t.getChildren().get(0));
+        try {
+            Node t = p.parse(tokens);
+            elementList(t.getChildren().get(0));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void elementList(Node elemList) throws ParsingException {
         while (elemList.getChildren().size() == 2) {
-            Node elem = elemList.getChildren().get(0);
+            Node selectorList = elemList.getChildren().get(0);
             elemList = elemList.getChildren().get(1);
-            element(elem, page.getAllElements(), 1);
+            selectorList(selectorList, page.getAllElements(), 1);
         }
-        Node elem = elemList.getChildren().get(0);
-        element(elem, page.getAllElements(), 1);
+        Node selectorList = elemList.getChildren().get(0);
+        selectorList(selectorList, page.getAllElements(), 1);
     }
 
-    private void element(Node node, Set<Element> selectedElements, int priority) throws ParsingException {
+    private void selectorList(Node selectorList, Set<Element> selectedElements, int priority) throws ParsingException {
+        List<Node> selectors = new ArrayList<>();
+        while (selectorList.getChildren().size() == 3) {
+            selectors.add(selectorList.getChildren().get(0));
+            selectorList = selectorList.getChildren().get(2);
+        }
+        selectors.add(selectorList.getChildren().get(0));
+        Node block = selectorList.getChildren().get(1);
+        for (Node selector: selectors) {
+            selector(selector, block, selectedElements, priority);
+        }
+    }
+
+    private void selector(Node node, Node block, Set<Element> selectedElements, int priority) throws ParsingException {
         List<Node> c = node.getChildren();
-        Node selector = c.get(0);
-        Terminal<?> tagType = ((Terminal<?>) selector.getChildren().get(0).getSymbol());
+        Node element = c.get(0);
+        Terminal<?> tagType = ((Terminal<?>) element.getChildren().get(0).getSymbol());
         String type = tagType.getName();
         String tag;
         if (!type.equals("QMARK") && !Element.isLegalTag(tag = (String) tagType.getToken().getValue())) {
@@ -139,8 +159,7 @@ public class SDSSParser {
         }
         Map<String, String> attrs = attributes(node, tagType);
         priority += attrs.size()*2;
-        Node block = c.get(c.size()-1);
-        boolean star = c.get(c.size()-2).getSymbol().getName().equals("ASTERISK") || (c.size() >= 3 && c.get(c.size()-3).getSymbol().getName().equals("ASTERISK"));
+        boolean star = c.get(c.size()-1).getSymbol().getName().equals("ASTERISK") || (c.size() >= 2 && c.get(c.size()-2).getSymbol().getName().equals("ASTERISK"));
         ElementState state = state(node);
         if (state != ElementState.BASE) {
             priority += 2;
@@ -152,7 +171,7 @@ public class SDSSParser {
     private ElementState state(Node node) throws ParsingException {
         ElementState state = ElementState.BASE;
         List<Node> c = node.getChildren();
-        Node stateNode = c.get(c.size() - 2);
+        Node stateNode = c.get(c.size() - 1);
         boolean isState = stateNode.getSymbol().getName().equals("state");
         if (isState) {
             String stateName = (String) ((Terminal<?>) stateNode.getChildren().get(1).getSymbol()).getToken().getValue();
@@ -212,24 +231,24 @@ public class SDSSParser {
 
     public void applyStyles(Set<Element> selectedElements, Node block, ElementState state, int priority) throws ParsingException {
         Style s = new Style();
-        Node elemsAndProps = block.getChildren().get(1);
-        while (elemsAndProps.getChildren().size() == 2) {
-            Node elemOrProp = elemsAndProps.getChildren().get(0);
-            if (elemOrProp.getSymbol().getName().equals("element")) {
-                element(elemOrProp, selectedElements, priority);
+        Node selectorsAndProps = block.getChildren().get(1);
+        while (selectorsAndProps.getChildren().size() == 2) {
+            Node selectorListOrProp = selectorsAndProps.getChildren().get(0);
+            if (selectorListOrProp.getSymbol().getName().equals("selector_list")) {
+                selectorList(selectorListOrProp, selectedElements, priority);
             } else { // Handle property
-                String key = (String) ((Terminal<?>) elemOrProp.getChildren().get(0).getSymbol()).getToken().getValue();
-                String value = (String) ((Terminal<?>) elemOrProp.getChildren().get(2).getSymbol()).getToken().getValue();
+                String key = (String) ((Terminal<?>) selectorListOrProp.getChildren().get(0).getSymbol()).getToken().getValue();
+                String value = (String) ((Terminal<?>) selectorListOrProp.getChildren().get(2).getSymbol()).getToken().getValue();
                 s.set(key, value, source, index, priority);
             }
-            elemsAndProps = elemsAndProps.getChildren().get(1);
+            selectorsAndProps = selectorsAndProps.getChildren().get(1);
         }
-        Node elemOrProp = elemsAndProps.getChildren().get(0);
-        if (elemOrProp.getSymbol().getName().equals("element")) {
-            element(elemOrProp, selectedElements, priority);
+        Node selectorListOrProp = selectorsAndProps.getChildren().get(0);
+        if (selectorListOrProp.getSymbol().getName().equals("selector_list")) {
+            selectorList(selectorListOrProp, selectedElements, priority);
         } else { // Handle property
-            String key = (String) ((Terminal<?>) elemOrProp.getChildren().get(0).getSymbol()).getToken().getValue();
-            String value = (String) ((Terminal<?>) elemOrProp.getChildren().get(2).getSymbol()).getToken().getValue();
+            String key = (String) ((Terminal<?>) selectorListOrProp.getChildren().get(0).getSymbol()).getToken().getValue();
+            String value = (String) ((Terminal<?>) selectorListOrProp.getChildren().get(2).getSymbol()).getToken().getValue();
             s.set(key, value, source, index, priority);
         }
         for (Element e: selectedElements) {
