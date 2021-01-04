@@ -61,7 +61,6 @@ doc(version="SDML/1.0", charset="UTF-8", author="Isaac Dixon", description="Upco
             li {"Combined states"}
             li {"Permit no layout manager"}
             li {"Apply text styling on " code {"li"} " to bullets"}
-            li {"More named colours"}
             li {"User-defined stylesheets"}
         }
         h3 {"Performance"}
