@@ -63,7 +63,6 @@ public abstract class BoxElement extends Element {
         }
     }
 
-    // TODO: investigate why panel is an argument here but a global variable in refreshChildren
     // Renders children for the first time
     public void renderChildren(Page page, JPanel panel) {
         if (panel != null) {
