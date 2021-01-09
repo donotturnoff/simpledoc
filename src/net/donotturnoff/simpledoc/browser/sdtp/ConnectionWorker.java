@@ -92,7 +92,7 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
                 return null;
             }
         } else {
-            this.e = new MalformedURLException("Illegal scheme: " + scheme);
+            this.e = new MalformedURLException("Scheme must be sdtp or file");
             return null;
         }
     }

@@ -196,14 +196,11 @@ public class Page {
         load(url);
     }
 
-    public void navigate(String s, boolean externalInput) {
+    public void navigate(String s, boolean externalInput) { // externalInput: from outside page (e.g. URL bar)
         URL url;
         try {
-            if (!externalInput) {
-                url = ConnectionUtils.getURL(this.url, s);
-            } else {
-                url = new URL(s);
-            }
+            s = externalInput ? s : "";
+            url = ConnectionUtils.getURL(this.url, s);
             revisiting = false;
             load(url);
         } catch (MalformedURLException e) {
