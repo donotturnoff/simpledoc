@@ -37,8 +37,12 @@ public class ImgElement extends BoxElement {
     public void render(Page page, JPanel parentPanel) {
         panel = getPanel();
         style(panel);
+
+        // Add image panel to parent
         addPanel(parentPanel, panel);
+
         if (panel != null) {
+            // Attempt to load image
             String src = attributes.get("src");
             try {
                 url = ConnectionUtils.getURL(page.getUrl(), src);
@@ -51,7 +55,10 @@ public class ImgElement extends BoxElement {
 
     private void loadingFailure(String msg, Exception e) {
         page.removePendingResource(url, response);
+
+        // Render alternative elements on image load failure
         super.renderChildren(page, panel);
+
         page.warning(msg + ": " + e.getMessage());
         panel.repaint();
         panel.revalidate();
@@ -71,6 +78,7 @@ public class ImgElement extends BoxElement {
         this.response = response;
         Status s = response.getStatus();
         if (s == Status.OK) {
+            // Start image rendering
             byte[] data = response.getBody();
             ((JImagePanel) panel).setImage(data);
         } else {
@@ -78,6 +86,7 @@ public class ImgElement extends BoxElement {
         }
     }
 
+    // Called when image is drawn on the page
     public void rendered() {
         page.info("Loaded " + url + ": " + response.getStatus());
         page.removePendingResource(url, response);

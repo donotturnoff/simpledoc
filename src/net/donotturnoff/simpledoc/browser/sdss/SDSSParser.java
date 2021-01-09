@@ -115,6 +115,10 @@ public class SDSSParser {
         elementList(t.getChildren().get(0));
     }
 
+    // The following methods uses the parse tree to apply styles to elements
+    // TODO: make easier to understand (e.g. remove dependence on children length for determining what to do)
+
+    // Loop over each base element in the file
     private void elementList(Node elemList) throws ParsingException {
         while (elemList.getChildren().size() == 2) {
             Node selectorList = elemList.getChildren().get(0);
@@ -125,6 +129,7 @@ public class SDSSParser {
         selectorList(selectorList, page.getAllElements(), 1);
     }
 
+    // Loop over all the selectors for a block of rules
     private void selectorList(Node selectorList, Set<Element> selectedElements, int priority) throws ParsingException {
         List<Node> selectors = new ArrayList<>();
         while (selectorList.getChildren().size() == 3) {
@@ -138,6 +143,7 @@ public class SDSSParser {
         }
     }
 
+    // Parse a single selector
     private void selector(Node node, Node block, Set<Element> selectedElements, int priority) throws ParsingException {
         List<Node> c = node.getChildren();
         Node element = c.get(0);
@@ -180,6 +186,7 @@ public class SDSSParser {
         return state;
     }
 
+    // Loop over all attributes
     private Map<String, String> attributes(Node n, Terminal<?> tagType) throws ParsingException {
         List<Node> c = n.getChildren();
         Node a;
@@ -210,6 +217,7 @@ public class SDSSParser {
         }
     }
 
+    // Filter currently-selected elements according to the selector, stripping out non-selected elements
     public Set<Element> filter(Set<Element> selectedElements, Terminal<?> tagType, Map<String, String> attrs, boolean star) {
         Set<Element> filteredElements;
         String tag = "?";
@@ -224,6 +232,7 @@ public class SDSSParser {
         return filteredElements;
     }
 
+    // TODO: remove code duplication
     public void applyStyles(Set<Element> selectedElements, Node block, ElementState state, int priority) throws ParsingException {
         Style s = new Style();
         Node selectorsAndProps = block.getChildren().get(1);
@@ -251,6 +260,8 @@ public class SDSSParser {
         }
     }
 
+    // Finds direct children of all the currently-selected elements which match the tag and attributes
+    // TODO: rename filteredElements to selectedElements?
     private Set<Element> childrenOf(Set<Element> filteredElements, String tag, Map<String, String> attrs) {
         Set<Element> childrenOf = new HashSet<>();
         for (Element e: filteredElements) {
@@ -263,6 +274,8 @@ public class SDSSParser {
         return childrenOf;
     }
 
+    // Finds any descendents of all the currently-selected elements which match the tag and attributes (used for *)
+    // TODO: rename filteredElements to selectedElements?
     private Set<Element> allDescendentsOf(Set<Element> filteredElements, String tag, Map<String, String> attrs) {
         Set<Element> thisAndAllDescendentsOf = new HashSet<>(childrenOf(filteredElements, tag, attrs));
         boolean altered;

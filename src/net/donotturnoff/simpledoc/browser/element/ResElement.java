@@ -18,7 +18,7 @@ import java.util.Map;
 public class ResElement extends Element {
     private URL url;
     private Response response;
-    private final int index;
+    private final int index; // Used for tracking precedence of styles
 
     public ResElement(Page page, Map<String, String> attributes, List<Element> children, int index) {
         super(page,"res", attributes, children);
@@ -31,6 +31,7 @@ public class ResElement extends Element {
 
     @Override
     public void render(Page page, JPanel parentPanel) {
+        // Attempt to load resource
         String src = attributes.get("src");
         try {
             url = ConnectionUtils.getURL(page.getUrl(), src);
@@ -60,6 +61,7 @@ public class ResElement extends Element {
         worker.execute();
     }
 
+    // Handle resource based on rel attribute
     public void loaded(URL url, Response response) {
         this.response = response;
         Status s = response.getStatus();
@@ -76,12 +78,15 @@ public class ResElement extends Element {
         }
     }
 
+    // Delegate stylesheet handling to worker thread
     private void handleStylesheet() {
         String body = new String(response.getBody());
         StyleWorker worker = new StyleWorker(page, page.getRoot(), body, url, response, StyleSource.EXTERNAL, index);
         worker.execute();
     }
 
+    // TODO: favicon precedence
+    // Offer favicon to page for when loading is complete
     private void handleFavicon() {
         byte[] body = response.getBody();
         ImageIcon favicon = new ImageIcon(body);

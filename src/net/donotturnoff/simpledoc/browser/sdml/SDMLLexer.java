@@ -13,9 +13,9 @@ public class SDMLLexer extends Lexer {
 
     protected Terminal<?> nextToken() throws LexingException {
         Terminal<?> t;
-        consumeWhiteSpace();
+        consumeWhiteSpace(); // Ignores whitespace between tokens
         if (end) {
-            t = new EOF();
+            t = new EOF(); // Parser requires special EOF token
         } else {
             switch (nextChar) {
                 case '(':
@@ -38,7 +38,7 @@ public class SDMLLexer extends Lexer {
                     break;
                 case '"':
                 case '\'':
-                    t = consumeString(nextChar);
+                    t = consumeString(nextChar); // If token begins with ' or ", consume the whole string
                     break;
                 case 'a':
                 case 'b':
@@ -66,7 +66,7 @@ public class SDMLLexer extends Lexer {
                 case 'x':
                 case 'y':
                 case 'z':
-                    t = consumeIdentifier(nextChar);
+                    t = consumeIdentifier(nextChar); // If token begins with a letter, consume the whole identifier
                     break;
                 default:
                     throw new LexingException("Unrecognised token initial: \"" + nextChar + "\"");

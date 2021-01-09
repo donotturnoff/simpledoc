@@ -15,7 +15,7 @@ class RequestHandler {
                     response = GetHandler.handle(r); break;
                 case HEAD:
                     response = HeadHandler.handle(r); break;
-                default: throw new RequestHandlingException(Status.NOT_IMPLEMENTED, "Request method " + r.getMethod() + " not implemented");
+                default: throw new RequestHandlingException(Status.NOT_IMPLEMENTED, "Request method " + r.getMethod() + " not implemented"); // Error 501
             }
         } catch (RequestHandlingException e) {
             response = ErrorHandler.handle(e);
@@ -24,6 +24,7 @@ class RequestHandler {
         return response;
     }
 
+    // Add headers which apply to all responses
     private static void addDefaultHeaders(Response response) {
         byte[] body = response.getBody();
         response.putHeader("length", Integer.toString(body.length));

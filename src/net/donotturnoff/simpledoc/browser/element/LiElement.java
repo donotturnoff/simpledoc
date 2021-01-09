@@ -15,6 +15,7 @@ public class LiElement extends BoxElement {
 
     @Override
     public void render(Page page, JPanel parentPanel) {
+        // Add bullet as new child
         String bulletText = getStyle().getBulletText();
         bullet = new TextElement(page, bulletText);
         children.add(0, bullet);
@@ -28,6 +29,8 @@ public class LiElement extends BoxElement {
     @Override
     public void refresh(Page page) {
         style(panel);
+
+        // Refresh bullet text
         String bulletText = getStyle().getBulletText();
         bullet.setText(bulletText);
 

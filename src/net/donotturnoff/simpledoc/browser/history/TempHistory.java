@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+// Provides normal back/forward capabilities, not persistent history storage
 public class TempHistory {
     private List<URL> docs;
     private int current;

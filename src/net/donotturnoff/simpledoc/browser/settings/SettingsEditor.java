@@ -11,9 +11,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+// TODO: simplify process of adding new configuration control
 public class SettingsEditor implements ActionListener {
 
-    private final Map<JComponent, String> componentPropertyMap = new HashMap<>();
+    private final Map<JComponent, String> componentPropertyMap = new HashMap<>(); // Maps components to their properties
     private final SDTPBrowser browser;
     private final JFrame gui;
     private final JButton saveButton, cancelButton;

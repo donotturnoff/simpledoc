@@ -88,6 +88,9 @@ public class SDMLParser {
         return start(t);
     }
 
+    // The following methods convert the parse tree into an element tree
+    // TODO: make easier to understand (e.g. remove dependence on children length for determining what to do)
+
     private Element start(Node n) throws ParsingException {
         return element(n.getChildren().get(0));
     }

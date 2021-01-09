@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
+// TODO: consistent naming scheme (properties, rules, styles, etc.)
 public class Style {
     private static final Set<String> INHERITABLE = new HashSet<>();
     private static final Map<String, Color> COLOUR_MAP = new HashMap<>();
@@ -203,19 +204,23 @@ public class Style {
     }
 
     public void set(String key, StyleValue sv) {
+        // Override styles with lower precedence
         if (sv.compareTo(properties.get(key)) > 0) {
             properties.put(key, sv);
         }
     }
 
+    // Convenience method
     public void setDefault(String key, String value) {
         setDefault(key, value, 0);
     }
 
+    // TODO: remove
     public void setDefault(String key, String value, int priority) {
         set(key, value, StyleSource.DEFAULT, 0, priority);
     }
 
+    // Add all rules from style to this one, obeying precedence
     public void setAll(Style style) {
         for (Map.Entry<String, StyleValue> rule: style.properties.entrySet()) {
             String key = rule.getKey();
@@ -224,6 +229,8 @@ public class Style {
         }
     }
 
+    // Add all rules from style to this one, obeyeing precedence but with a fixed priority assigned to each one
+    // Used when cascading styles, as pre-existing priorities are to be ignored in favour of distance back in the tree
     public void setAll(Style style, int priority) {
         for (Map.Entry<String, StyleValue> rule: style.properties.entrySet()) {
             String key = rule.getKey();

@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.SortedMap;
 
+// TODO: add history-related settings here as well as in the main settings menu
 public class HistoryViewer implements ActionListener, MouseListener {
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy KK:mm:ss a");

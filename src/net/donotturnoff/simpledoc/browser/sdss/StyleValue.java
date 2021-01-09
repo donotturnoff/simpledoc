@@ -1,5 +1,6 @@
 package net.donotturnoff.simpledoc.browser.sdss;
 
+// Stores style rule value alongside information used to determine precedence (source, position in file and priority)
 public class StyleValue implements Comparable<StyleValue> {
     private final String value;
     private final StyleSource source;

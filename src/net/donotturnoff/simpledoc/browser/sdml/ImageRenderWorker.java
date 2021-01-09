@@ -5,6 +5,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.function.Consumer;
 
+// Creates image from data in separate thread to prevent slowing down the main thread
 public class ImageRenderWorker extends SwingWorker<Image, Void> {
 
     private final byte[] data;

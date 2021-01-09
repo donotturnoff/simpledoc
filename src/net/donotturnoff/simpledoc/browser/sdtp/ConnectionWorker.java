@@ -77,10 +77,11 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
                 this.e = e;
                 return null;
             }
-        } else if (scheme.equals("file")) {
+        } else if (scheme.equals("file")) { // Local files
+            // TODO: local directories
             try {
                 Path p = Paths.get(url.getPath());
-                byte[] data = Files.readAllBytes(p);
+                byte[] data = Files.readAllBytes(p); // Read straight from file
                 Map<String, String> headers = new HashMap<>();
                 String mime = FileUtils.getMime(p);
                 mime = (mime == null) ? browser.getConfig().getProperty("default_mime") : mime;
@@ -104,7 +105,7 @@ public class ConnectionWorker extends SwingWorker<Response, Void> {
             if (response != null) {
                 callback.accept(url, response);
             } else {
-                throw e;
+                throw e; // Throw any exception we stored in doInBackground
             }
         } catch (CancellationException e) {
             page.info("Loading of " + url + " cancelled");

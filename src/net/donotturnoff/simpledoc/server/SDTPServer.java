@@ -90,6 +90,8 @@ public class SDTPServer {
             try {
                 Socket c = socket.accept();
                 logger.log(Level.INFO, "Accepted new connection: " + c);
+
+                // Delegate request handling to thread
                 ServerWorker worker = new ServerWorker(this, c);
                 workers.add(worker);
                 (new Thread(worker, c.toString())).start();
@@ -105,6 +107,7 @@ public class SDTPServer {
         workers.remove(worker);
     }
 
+    // Clean shutdown
     private void halt() {
         try {
             for (ServerWorker worker: workers) {

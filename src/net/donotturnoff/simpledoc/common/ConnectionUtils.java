@@ -82,6 +82,8 @@ public class ConnectionUtils {
         out.flush();
     }
 
+    // Attempts to resolve s as an absolute URL, then as relative to the current URL
+    // TODO: use in other places in the code
     public static URL getURL(URL current, String s) throws MalformedURLException {
         URL url;
         try {
@@ -91,7 +93,7 @@ public class ConnectionUtils {
         }
         String scheme = url.getProtocol();
         if (!(scheme.equals("sdtp") || scheme.equals("file"))) {
-            throw new MalformedURLException("Scheme must be sdtp");
+            throw new MalformedURLException("Scheme must be sdtp"); // TODO: add file as acceptable here and elsewhere
         }
         return url;
     }

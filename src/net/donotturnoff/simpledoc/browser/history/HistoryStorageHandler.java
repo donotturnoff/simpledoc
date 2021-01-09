@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+// TODO: switch to JSON or other more suitable format
 public class HistoryStorageHandler {
 
     private final SDTPBrowser browser;
@@ -19,6 +20,9 @@ public class HistoryStorageHandler {
     }
 
     public void add(URL url) throws IOException {
+        // Add url to history if configured to store history
+        // File is stored with oldest entry first and new entries appended, then read in reverse
+        // This is faster than adding to the start of the file
         if (browser.getConfig().getProperty("store_history").equals("true")) {
             Date datetime = new Date();
             String timestamp = String.valueOf(datetime.getTime());
@@ -46,6 +50,9 @@ public class HistoryStorageHandler {
         int entries = getHistoryLength();
         String line;
         int i = 0;
+
+        // Start at start+len entries from the end of the history file since we are reading in reverse order
+        // Add each valid line to the map to return (which also stores in reversed order)
         while ((line = br.readLine()) != null) {
             if (i >= entries - (start + len)) {
                 if (i >= entries - start) {
@@ -65,7 +72,7 @@ public class HistoryStorageHandler {
                     }
                 }
             }
-            i++;
+            i++; // TODO: only count valid lines
         }
         return visits;
     }
@@ -86,7 +93,7 @@ public class HistoryStorageHandler {
                         }
                         Date datetime = new Date(Long.parseLong(parts[0]));
                         URL url = new URL(parts[1]);
-                        len++;
+                        len++; // Incrementing counter here prevents counting invalid lines
                     } catch (MalformedURLException | IllegalArgumentException ignored) {
 
                     }

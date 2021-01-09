@@ -12,11 +12,12 @@ public class FileUtils {
     private static String getFileExtension(String name) {
         int lastIndexOf = name.lastIndexOf(".");
         if (lastIndexOf == -1) {
-            return ""; // empty extension
+            return ""; // Empty extension
         }
         return name.substring(lastIndexOf+1);
     }
 
+    // TODO: improve SDML/SDSS detection
     public static String getMime(Path p) throws IOException {
         String ext = getFileExtension(p.toString());
         if (ext.equals("sdml")) {

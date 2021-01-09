@@ -12,7 +12,7 @@ public class AddTabComponent extends JPanel  {
     private final SDTPBrowser browser;
 
     public AddTabComponent(final SDTPBrowser browser)  {
-        //unset default FlowLayout' gaps
+        // Unset default FlowLayout' gaps
         super(new FlowLayout(FlowLayout.LEFT, 0, 0));
         this.browser = browser;
         setOpaque(false);
@@ -28,6 +28,8 @@ public class AddTabComponent extends JPanel  {
         public AddTabButton() {
             setText("+");
             setToolTipText("Add new tab");
+
+            // Bare-bones UI
             setUI(new BasicButtonUI());
             setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
             setContentAreaFilled(false);
@@ -37,15 +39,18 @@ public class AddTabComponent extends JPanel  {
             addActionListener(this);
         }
 
+        //Add new page on click
         public void actionPerformed(ActionEvent e) {
             browser.addPage(browser.getConfig().getProperty("homepage"));
         }
 
-        //we don't want to update UI for this button
+        // We don't want to update UI for this button
         public void updateUI() {}
     }
 
     private final static MouseListener buttonMouseListener = new MouseAdapter() {
+
+        // Display shaded background on mouseover
         public void mouseEntered(MouseEvent e) {
             Component component = e.getComponent();
             if (component instanceof AbstractButton) {
@@ -54,6 +59,7 @@ public class AddTabComponent extends JPanel  {
             }
         }
 
+        // Hide shaded background on mouse exit
         public void mouseExited(MouseEvent e) {
             Component component = e.getComponent();
             if (component instanceof AbstractButton) {

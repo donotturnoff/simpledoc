@@ -27,7 +27,7 @@ public class RenderWorker extends SwingWorker<Void, Void> {
 
     @Override
     protected void done() {
-        root.cascadeStyles();
+        root.cascadeStyles(); // Pass inheritable styles down to children once all elements have their own style
         root.refresh(page);
         page.removePendingResource(page.getUrl(), page.getData(), 0);
         page.info("Rendered " + page.getUrl());

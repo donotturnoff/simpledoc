@@ -10,6 +10,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
+// For box-based elements which get drawn on the page
 public abstract class BoxElement extends Element {
 
     protected JPanel panel;
@@ -39,6 +40,7 @@ public abstract class BoxElement extends Element {
         }
     }
 
+    // Apply all relevant styles
     public void style(JPanel panel) {
         if (panel != null) {
             Style s = getStyle();
@@ -61,6 +63,8 @@ public abstract class BoxElement extends Element {
         }
     }
 
+    // TODO: investigate why panel is an argument here but a global variable in refreshChildren
+    // Renders children for the first time
     public void renderChildren(Page page, JPanel panel) {
         if (panel != null) {
             for (Element c : children) {
@@ -69,6 +73,8 @@ public abstract class BoxElement extends Element {
         }
     }
 
+    // TODO: consider combining refresh and render and use a flag to indicate that an element has been rendered already
+    // Refreshes children for subsequent updates (avoids reloading resources, etc.)
     public void refreshChildren(Page page) {
         if (panel != null) {
             for (Element c: children) {

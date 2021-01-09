@@ -100,11 +100,13 @@ public class Page {
         updateTab();
     }
 
+    // Set favicon with immediate effect
     private void setFavicon(ImageIcon favicon, boolean gif) {
         this.favicon = SDTPBrowser.scaleFavicon(favicon, gif);
         updateTab();
     }
 
+    // Set favicon to use once loading has finished
     public void offerFavicon(ImageIcon favicon, boolean gif) {
         this.pendingFavicon = favicon;
         this.pendingFaviconIsGif = gif;
@@ -113,10 +115,12 @@ public class Page {
         }
     }
 
+    // Once loading has finished, set the offered favicon
     private void applyOfferedFavicon() {
         setFavicon(this.pendingFavicon, this.pendingFaviconIsGif);
     }
 
+    // Refreshes tab widget on title or favicon update
     private void updateTab() {
         JTabbedPane tabbedPane = browser.getTabbedPane();
         for (int i = 0; i < tabbedPane.getTabCount(); i++) {
@@ -210,16 +214,27 @@ public class Page {
     private void load(URL url) {
         this.url = url;
         filename = FileUtils.getFilename(url);
+
+        // Cancel loading of previous page
         killWorkers();
         pendingResources.clear();
+
+        // Offer default favicon for fully-loaded page (may be overridden in SDML), and set loading favicon
         offerFavicon(SDTPBrowser.ICON_FAVICON, true);
         setFavicon(SDTPBrowser.SPINNER_FAVICON, true);
+
+        // Reset resource and event viewers
         rv.clear();
         ev.updateTitle();
         rv.updateTitle();
+
+        // Update interface
         browser.setUrlBar(url);
         setTitle("Loading");
+
         addPendingResource(url);
+
+        // Start load
         ConnectionWorker worker = new ConnectionWorker(url,this);
         worker.execute();
     }
@@ -233,14 +248,20 @@ public class Page {
         }
         setTitle(filename);
         data = response;
+
+        // Reset page on load
         allElements.clear();
         panel.removeAll();
+
+        // Only add to history if we are visiting the page anew (not going back/forward or refreshing)
         if (!revisiting || !history.pageVisited(url)) {
             history.navigate(url);
             browser.addToHistory(this, url);
             browser.setBackButtonState(history.canGoBack());
             browser.setForwardButtonState(history.canGoForward());
         }
+
+        // Render page according to MIME type
         String type = response.getHeaders().get("type");
         String generalType = type.split("/")[0];
         if (type.equals("text/sdml")) {
@@ -291,12 +312,15 @@ public class Page {
         byte[] data = response.getBody();
         Status status = response.getStatus();
         JImagePanel imgPanel = new JImagePanel(data, () -> info("Loaded " + url + ": " + status), (Exception e) -> error("Failed to load " + url, e), true);
+
+        // Zoom on click
         imgPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 imgPanel.toggleScaled();
             }
         });
+
         panel.add(imgPanel);
         panel.repaint();
         panel.revalidate();
@@ -324,6 +348,7 @@ public class Page {
         workers.add(worker);
     }
 
+    // Cancel all currently-executing threads before navigation
     private synchronized void killWorkers() {
         for (SwingWorker<?, ?> worker : workers) {
             worker.cancel(true);
@@ -370,10 +395,14 @@ public class Page {
 
     public void removePendingResource(URL url, Response response, int index) {
         pendingResources.remove(url);
+
+        // Set offered favicon if all resources have loaded
         if (pendingResources.isEmpty()) {
             applyOfferedFavicon();
         }
-        if (response != null) { // Excludes internal resources
+
+        // Excludes internal resources (e.g. internal stylesheets)
+        if (response != null) {
             rv.addResource(url, response, index);
         }
     }

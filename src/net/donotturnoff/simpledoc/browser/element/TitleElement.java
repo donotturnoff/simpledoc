@@ -12,6 +12,7 @@ public class TitleElement extends Element {
         super(page, "title", attributes, children);
     }
 
+    // TODO: fail if title element contains something other than a single text child
     @Override
     public void render(Page page, JPanel parentPanel) {
         for (Element c: children) {

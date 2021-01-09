@@ -9,6 +9,7 @@ import java.util.Map;
 
 class HeadHandler {
     static Response handle(Request r) throws RequestHandlingException {
+        // HEAD = GET without body
         Response getResponse = GetHandler.handle(r);
         String protocol = getResponse.getProtocol();
         Status status = getResponse.getStatus();

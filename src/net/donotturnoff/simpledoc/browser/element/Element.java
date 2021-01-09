@@ -58,7 +58,7 @@ public abstract class Element implements MouseListener {
     protected Element parent;
     protected List<Element> children;
     protected ElementState state;
-    protected Style style;
+    protected Style style; // Holds current style
     protected Map<ElementState, Style> styles;
 
     public Element(Page page, String name, Map<String, String> attributes, List<Element> children) {
@@ -88,7 +88,9 @@ public abstract class Element implements MouseListener {
         refreshCurrentStyle();
     }
 
+    // Called by SDSSParser to apply styles
     public void addStyles(ElementState e, Style toAdd) {
+        // If styles apply to base state, they apply to all other states too
         if (e == ElementState.BASE) {
             for (Style s: styles.values()) {
                 s.setAll(toAdd);
@@ -111,6 +113,7 @@ public abstract class Element implements MouseListener {
     }
 
     public void setDefault(String key, String value) {
+        // Apply default style to all states
         for (ElementState s: ElementState.values()) {
             styles.get(s).setDefault(key, value);
         }
@@ -143,16 +146,19 @@ public abstract class Element implements MouseListener {
 
     public abstract void render(Page page, JPanel parentPanel);
 
+    // Called on any update that may alter the page styling (initial page render, style application, element state change)
     public void refresh(Page page) {
         for (Element c: children) {
             c.refresh(page);
         }
     }
 
+    // Priority starts at -1 to not interfere with directly-applied styles
     public void cascadeStyles() {
         cascadeStyles(-1);
     }
 
+    // Makes children inherit inheritable styles, with priority decreasing for each level of inheritance
     public void cascadeStyles(int priority) {
         if (parent != null) {
             refreshCurrentStyle();

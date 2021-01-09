@@ -14,6 +14,7 @@ public class JImagePanel extends JPanel {
     private boolean scaled;
     private int pw = 0, ph = 0;
 
+    // Used by img elements
     public JImagePanel(Runnable callback, Consumer<Exception> errorHandlerCallback) {
         this.callback = callback;
         this.errorHandlerCallback = errorHandlerCallback;
@@ -24,6 +25,7 @@ public class JImagePanel extends JPanel {
         add(label);
     }
 
+    // Used by resource viewer
     public JImagePanel(byte[] data, Runnable callback, Consumer<Exception> errorHandlerCallback) {
         this.callback = callback;
         this.errorHandlerCallback = errorHandlerCallback;
@@ -34,6 +36,7 @@ public class JImagePanel extends JPanel {
         add(label);
     }
 
+    // Used when viewing image alone
     public JImagePanel(byte[] data, Runnable callback, Consumer<Exception> errorHandlerCallback, boolean scaled) {
         this.callback = callback;
         this.errorHandlerCallback = errorHandlerCallback;
@@ -69,6 +72,7 @@ public class JImagePanel extends JPanel {
 
     private int[] getScaledSize() {
         if (scaled) {
+            // Scale to fit inside viewport whilst maintaining aspect ratio
             int w = img.getWidth(null);
             int h = img.getHeight(null);
             double ratio = ((double) h)/w;
@@ -82,6 +86,7 @@ public class JImagePanel extends JPanel {
             }
             return new int[]{w, h};
         } else {
+            // Actual size
             return new int[]{img.getWidth(this), img.getHeight(this)};
         }
     }

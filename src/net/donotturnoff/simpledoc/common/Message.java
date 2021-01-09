@@ -1,5 +1,6 @@
 package net.donotturnoff.simpledoc.common;
 
+// Convenience class, represents either a Request or a Response
 public class Message {
     private final String head;
     private final byte[] body;

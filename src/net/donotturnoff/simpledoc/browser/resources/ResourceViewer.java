@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+// TODO: ensure index isn't altered by adding new resources (so that the first resource displayed is the page itself)
 public class ResourceViewer {
 
     private final Page page;
@@ -77,12 +78,13 @@ public class ResourceViewer {
             if (genericType.equals("text")) {
                 sourceComponent = Page.getTextPanel(r.getBody(), page.getBrowser().getConfig());
             } else if (genericType.equals("image")) {
+                // Attempt to display image. Display error message on failure
                 AtomicReference<String> error = new AtomicReference<>("");
                 sourceComponent = new JImagePanel(r.getBody(), () -> {}, (Exception e) -> error.set("Failed to display image: " + e.getMessage()));
                 if (!error.get().isBlank()) {
                     sourceComponent = new JLabel(error.get());
                 }
-            } else {
+            } else { // Resource of some type that we can't handle yet
                 sourceComponent = new JLabel("Resource of type " + type);
             }
             sourceComponent.setAlignmentX(Component.LEFT_ALIGNMENT);

@@ -18,6 +18,7 @@ public class LinkElement extends BoxElement implements MouseListener {
         setDefault("underline", "single");
     }
 
+    // TODO: investigate removing this method (identical to overridden method)
     @Override
     public void render(Page page, JPanel parentPanel) {
         panel = getPanel();
@@ -26,6 +27,7 @@ public class LinkElement extends BoxElement implements MouseListener {
         renderChildren(page, panel);
     }
 
+    // Navigate on click
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
         super.mouseClicked(mouseEvent);
@@ -35,6 +37,7 @@ public class LinkElement extends BoxElement implements MouseListener {
         }
     }
 
+    // Update status bar on mouseover, as well as usual mouseover operations
     @Override
     public void mouseEntered(MouseEvent mouseEvent) {
         super.mouseEntered(mouseEvent);
@@ -48,6 +51,7 @@ public class LinkElement extends BoxElement implements MouseListener {
         }
     }
 
+    // Clear status bar on mouseout, as well as usual mouseout operations
     @Override
     public void mouseExited(MouseEvent mouseEvent) {
         super.mouseExited(mouseEvent);

@@ -7,7 +7,7 @@ import java.net.URLConnection;
 
 public class SDTPURLConnection extends URLConnection {
 
-    private final static int DEFAULT_PORT = 5000;
+    private final static int DEFAULT_PORT = 5000; // TODO: make configurable
 
     private InputStream in;
     private OutputStream out;

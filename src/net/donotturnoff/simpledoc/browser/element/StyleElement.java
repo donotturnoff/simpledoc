@@ -21,11 +21,14 @@ public class StyleElement extends Element {
         return index;
     }
 
+    // TODO: make use of element tree directly inside style element, rather than inside a string
     @Override
     public void render(Page page, JPanel parentPanel) {
         for (Element child: children) {
             if (child instanceof TextElement) {
                 String body = ((TextElement) child).getText();
+
+                // Delegate styling to worker
                 StyleWorker worker = new StyleWorker(page, page.getRoot(), body, null, null, StyleSource.INTERNAL, index);
                 worker.execute();
             }

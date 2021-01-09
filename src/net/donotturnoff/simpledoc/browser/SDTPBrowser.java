@@ -317,6 +317,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         }
     }
 
+    // Local files
     private void openFile() {
         fc.setDialogTitle("Open file");
         int choice = fc.showOpenDialog(gui);
@@ -418,15 +419,16 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
 
     }
 
+    // TODO: Simplify this (reduce duplicated code)
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER && keyEvent.getSource() == urlBar) {
-            if (!keyDown) {
+            if (!keyDown) { // Navigate current page
                 keyDown = true;
                 currentPage.navigate(urlBar.getText(), true);
             }
         } else if (keyEvent.getKeyCode() == KeyEvent.VK_R) {
-            if (keyEvent.isControlDown()) {
+            if (keyEvent.isControlDown()) { // Refresh current page
                 if (!keyDown) {
                     keyDown = true;
                     currentPage.reload();
@@ -435,9 +437,9 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         } else if (keyEvent.getKeyCode() == KeyEvent.VK_TAB) {
             if (keyEvent.isControlDown()) {
                 int index;
-                if (keyEvent.isShiftDown()) {
+                if (keyEvent.isShiftDown()) { // Previous tab
                     index = (tabbedPane.getSelectedIndex()-1+pages.size())%pages.size(); // Add pages.size() to keep index positive
-                } else {
+                } else { // Next tab
                     index = (tabbedPane.getSelectedIndex()+1)%pages.size();
                 }
                 if (!keyDown) {
@@ -449,34 +451,34 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
             }
         } else if (keyEvent.getKeyCode() == KeyEvent.VK_S) {
             if (keyEvent.isControlDown()) {
-                if (!keyDown) {
+                if (!keyDown) { // Save page
                     keyDown = true;
                     saveCurrentPage();
                 }
             }
         } else if (keyEvent.getKeyCode() == KeyEvent.VK_O) {
             if (keyEvent.isControlDown()) {
-                if (!keyDown) {
+                if (!keyDown) { // Open file
                     keyDown = true;
                     openFile();
                 }
             }
         } else if (keyEvent.getKeyCode() == KeyEvent.VK_W) {
             if (keyEvent.isControlDown()) {
-                if (!keyDown) {
+                if (!keyDown) { // Close tab
                     keyDown = true;
                     removePage(tabbedPane.getSelectedIndex());
                 }
             }
         } else if (keyEvent.getKeyCode() == KeyEvent.VK_T) {
-            if (keyEvent.isControlDown()) {
+            if (keyEvent.isControlDown()) { // New tab
                 if (!keyDown) {
                     keyDown = true;
                     addPage(config.getProperty("homepage"));
                 }
             }
         } else if (keyEvent.getKeyCode() == KeyEvent.VK_H) {
-            if (keyEvent.isControlDown()) {
+            if (keyEvent.isControlDown()) { // View history
                 if (!keyDown) {
                     keyDown = true;
                     historyViewer.show();
@@ -492,7 +494,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
 
     @Override
     public void stateChanged(ChangeEvent changeEvent) {
-        if (changeEvent.getSource() == tabbedPane) {
+        if (changeEvent.getSource() == tabbedPane) { // Open selected tab and set URL in URL bar
             int index = tabbedPane.getSelectedIndex();
             if (index >= 0 && index < pages.size()) {
                 currentPage = pages.get(index);
