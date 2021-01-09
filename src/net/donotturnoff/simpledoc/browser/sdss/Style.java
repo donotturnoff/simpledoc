@@ -212,12 +212,7 @@ public class Style {
 
     // Convenience method
     public void setDefault(String key, String value) {
-        setDefault(key, value, 0);
-    }
-
-    // TODO: remove
-    public void setDefault(String key, String value, int priority) {
-        set(key, value, StyleSource.DEFAULT, 0, priority);
+        set(key, value, StyleSource.DEFAULT, 0, 0);
     }
 
     // Add all rules from style to this one, obeying precedence
