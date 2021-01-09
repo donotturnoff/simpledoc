@@ -18,15 +18,6 @@ public class LinkElement extends BoxElement implements MouseListener {
         setDefault("underline", "single");
     }
 
-    // TODO: investigate removing this method (identical to overridden method)
-    @Override
-    public void render(Page page, JPanel parentPanel) {
-        panel = getPanel();
-        style(panel);
-        addPanel(parentPanel, panel);
-        renderChildren(page, panel);
-    }
-
     // Navigate on click
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
