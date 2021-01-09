@@ -2,8 +2,8 @@ package net.donotturnoff.simpledoc.browser.sdml;
 
 import net.donotturnoff.simpledoc.browser.Page;
 import net.donotturnoff.lr0.*;
-import net.donotturnoff.simpledoc.browser.parsing.Lexer;
-import net.donotturnoff.simpledoc.browser.parsing.LexingException;
+import net.donotturnoff.simpledoc.browser.lexingbase.Lexer;
+import net.donotturnoff.simpledoc.browser.lexingbase.LexingException;
 
 public class SDMLLexer extends Lexer {
 

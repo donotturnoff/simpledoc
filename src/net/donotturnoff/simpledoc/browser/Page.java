@@ -6,7 +6,7 @@ import net.donotturnoff.simpledoc.browser.element.Element;
 import net.donotturnoff.simpledoc.browser.events.BrowserEvent;
 import net.donotturnoff.simpledoc.browser.events.EventViewer;
 import net.donotturnoff.simpledoc.browser.history.TempHistory;
-import net.donotturnoff.simpledoc.browser.parsing.*;
+import net.donotturnoff.simpledoc.browser.lexingbase.*;
 import net.donotturnoff.simpledoc.browser.resources.ResourceViewer;
 import net.donotturnoff.simpledoc.browser.sdml.RenderWorker;
 import net.donotturnoff.simpledoc.browser.sdml.SDMLLexer;

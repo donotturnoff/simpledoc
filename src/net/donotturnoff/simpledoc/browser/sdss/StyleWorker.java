@@ -2,11 +2,8 @@ package net.donotturnoff.simpledoc.browser.sdss;
 
 import net.donotturnoff.simpledoc.browser.Page;
 import net.donotturnoff.simpledoc.browser.element.Element;
-import net.donotturnoff.simpledoc.browser.parsing.*;
+import net.donotturnoff.simpledoc.browser.lexingbase.*;
 import net.donotturnoff.lr0.*;
-import net.donotturnoff.simpledoc.browser.sdss.SDSSLexer;
-import net.donotturnoff.simpledoc.browser.sdss.SDSSParser;
-import net.donotturnoff.simpledoc.browser.sdss.StyleSource;
 import net.donotturnoff.simpledoc.common.Response;
 
 import javax.swing.*;
