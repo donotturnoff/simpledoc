@@ -261,10 +261,9 @@ public class SDSSParser {
     }
 
     // Finds direct children of all the currently-selected elements which match the tag and attributes
-    // TODO: rename filteredElements to selectedElements?
-    private Set<Element> childrenOf(Set<Element> filteredElements, String tag, Map<String, String> attrs) {
+    private Set<Element> childrenOf(Set<Element> selectedElements, String tag, Map<String, String> attrs) {
         Set<Element> childrenOf = new HashSet<>();
-        for (Element e: filteredElements) {
+        for (Element e: selectedElements) {
             childrenOf.addAll(e.getChildren().stream().filter(c -> !c.getName().equals("text")).collect(Collectors.toSet()));
         }
         if (!tag.equals("?")) {
@@ -275,9 +274,8 @@ public class SDSSParser {
     }
 
     // Finds any descendents of all the currently-selected elements which match the tag and attributes (used for *)
-    // TODO: rename filteredElements to selectedElements?
-    private Set<Element> allDescendentsOf(Set<Element> filteredElements, String tag, Map<String, String> attrs) {
-        Set<Element> thisAndAllDescendentsOf = new HashSet<>(childrenOf(filteredElements, tag, attrs));
+    private Set<Element> allDescendentsOf(Set<Element> selectedElements, String tag, Map<String, String> attrs) {
+        Set<Element> thisAndAllDescendentsOf = new HashSet<>(childrenOf(selectedElements, tag, attrs));
         boolean altered;
         do {
             altered = thisAndAllDescendentsOf.addAll(childrenOf(thisAndAllDescendentsOf, tag, attrs));
