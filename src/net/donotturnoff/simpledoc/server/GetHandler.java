@@ -1,6 +1,6 @@
 package net.donotturnoff.simpledoc.server;
 
-import net.donotturnoff.simpledoc.util.*;
+import net.donotturnoff.simpledoc.common.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;

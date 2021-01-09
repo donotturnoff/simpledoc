@@ -1,7 +1,7 @@
 package net.donotturnoff.simpledoc.browser.element;
 
 import net.donotturnoff.simpledoc.browser.Page;
-import net.donotturnoff.simpledoc.util.ConnectionUtils;
+import net.donotturnoff.simpledoc.common.ConnectionUtils;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;

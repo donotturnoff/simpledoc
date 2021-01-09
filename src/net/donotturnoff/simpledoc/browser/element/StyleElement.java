@@ -1,8 +1,8 @@
 package net.donotturnoff.simpledoc.browser.element;
 
 import net.donotturnoff.simpledoc.browser.Page;
-import net.donotturnoff.simpledoc.browser.StyleWorker;
-import net.donotturnoff.simpledoc.browser.parsing.StyleSource;
+import net.donotturnoff.simpledoc.browser.sdss.StyleWorker;
+import net.donotturnoff.simpledoc.browser.sdss.StyleSource;
 
 import javax.swing.*;
 import java.util.List;

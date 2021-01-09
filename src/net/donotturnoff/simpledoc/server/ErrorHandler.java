@@ -1,7 +1,7 @@
 package net.donotturnoff.simpledoc.server;
 
-import net.donotturnoff.simpledoc.util.RequestHandlingException;
-import net.donotturnoff.simpledoc.util.Response;
+import net.donotturnoff.simpledoc.common.RequestHandlingException;
+import net.donotturnoff.simpledoc.common.Response;
 
 import java.util.HashMap;
 import java.util.Map;

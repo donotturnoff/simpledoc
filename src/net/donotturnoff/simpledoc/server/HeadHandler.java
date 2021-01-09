@@ -1,9 +1,9 @@
 package net.donotturnoff.simpledoc.server;
 
-import net.donotturnoff.simpledoc.util.Request;
-import net.donotturnoff.simpledoc.util.RequestHandlingException;
-import net.donotturnoff.simpledoc.util.Response;
-import net.donotturnoff.simpledoc.util.Status;
+import net.donotturnoff.simpledoc.common.Request;
+import net.donotturnoff.simpledoc.common.RequestHandlingException;
+import net.donotturnoff.simpledoc.common.Response;
+import net.donotturnoff.simpledoc.common.Status;
 
 import java.util.Map;
 

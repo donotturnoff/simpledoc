@@ -1,5 +1,12 @@
 package net.donotturnoff.simpledoc.browser;
 
+import net.donotturnoff.simpledoc.browser.components.AddTabComponent;
+import net.donotturnoff.simpledoc.browser.components.PageTabComponent;
+import net.donotturnoff.simpledoc.browser.history.HistoryStorageHandler;
+import net.donotturnoff.simpledoc.browser.history.HistoryViewer;
+import net.donotturnoff.simpledoc.browser.sdtp.SDTPURLStreamHandlerFactory;
+import net.donotturnoff.simpledoc.browser.settings.SettingsEditor;
+
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -26,16 +33,16 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
 
     static {
         Toolkit kit = Toolkit.getDefaultToolkit();
-        URL iconUrl = ClassLoader.getSystemResource("net/donotturnoff/simpledoc/browser/icon.png");
+        URL iconUrl = ClassLoader.getSystemResource("net/donotturnoff/simpledoc/browser/assets/icon.png");
         ICON = kit.createImage(iconUrl);
 
-        URL iconFaviconUrl = ClassLoader.getSystemResource("net/donotturnoff/simpledoc/browser/icon.gif");
+        URL iconFaviconUrl = ClassLoader.getSystemResource("net/donotturnoff/simpledoc/browser/assets/icon.gif");
         ICON_FAVICON = new ImageIcon(iconFaviconUrl);
 
-        URL spinnerFaviconUrl = ClassLoader.getSystemResource("net/donotturnoff/simpledoc/browser/spinner.gif");
+        URL spinnerFaviconUrl = ClassLoader.getSystemResource("net/donotturnoff/simpledoc/browser/assets/spinner.gif");
         SPINNER_FAVICON = new ImageIcon(spinnerFaviconUrl);
 
-        URL errorFaviconUrl = ClassLoader.getSystemResource("net/donotturnoff/simpledoc/browser/error.gif");
+        URL errorFaviconUrl = ClassLoader.getSystemResource("net/donotturnoff/simpledoc/browser/assets/error.gif");
         ERROR_FAVICON = new ImageIcon(errorFaviconUrl);
     }
 
@@ -270,7 +277,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         }
     }
 
-    void addPage(String urlString) {
+    public void addPage(String urlString) {
         currentPage = new Page(this);
         pages.add(currentPage);
         tabbedPane.insertTab("New tab", null, currentPage.getScrollPane(), "New tab", tabbedPane.getTabCount()-1); // Minus 1 because although the last tab is actually the add tab button, this tab hasn't been added yet
@@ -345,7 +352,7 @@ public class SDTPBrowser implements ActionListener, KeyListener, ChangeListener 
         return config;
     }
 
-    void loadConfig() {
+    public void loadConfig() {
         try {
             FileInputStream in = new FileInputStream(CONFIG_PATH);
             config.load(in);

@@ -1,13 +1,11 @@
 package net.donotturnoff.simpledoc.server;
 
-import net.donotturnoff.simpledoc.util.*;
+import net.donotturnoff.simpledoc.common.*;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 class ServerWorker implements Runnable {
 

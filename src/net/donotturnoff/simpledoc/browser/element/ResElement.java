@@ -1,10 +1,13 @@
 package net.donotturnoff.simpledoc.browser.element;
 
 import net.donotturnoff.simpledoc.browser.*;
-import net.donotturnoff.simpledoc.browser.parsing.StyleSource;
-import net.donotturnoff.simpledoc.util.ConnectionUtils;
-import net.donotturnoff.simpledoc.util.Response;
-import net.donotturnoff.simpledoc.util.Status;
+import net.donotturnoff.simpledoc.browser.sdss.StyleSource;
+import net.donotturnoff.simpledoc.browser.sdss.StyleWorker;
+import net.donotturnoff.simpledoc.browser.sdtp.ConnectionWorker;
+import net.donotturnoff.simpledoc.browser.sdtp.SDTPException;
+import net.donotturnoff.simpledoc.common.ConnectionUtils;
+import net.donotturnoff.simpledoc.common.Response;
+import net.donotturnoff.simpledoc.common.Status;
 
 import javax.swing.*;
 import java.net.MalformedURLException;

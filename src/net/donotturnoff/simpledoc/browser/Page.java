@@ -1,12 +1,23 @@
 package net.donotturnoff.simpledoc.browser;
 
+import net.donotturnoff.simpledoc.browser.components.JImagePanel;
+import net.donotturnoff.simpledoc.browser.components.PageTabComponent;
 import net.donotturnoff.simpledoc.browser.element.Element;
+import net.donotturnoff.simpledoc.browser.events.BrowserEvent;
+import net.donotturnoff.simpledoc.browser.events.EventViewer;
+import net.donotturnoff.simpledoc.browser.history.TempHistory;
 import net.donotturnoff.simpledoc.browser.parsing.*;
-import net.donotturnoff.simpledoc.util.ConnectionUtils;
-import net.donotturnoff.simpledoc.util.FileUtils;
-import net.donotturnoff.simpledoc.util.Response;
+import net.donotturnoff.simpledoc.browser.resources.ResourceViewer;
+import net.donotturnoff.simpledoc.browser.sdml.RenderWorker;
+import net.donotturnoff.simpledoc.browser.sdml.SDMLLexer;
+import net.donotturnoff.simpledoc.browser.sdml.SDMLParser;
+import net.donotturnoff.simpledoc.browser.sdtp.ConnectionWorker;
+import net.donotturnoff.simpledoc.browser.sdtp.SDTPException;
+import net.donotturnoff.simpledoc.common.ConnectionUtils;
+import net.donotturnoff.simpledoc.common.FileUtils;
+import net.donotturnoff.simpledoc.common.Response;
 import net.donotturnoff.lr0.*;
-import net.donotturnoff.simpledoc.util.Status;
+import net.donotturnoff.simpledoc.common.Status;
 
 import javax.swing.*;
 import java.awt.*;
