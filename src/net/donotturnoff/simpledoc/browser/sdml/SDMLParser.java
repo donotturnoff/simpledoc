@@ -1,13 +1,9 @@
 package net.donotturnoff.simpledoc.browser.sdml;
 
 import net.donotturnoff.simpledoc.browser.Page;
-import net.donotturnoff.simpledoc.browser.element.Element;
-import net.donotturnoff.simpledoc.browser.element.ResElement;
-import net.donotturnoff.simpledoc.browser.element.StyleElement;
-import net.donotturnoff.simpledoc.browser.element.TextElement;
+import net.donotturnoff.simpledoc.browser.element.*;
 import net.donotturnoff.lr0.*;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class SDMLParser {
@@ -73,17 +69,16 @@ public class SDMLParser {
     private final Page page;
     private final Parser p;
     private final Set<String> ids;
-    private int styleIndex;
-    private int resIndex;
+    private int index;
     
     public SDMLParser(Page page) {
         this.page = page;
         p = new Parser(grammar);
         ids = new HashSet<>();
-        styleIndex = resIndex = 0;
+        index = 0;
     }
     
-    public Element parse(Queue<Terminal<?>> tokens) throws ParsingException {
+    public Element parse(Queue<Terminal<?>> tokens) throws ParsingException, SDMLException {
         Node t = p.parse(tokens);
         return start(t);
     }
@@ -91,41 +86,25 @@ public class SDMLParser {
     // The following methods convert the parse tree into an element tree
     // TODO: make easier to understand (e.g. remove dependence on children length for determining what to do)
 
-    private Element start(Node n) throws ParsingException {
+    private Element start(Node n) throws SDMLException {
         return element(n.getChildren().get(0));
     }
 
-    private Element element(Node n) throws ParsingException {
+    private Element element(Node n) throws SDMLException {
         List<Node> c = n.getChildren();
         Symbol<?> fst = c.get(0).getSymbol();
         String tag = (String) ((Terminal<?>) fst).getToken().getValue();
         if (fst.getName().equals("STRING")) {
             return new TextElement(page, tag);
         }
-        if (!Element.isLegalTag(tag)) {
-            throw new ParsingException("Illegal tag: " + tag);
-        }
-        Class<? extends Element> tagClass = Element.getTagClass(tag);
         Map<String, String> attrs = attributes(n, tag);
         List<Element> children = children(n);
-        try {
-            Element e;
-            if (tag.equals("style")) {
-                e = new StyleElement(page, attrs, children, styleIndex++);
-            } else if (tag.equals("res")) {
-                e = new ResElement(page, attrs, children, resIndex++);
-            } else {
-                e = tagClass.getConstructor(Page.class, Map.class, List.class).newInstance(page, attrs, children);
-            }
-            page.addElement(e);
-            return e;
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            page.warning("Failed to construct " + tag + " object");
-            return null;
-        }
+        Element e = Element.createElement(tag, page, attrs, children, index++);
+        page.addElement(e);
+        return e;
     }
 
-    private Map<String, String> attributes(Node n, String tag) throws ParsingException {
+    private Map<String, String> attributes(Node n, String tag) throws SDMLException {
         List<Node> c = n.getChildren();
         Node a;
         if (c.size() == 1 || !(a = c.get(1)).getSymbol().getName().equals("attrs") || a.getChildren().size() == 2) { //No attributes or children OR no attributes OR empty attributes
@@ -144,24 +123,24 @@ public class SDMLParser {
         }
     }
 
-    private void addAttribute(Node attr, Map<String, String> attrs, String tag) throws ParsingException {
+    private void addAttribute(Node attr, Map<String, String> attrs, String tag) throws SDMLException {
         String key = (String) ((Terminal<?>) attr.getChildren().get(0).getSymbol()).getToken().getValue();
         String value = (String) ((Terminal<?>) attr.getChildren().get(2).getSymbol()).getToken().getValue();
-        if (!Element.isLegalAttribute(tag, key)) {
-            throw new ParsingException("Illegal attribute for tag " + tag + ": " + key);
-        } else {
+        if (Element.isLegalAttribute(tag, key)) {
             if (key.equals("id")) {
                 if (ids.contains(value)) {
-                    throw new ParsingException("Duplicate id detected: " + value);
+                    throw new SDMLException("Duplicate id detected: " + value);
                 } else {
                     ids.add(value);
                 }
             }
             attrs.put(key, value);
+        } else {
+            throw new SDMLException("Illegal attribute for " + tag + ": " + key);
         }
     }
 
-    private List<Element> children(Node n) throws ParsingException {
+    private List<Element> children(Node n) throws SDMLException {
         List<Node> c = n.getChildren();
         Node b;
         //No attributes or children OR attributes and no children OR empty children

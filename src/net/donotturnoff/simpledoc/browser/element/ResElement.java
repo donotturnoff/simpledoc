@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ResElement extends Element {
+
     private URL url;
     private Response response;
     private final int index; // Used for tracking precedence of styles

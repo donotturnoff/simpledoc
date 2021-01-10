@@ -110,7 +110,7 @@ public class SDSSParser {
         this.index = index;
     }
 
-    public void parse(Queue<Terminal<?>> tokens) throws ParsingException {
+    public void parse(Queue<Terminal<?>> tokens) throws ParsingException, SDSSException {
         Node t = p.parse(tokens);
         elementList(t.getChildren().get(0));
     }
@@ -119,7 +119,7 @@ public class SDSSParser {
     // TODO: make easier to understand (e.g. remove dependence on children length for determining what to do)
 
     // Loop over each base element in the file
-    private void elementList(Node elemList) throws ParsingException {
+    private void elementList(Node elemList) throws SDSSException {
         while (elemList.getChildren().size() == 2) {
             Node selectorList = elemList.getChildren().get(0);
             elemList = elemList.getChildren().get(1);
@@ -130,7 +130,7 @@ public class SDSSParser {
     }
 
     // Loop over all the selectors for a block of rules
-    private void selectorList(Node selectorList, Set<Element> selectedElements, int priority) throws ParsingException {
+    private void selectorList(Node selectorList, Set<Element> selectedElements, int priority) throws SDSSException {
         List<Node> selectors = new ArrayList<>();
         while (selectorList.getChildren().size() == 3) {
             selectors.add(selectorList.getChildren().get(0));
@@ -144,14 +144,14 @@ public class SDSSParser {
     }
 
     // Parse a single selector
-    private void selector(Node node, Node block, Set<Element> selectedElements, int priority) throws ParsingException {
+    private void selector(Node node, Node block, Set<Element> selectedElements, int priority) throws SDSSException {
         List<Node> c = node.getChildren();
         Node element = c.get(0);
         Terminal<?> tagType = ((Terminal<?>) element.getChildren().get(0).getSymbol());
         String type = tagType.getName();
-        String tag;
-        if (!type.equals("QMARK") && !Element.isLegalTag(tag = (String) tagType.getToken().getValue())) {
-            throw new ParsingException("Illegal tag: " + tag);
+        String tag = (String) tagType.getToken().getValue();
+        if (!type.equals("QMARK") && !Element.isLegalElement(tag)) {
+            throw new SDSSException("Illegal element: " + tag);
         }
         if (type.equals("QMARK")) {
             priority += 1;
@@ -169,7 +169,7 @@ public class SDSSParser {
         applyStyles(filteredElements, block, state, priority);
     }
 
-    private ElementState state(Node node) throws ParsingException {
+    private ElementState state(Node node) throws SDSSException {
         ElementState state = ElementState.BASE;
         List<Node> c = node.getChildren();
         Node stateNode = c.get(c.size() - 1);
@@ -180,14 +180,14 @@ public class SDSSParser {
                 case "base": break;
                 case "hover": state = ElementState.HOVER; break;
                 case "active": state = ElementState.ACTIVE; break;
-                default: throw new ParsingException("Illegal state: " + stateName);
+                default: throw new SDSSException("Illegal state: " + stateName);
             }
         }
         return state;
     }
 
     // Loop over all attributes
-    private Map<String, String> attributes(Node n, Terminal<?> tagType) throws ParsingException {
+    private Map<String, String> attributes(Node n, Terminal<?> tagType) throws SDSSException {
         List<Node> c = n.getChildren();
         Node a;
         if (c.size() == 1 || !(a = c.get(1)).getSymbol().getName().equals("attrs") || a.getChildren().size() == 2) { //No attributes or children OR no attributes OR empty attributes
@@ -206,12 +206,12 @@ public class SDSSParser {
         }
     }
 
-    private void addAttribute(Node attr, Map<String, String> attrs, Terminal<?> tagType) throws ParsingException {
+    private void addAttribute(Node attr, Map<String, String> attrs, Terminal<?> tagType) throws SDSSException {
         String key = (String) ((Terminal<?>) attr.getChildren().get(0).getSymbol()).getToken().getValue();
         String value = (String) ((Terminal<?>) attr.getChildren().get(2).getSymbol()).getToken().getValue();
         String tag;
-        if (!tagType.getName().equals("QMARK") && !Element.isLegalAttribute(tag = (String) tagType.getToken().getValue(), key)) {
-            throw new ParsingException("Illegal attribute for tag " + tag + ": " + key);
+        if ((!tagType.getName().equals("QMARK") && Element.isLegalAttribute(key)) && !Element.isLegalAttribute(tag = (String) tagType.getToken().getValue(), key)) {
+            throw new SDSSException("Illegal attribute for tag " + tag + ": " + key);
         } else {
             attrs.put(key, value);
         }
@@ -233,7 +233,7 @@ public class SDSSParser {
     }
 
     // TODO: remove code duplication
-    public void applyStyles(Set<Element> selectedElements, Node block, ElementState state, int priority) throws ParsingException {
+    public void applyStyles(Set<Element> selectedElements, Node block, ElementState state, int priority) throws SDSSException {
         Style s = new Style();
         Node selectorsAndProps = block.getChildren().get(1);
         while (selectorsAndProps.getChildren().size() == 2) {

@@ -71,6 +71,12 @@ public class StyleWorker extends SwingWorker<Void, Void> {
             } else {
                 page.warning("Failed to parse stylesheet " + url + ": " + e.getMessage());
             }
+        } catch (SDSSException e) {
+            if (url == null) {
+                page.warning("Failed to apply internal stylesheet: " + e.getMessage());
+            } else {
+                page.warning("Failed to apply stylesheet " + url + ": " + e.getMessage());
+            }
         }
     }
 

@@ -1,6 +1,7 @@
 package net.donotturnoff.simpledoc.browser.element;
 
 import net.donotturnoff.simpledoc.browser.Page;
+import net.donotturnoff.simpledoc.browser.sdml.SDMLException;
 import net.donotturnoff.simpledoc.browser.sdss.Style;
 
 import javax.swing.*;
@@ -9,47 +10,67 @@ import java.awt.event.MouseListener;
 import java.util.*;
 
 public abstract class Element implements MouseListener {
-    private static final Set<String> tags = Set.of("doc", "head", "body", "title", "res", "style", "base", "header",
+    private static final Set<String> elements = Set.of("doc", "head", "body", "title", "res", "style", "base", "header",
             "nav", "main", "article", "section", "footer", "div", "blockquote", "h1", "h2", "h3", "h4", "h5", "h6", "p",
             "code", "cite", "span", "q", "link", "br", "hr", "math", "ul", "ol", "li", "dl", "dt", "dd", "table", "thead",
             "tbody", "tfoot", "tr", "th", "td", "img", "audio", "video"
 
     );
-    private static final Set<String> generalAttrs = Set.of("id", "class", "description", "title", "accesskey", "lang",
-            "dir", "hidden", "style", "tabindex");
-    private static final Map<String, Set<String>> tagSpecificAttrs = new HashMap<>();
-    private static final Map<String, Class<? extends Element>> tagClasses = new HashMap<>();
+    private static final Set<String> baseAttributes = Set.of("id", "class", "description", "title", "accesskey", "lang", "dir", "hidden", "style", "tabindex");
+    private static final Set<String> allAttributes = Set.of("id", "class", "description", "title", "accesskey", "lang", "dir", "hidden", "style", "tabindex", "version", "charset", "author", "keywords", "src", "href", "rel", "type");
+    private static final Map<String, Set<String>> tagSpecificAttributes = new HashMap<>();
 
-    static {
-        tagSpecificAttrs.put("doc", Set.of("version", "charset", "author", "description", "keywords"));
-        tagSpecificAttrs.put("img", Set.of("src"));
-        tagSpecificAttrs.put("audio", Set.of("src"));
-        tagSpecificAttrs.put("video", Set.of("src"));
-        tagSpecificAttrs.put("base", Set.of("href"));
-        tagSpecificAttrs.put("link", Set.of("href"));
-        tagSpecificAttrs.put("res", Set.of("src", "type", "rel"));
-
-        String packageName = "net.donotturnoff.simpledoc.browser.element.";
-        tags.forEach(t -> {
-            String name = t.substring(0, 1).toUpperCase() + t.substring(1) + "Element";
-            try {
-                tagClasses.put(t, Class.forName(packageName + name).asSubclass(Element.class));
-            } catch (ClassNotFoundException ignored) {
-                //System.out.println("Class not found for tag: " + name);
-            }
-        });
+    public static Element createElement(String tag, Page page, Map<String, String> attrs, List<Element> children, int index) throws SDMLException {
+        switch (tag) {
+            case "audio": return new AudioElement(page, attrs, children); 
+            case "body": return new BodyElement(page, attrs, children); 
+            case "code": return new CodeElement(page, attrs, children); 
+            case "div": return new DivElement(page, attrs, children); 
+            case "doc": return new DocElement(page, attrs, children); 
+            case "footer": return new FooterElement(page, attrs, children); 
+            case "h1": return new H1Element(page, attrs, children); 
+            case "h2": return new H2Element(page, attrs, children); 
+            case "h3": return new H3Element(page, attrs, children); 
+            case "h4": return new H4Element(page, attrs, children); 
+            case "h5": return new H5Element(page, attrs, children); 
+            case "h6": return new H6Element(page, attrs, children); 
+            case "head": return new HeadElement(page, attrs, children); 
+            case "header": return new HeaderElement(page, attrs, children); 
+            case "img": return new ImgElement(page, attrs, children); 
+            case "li": return new LiElement(page, attrs, children); 
+            case "link": return new LinkElement(page, attrs, children); 
+            case "main": return new MainElement(page, attrs, children); 
+            case "nav": return new NavElement(page, attrs, children); 
+            case "p": return new PElement(page, attrs, children); 
+            case "res": return new ResElement(page, attrs, children, index); 
+            case "section": return new SectionElement(page, attrs, children); 
+            case "style": return new StyleElement(page, attrs, children, index); 
+            case "title": return new TitleElement(page, attrs, children); 
+            case "ul": return new UlElement(page, attrs, children); 
+            default: throw new SDMLException("Illegal element: " + tag);
+        }
     }
 
-    public static boolean isLegalTag(String tag) {
-        return tags.contains(tag);
+    static {
+        tagSpecificAttributes.put("doc", Set.of("version", "charset", "author", "keywords"));
+        tagSpecificAttributes.put("img", Set.of("src"));
+        tagSpecificAttributes.put("audio", Set.of("src"));
+        tagSpecificAttributes.put("video", Set.of("src"));
+        tagSpecificAttributes.put("base", Set.of("href"));
+        tagSpecificAttributes.put("link", Set.of("href"));
+        tagSpecificAttributes.put("res", Set.of("src", "type", "rel"));
+    }
+
+    public static boolean isLegalElement(String name) {
+        return elements.contains(name);
+    }
+
+    public static boolean isLegalAttribute(String attr) {
+        return allAttributes.contains(attr);
     }
 
     public static boolean isLegalAttribute(String tag, String attr) {
-        return generalAttrs.contains(attr) || (tagSpecificAttrs.containsKey(tag) && tagSpecificAttrs.get(tag).contains(attr));
-    }
-
-    public static Class<? extends Element> getTagClass(String tag) {
-        return tagClasses.get(tag);
+        return baseAttributes.contains(attr) || (tagSpecificAttributes.containsKey(tag) && tagSpecificAttributes.get(tag).contains(attr));
     }
 
     protected Page page;

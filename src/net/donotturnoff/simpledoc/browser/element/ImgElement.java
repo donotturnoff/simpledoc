@@ -2,6 +2,7 @@ package net.donotturnoff.simpledoc.browser.element;
 
 import net.donotturnoff.simpledoc.browser.*;
 import net.donotturnoff.simpledoc.browser.components.JImagePanel;
+import net.donotturnoff.simpledoc.browser.sdml.SDMLException;
 import net.donotturnoff.simpledoc.browser.sdtp.ConnectionWorker;
 import net.donotturnoff.simpledoc.browser.sdtp.SDTPException;
 import net.donotturnoff.simpledoc.common.ConnectionUtils;
@@ -13,8 +14,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ImgElement extends VisibleElement {
+
+    protected final Set<String> legalAttributes = Set.of("id", "class", "description", "title", "accesskey", "lang", "dir", "hidden", "style", "tabindex", "src");
 
     private URL url;
     private Response response;

@@ -1,6 +1,7 @@
 package net.donotturnoff.simpledoc.browser.element;
 
 import net.donotturnoff.simpledoc.browser.Page;
+import net.donotturnoff.simpledoc.browser.sdml.SDMLException;
 import net.donotturnoff.simpledoc.common.ConnectionUtils;
 
 import java.awt.event.MouseEvent;

@@ -9,6 +9,7 @@ import net.donotturnoff.simpledoc.browser.history.TempHistory;
 import net.donotturnoff.simpledoc.browser.lexingbase.*;
 import net.donotturnoff.simpledoc.browser.resources.ResourceViewer;
 import net.donotturnoff.simpledoc.browser.sdml.RenderWorker;
+import net.donotturnoff.simpledoc.browser.sdml.SDMLException;
 import net.donotturnoff.simpledoc.browser.sdml.SDMLLexer;
 import net.donotturnoff.simpledoc.browser.sdml.SDMLParser;
 import net.donotturnoff.simpledoc.browser.sdtp.ConnectionWorker;
@@ -297,6 +298,8 @@ public class Page {
             root = parser.parse(tokens);
         } catch (ParsingException e) {
             error("Failed to parse page", e);
+        } catch (SDMLException e) {
+            error("Failed to construct element tree", e);
         }
         return root;
     }
