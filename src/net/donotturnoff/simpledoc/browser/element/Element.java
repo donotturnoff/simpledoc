@@ -78,8 +78,9 @@ public abstract class Element implements MouseListener {
     protected Map<String, String> attributes;
     protected Element parent;
     protected List<Element> children;
-    protected ElementState state;
+    protected Set<ElementState> states;
     protected Map<ElementState, Style> styles;
+    protected Style currentStyle;
 
     public Element(Page page, String name, Map<String, String> attributes, List<Element> children) {
         this.page = page;
@@ -88,6 +89,7 @@ public abstract class Element implements MouseListener {
         this.children = children;
         this.styles = new HashMap<>();
         this.parent = null;
+        this.states = new HashSet<>();
 
         for (Element child: children) {
             child.setParent(this);
@@ -96,15 +98,28 @@ public abstract class Element implements MouseListener {
         styles.put(ElementState.BASE, new Style());
         styles.put(ElementState.HOVER, new Style());
         styles.put(ElementState.ACTIVE, new Style());
-        setState(ElementState.BASE);
+        addState(ElementState.BASE);
     }
 
     private void setParent(Element parent) {
         this.parent = parent;
     }
 
-    private void setState(ElementState state) {
-        this.state = state;
+    private void addState(ElementState state) {
+        states.add(state);
+        refreshCurrentStyle();
+    }
+
+    private void removeState(ElementState state) {
+        states.remove(state);
+        refreshCurrentStyle();
+    }
+
+    private void refreshCurrentStyle() {
+        currentStyle = new Style();
+        for (ElementState state: states) {
+            currentStyle.setAll(styles.get(state));
+        }
     }
 
     // Called by SDSSParser to apply styles
@@ -117,6 +132,7 @@ public abstract class Element implements MouseListener {
         } else {
             styles.get(e).setAll(toAdd);
         }
+        refreshCurrentStyle();
     }
 
     public void setStyle(ElementState state, Style style) {
@@ -128,6 +144,7 @@ public abstract class Element implements MouseListener {
         for (Style s: styles.values()) {
             s.setDefault(key, value);
         }
+        refreshCurrentStyle();
     }
 
     public List<Element> getChildren() {
@@ -143,7 +160,7 @@ public abstract class Element implements MouseListener {
     }
 
     public Style getStyle() {
-        return getStyle(state);
+        return currentStyle;
     }
 
     public Style getStyle(ElementState state) {
@@ -171,7 +188,7 @@ public abstract class Element implements MouseListener {
     // Makes children inherit inheritable styles, with priority decreasing for each level of inheritance
     public void cascadeStyles(int priority) {
         for (Element child: children) {
-            child.getStyle().setAll(getStyle().getInheritable(), priority);
+            child.currentStyle.setAll(currentStyle.getInheritable(), priority);
             child.cascadeStyles(priority - 1);
         }
     }
@@ -211,28 +228,28 @@ public abstract class Element implements MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        setState(ElementState.ACTIVE);
+        addState(ElementState.ACTIVE);
         cascadeStyles();
         refresh();
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        setState(ElementState.BASE);
+        removeState(ElementState.ACTIVE);
         cascadeStyles();
         refresh();
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        setState(ElementState.HOVER);
+        addState(ElementState.HOVER);
         cascadeStyles();
         refresh();
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        setState(ElementState.BASE);
+        removeState(ElementState.HOVER);
         cascadeStyles();
         refresh();
     }
