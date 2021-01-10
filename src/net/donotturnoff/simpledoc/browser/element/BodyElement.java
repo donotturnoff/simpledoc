@@ -15,4 +15,16 @@ public class BodyElement extends VisibleElement {
         setDefault("padding_right", "5");
         setDefault("layout", "vbox");
     }
+
+    @Override
+    public JPanel getPanel() {
+        return page.getPanel();
+    }
+
+    @Override
+    public void render(JPanel parentPanel) {
+        panel = getPanel();
+        style();
+        renderChildren(panel);
+    }
 }
