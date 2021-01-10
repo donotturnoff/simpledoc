@@ -40,6 +40,8 @@ public class ResourceViewer {
     }
 
     public void addResource(URL url, Response r, int index) {
+        int selectedIndex = tabbedPane.getSelectedIndex();
+        selectedIndex = Math.max(selectedIndex, 0);
         JPanel infoPanel = new JPanel();
 
         if (r == null) {
@@ -108,6 +110,7 @@ public class ResourceViewer {
         } else {
             tabbedPane.insertTab(filename, null, infoPanel, filename, index);
         }
+        tabbedPane.setSelectedIndex(selectedIndex);
     }
 
     public void toggle() {
