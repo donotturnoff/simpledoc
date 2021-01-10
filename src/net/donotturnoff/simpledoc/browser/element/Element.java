@@ -58,7 +58,6 @@ public abstract class Element implements MouseListener {
     protected Element parent;
     protected List<Element> children;
     protected ElementState state;
-    protected Style style; // Holds current style
     protected Map<ElementState, Style> styles;
 
     public Element(Page page, String name, Map<String, String> attributes, List<Element> children) {
@@ -85,7 +84,6 @@ public abstract class Element implements MouseListener {
 
     private void setState(ElementState state) {
         this.state = state;
-        refreshCurrentStyle();
     }
 
     // Called by SDSSParser to apply styles
@@ -98,18 +96,10 @@ public abstract class Element implements MouseListener {
         } else {
             styles.get(e).setAll(toAdd);
         }
-        refreshCurrentStyle();
-    }
-
-    private void refreshCurrentStyle() {
-        this.style = new Style(styles.get(state));
     }
 
     public void setStyle(ElementState state, Style style) {
         styles.put(state, style);
-        if (state == this.state) {
-            refreshCurrentStyle();
-        }
     }
 
     public void setDefault(String key, String value) {
@@ -117,7 +107,6 @@ public abstract class Element implements MouseListener {
         for (ElementState s: ElementState.values()) {
             styles.get(s).setDefault(key, value);
         }
-        refreshCurrentStyle();
     }
 
     public List<Element> getChildren() {
@@ -133,7 +122,7 @@ public abstract class Element implements MouseListener {
     }
 
     public Style getStyle() {
-        return style;
+        return getStyle(state);
     }
 
     public Style getStyle(ElementState state) {
@@ -161,8 +150,7 @@ public abstract class Element implements MouseListener {
     // Makes children inherit inheritable styles, with priority decreasing for each level of inheritance
     public void cascadeStyles(int priority) {
         if (parent != null) {
-            refreshCurrentStyle();
-            style.setAll(parent.getStyle().getInheritable(), priority);
+            getStyle().setAll(parent.getStyle().getInheritable(), priority);
         }
         for (Element child: children) {
             child.cascadeStyles(priority - 1);

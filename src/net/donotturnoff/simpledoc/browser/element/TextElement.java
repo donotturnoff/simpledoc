@@ -1,6 +1,7 @@
 package net.donotturnoff.simpledoc.browser.element;
 
 import net.donotturnoff.simpledoc.browser.Page;
+import net.donotturnoff.simpledoc.browser.sdss.Style;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,6 +27,7 @@ public class TextElement extends Element {
     }
 
     public void style() {
+        Style style = getStyle();
         Font font = style.getFont();
         Color colour = style.getColour();
         label.setFont(font);

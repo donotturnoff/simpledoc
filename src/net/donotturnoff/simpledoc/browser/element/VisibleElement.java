@@ -1,6 +1,7 @@
 package net.donotturnoff.simpledoc.browser.element;
 
 import net.donotturnoff.simpledoc.browser.Page;
+import net.donotturnoff.simpledoc.browser.sdss.Style;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -33,6 +34,7 @@ public abstract class VisibleElement extends Element {
 
     // Apply all relevant styles
     public void style() {
+        Style style = getStyle();
         LayoutManager layout = style.getLayoutManager(panel);
         Cursor cursor = style.getCursor();
         Color backgroundColour = style.getBackgroundColour();
