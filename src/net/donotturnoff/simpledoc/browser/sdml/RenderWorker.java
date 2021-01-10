@@ -21,14 +21,14 @@ public class RenderWorker extends SwingWorker<Void, Void> {
     @Override
     protected Void doInBackground() {
         page.info("Rendering " + page.getUrl());
-        root.render(page, panel);
+        root.render(panel);
         return null;
     }
 
     @Override
     protected void done() {
         root.cascadeStyles(); // Pass inheritable styles down to children once all elements have their own style
-        root.refresh(page);
+        root.refresh();
         page.removePendingResource(page.getUrl(), page.getData(), 0);
         page.info("Rendered " + page.getUrl());
     }

@@ -13,9 +13,16 @@ public abstract class InvisibleElement extends Element {
     }
 
     @Override
-    public final void render(Page page, JPanel parentPanel) {
+    public final void render(JPanel parentPanel) {
         for (Element c: children) {
-            c.render(page, parentPanel);
+            c.render(parentPanel);
+        }
+    }
+
+    @Override
+    public final void refresh() {
+        for (Element c: children) {
+            c.refresh();
         }
     }
 }

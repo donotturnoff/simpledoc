@@ -322,8 +322,8 @@ public class Page {
         });
 
         panel.add(imgPanel);
-        panel.repaint();
         panel.revalidate();
+        panel.repaint();
         removePendingResource(url, response, 0);
     }
 
@@ -332,8 +332,8 @@ public class Page {
         Status status = response.getStatus();
         JTextArea ta = getTextPanel(data, browser.getConfig());
         panel.add(ta);
-        panel.repaint();
         panel.revalidate();
+        panel.repaint();
         info("Loaded " + url + ": " + status);
         removePendingResource(url, response, 0);
     }

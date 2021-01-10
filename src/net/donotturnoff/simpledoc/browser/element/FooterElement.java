@@ -5,7 +5,7 @@ import net.donotturnoff.simpledoc.browser.Page;
 import java.util.List;
 import java.util.Map;
 
-public class FooterElement extends BoxElement {
+public class FooterElement extends VisibleElement {
     public FooterElement(Page page, Map<String, String> attributes, List<Element> children) {
         super(page, "footer", attributes, children);
     }

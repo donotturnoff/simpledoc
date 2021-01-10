@@ -23,7 +23,7 @@ public class StyleElement extends Element {
 
     // TODO: make use of element tree directly inside style element, rather than inside a string
     @Override
-    public void render(Page page, JPanel parentPanel) {
+    public void render(JPanel parentPanel) {
         for (Element child: children) {
             if (child instanceof TextElement) {
                 String body = ((TextElement) child).getText();
@@ -34,4 +34,7 @@ public class StyleElement extends Element {
             }
         }
     }
+
+    @Override
+    public void refresh() {}
 }

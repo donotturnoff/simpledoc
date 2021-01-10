@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.util.List;
 import java.util.Map;
 
-public class LiElement extends BoxElement {
+public class LiElement extends VisibleElement {
     private TextElement bullet;
     public LiElement(Page page, Map<String, String> attributes, List<Element> children) {
         super(page, "li", attributes, children);
@@ -14,21 +14,21 @@ public class LiElement extends BoxElement {
     }
 
     @Override
-    public void render(Page page, JPanel parentPanel) {
+    public void render(JPanel parentPanel) {
         // Add bullet as new child
         String bulletText = getStyle().getBulletText();
         bullet = new TextElement(page, bulletText);
         children.add(0, bullet);
 
         panel = getPanel();
-        style(panel);
-        addPanel(parentPanel, panel);
-        renderChildren(page, panel);
+        style();
+        parentPanel.add(panel);
+        renderChildren(panel);
     }
 
     @Override
-    public void refresh(Page page) {
-        style(panel);
+    public void refresh() {
+        style();
 
         // Refresh bullet text
         String bulletText = getStyle().getBulletText();
@@ -38,6 +38,6 @@ public class LiElement extends BoxElement {
             panel.revalidate();
             panel.repaint();
         }
-        refreshChildren(page);
+        refreshChildren();
     }
 }

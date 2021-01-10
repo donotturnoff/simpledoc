@@ -144,12 +144,12 @@ public abstract class Element implements MouseListener {
         return styles;
     }
 
-    public abstract void render(Page page, JPanel parentPanel);
+    public abstract void render(JPanel parentPanel);
 
     // Called on any update that may alter the page styling (initial page render, style application, element state change)
-    public void refresh(Page page) {
+    public void refresh() {
         for (Element c: children) {
-            c.refresh(page);
+            c.refresh();
         }
     }
 
@@ -206,28 +206,28 @@ public abstract class Element implements MouseListener {
     public void mousePressed(MouseEvent e) {
         setState(ElementState.ACTIVE);
         cascadeStyles();
-        refresh(page);
+        refresh();
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
         setState(ElementState.BASE);
         cascadeStyles();
-        refresh(page);
+        refresh();
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
         setState(ElementState.HOVER);
         cascadeStyles();
-        refresh(page);
+        refresh();
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
         setState(ElementState.BASE);
         cascadeStyles();
-        refresh(page);
+        refresh();
     }
 
     @Override

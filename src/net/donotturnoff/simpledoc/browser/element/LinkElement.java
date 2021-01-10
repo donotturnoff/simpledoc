@@ -3,14 +3,13 @@ package net.donotturnoff.simpledoc.browser.element;
 import net.donotturnoff.simpledoc.browser.Page;
 import net.donotturnoff.simpledoc.common.ConnectionUtils;
 
-import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
 
-public class LinkElement extends BoxElement implements MouseListener {
+public class LinkElement extends VisibleElement implements MouseListener {
     public LinkElement(Page page, Map<String, String> attributes, List<Element> children) {
         super(page, "link", attributes, children);
         setDefault("cursor", "pointer");

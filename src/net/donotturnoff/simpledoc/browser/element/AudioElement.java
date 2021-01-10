@@ -12,7 +12,7 @@ public class AudioElement extends Element {
     }
 
     @Override
-    public void render(Page page, JPanel parentPanel) {
+    public void render(JPanel parentPanel) {
 
     }
 }

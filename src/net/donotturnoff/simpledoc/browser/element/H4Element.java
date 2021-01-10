@@ -6,7 +6,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
-public class H4Element extends BoxElement {
+public class H4Element extends VisibleElement {
     public H4Element(Page page, Map<String, String> attributes, List<Element> children) {
         super(page, "h4", attributes, children);
         setDefault("font_family", Font.SERIF);

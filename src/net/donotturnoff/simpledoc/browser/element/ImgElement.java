@@ -14,54 +14,59 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
-public class ImgElement extends BoxElement {
+public class ImgElement extends VisibleElement {
 
     private URL url;
     private Response response;
+    private boolean success = true;
 
     public ImgElement(Page page, Map<String, String> attributes, List<Element> children) {
         super(page, "img", attributes, children);
     }
 
     public JImagePanel getPanel() {
-        if (isHidden()) {
-            return null;
-        } else {
-            JImagePanel panel = new JImagePanel(this::rendered, this::loadingFailure);
-            panel.addMouseListener(this);
-            return panel;
+        JImagePanel panel = new JImagePanel(this::rendered, this::loadingFailure);
+        panel.addMouseListener(this);
+        return panel;
+    }
+
+    @Override
+    public void render(JPanel parentPanel) {
+        panel = getPanel();
+        style();
+
+        // Add image panel to parent
+        parentPanel.add(panel);
+
+        String src = attributes.get("src");
+        try {
+            url = ConnectionUtils.getURL(page.getUrl(), src);
+            load();
+        } catch (MalformedURLException e) {
+            loadingFailure("Failed to load " + src, e);
         }
     }
 
     @Override
-    public void render(Page page, JPanel parentPanel) {
-        panel = getPanel();
-        style(panel);
-
-        // Add image panel to parent
-        addPanel(parentPanel, panel);
-
-        if (panel != null) {
-            // Attempt to load image
-            String src = attributes.get("src");
-            try {
-                url = ConnectionUtils.getURL(page.getUrl(), src);
-                load();
-            } catch (MalformedURLException e) {
-                loadingFailure("Failed to load " + src, e);
-            }
+    public void refresh() {
+        style();
+        panel.revalidate();
+        panel.repaint();
+        if (!success) {
+            refreshChildren();
         }
     }
 
     private void loadingFailure(String msg, Exception e) {
+        success = false;
         page.removePendingResource(url, response);
 
         // Render alternative elements on image load failure
-        super.renderChildren(page, panel);
+        renderChildren(panel);
 
         page.warning(msg + ": " + e.getMessage());
-        panel.repaint();
         panel.revalidate();
+        panel.repaint();
     }
 
     public void loadingFailure(Exception e) {

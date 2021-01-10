@@ -30,7 +30,7 @@ public class ResElement extends Element {
     }
 
     @Override
-    public void render(Page page, JPanel parentPanel) {
+    public void render(JPanel parentPanel) {
         // Attempt to load resource
         String src = attributes.get("src");
         try {
@@ -42,7 +42,7 @@ public class ResElement extends Element {
     }
 
     @Override
-    public void refresh(Page page) {
+    public void refresh() {
 
     }
 

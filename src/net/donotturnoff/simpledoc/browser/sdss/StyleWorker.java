@@ -77,7 +77,7 @@ public class StyleWorker extends SwingWorker<Void, Void> {
     @Override
     public void done() {
         root.cascadeStyles(); // Pass updated inheritable styles down to children
-        root.refresh(page);
+        root.refresh();
         page.getPanel().repaint();
         page.getPanel().revalidate();
         page.removePendingResource(url, response);

@@ -1,7 +1,6 @@
 package net.donotturnoff.simpledoc.browser.element;
 
 import net.donotturnoff.simpledoc.browser.Page;
-import net.donotturnoff.simpledoc.browser.sdss.Style;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,31 +25,25 @@ public class TextElement extends Element {
         return text;
     }
 
-    @Override
-    public void render(Page page, JPanel parentPanel) {
-        Style style = getStyle();
+    public void style() {
         Font font = style.getFont();
         Color colour = style.getColour();
-
-        label = new JLabel(text);
         label.setFont(font);
         label.setForeground(colour);
+    }
+
+    @Override
+    public void render(JPanel parentPanel) {
+        label = new JLabel(text);
+        style();
         parentPanel.add(label);
     }
 
     @Override
-    public void refresh(Page page) {
-        Style style = getStyle();
-        Font font = style.getFont();
-        Color colour = style.getColour();
-
-        if (label != null) {
-            label.setFont(font);
-            label.setForeground(colour);
-
-            label.revalidate();
-            label.repaint();
-        }
+    public void refresh() {
+        style();
+        label.revalidate();
+        label.repaint();
     }
 
     @Override

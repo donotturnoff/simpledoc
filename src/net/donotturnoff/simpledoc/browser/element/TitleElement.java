@@ -14,7 +14,7 @@ public class TitleElement extends Element {
 
     // TODO: fail if title element contains something other than a single text child
     @Override
-    public void render(Page page, JPanel parentPanel) {
+    public void render(JPanel parentPanel) {
         for (Element c: children) {
             if (c instanceof TextElement) {
                 page.setTitle(((TextElement) c).getText());
@@ -23,7 +23,7 @@ public class TitleElement extends Element {
     }
 
     @Override
-    public void refresh(Page page) {
+    public void refresh() {
 
     }
 }
