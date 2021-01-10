@@ -224,7 +224,7 @@ public class Style {
         }
     }
 
-    // Add all rules from style to this one, obeyeing precedence but with a fixed priority assigned to each one
+    // Add all rules from style to this one, obeying precedence but with a fixed priority assigned to each one
     // Used when cascading styles, as pre-existing priorities are to be ignored in favour of distance back in the tree
     public void setAll(Style style, int priority) {
         for (Map.Entry<String, StyleValue> rule: style.properties.entrySet()) {
@@ -264,12 +264,7 @@ public class Style {
 
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder("Style{");
-        for (String key: properties.keySet()) {
-            s.append(key).append("=\"").append(properties.get(key).getValue()).append("\"");
-        }
-        s.append("}");
-        return s.toString();
+        return "Style" + properties;
     }
 
     public LayoutManager getLayoutManager(JComponent component) {

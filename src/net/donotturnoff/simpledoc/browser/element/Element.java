@@ -104,8 +104,8 @@ public abstract class Element implements MouseListener {
 
     public void setDefault(String key, String value) {
         // Apply default style to all states
-        for (ElementState s: ElementState.values()) {
-            styles.get(s).setDefault(key, value);
+        for (Style s: styles.values()) {
+            s.setDefault(key, value);
         }
     }
 
@@ -149,10 +149,8 @@ public abstract class Element implements MouseListener {
 
     // Makes children inherit inheritable styles, with priority decreasing for each level of inheritance
     public void cascadeStyles(int priority) {
-        if (parent != null) {
-            getStyle().setAll(parent.getStyle().getInheritable(), priority);
-        }
         for (Element child: children) {
+            child.getStyle().setAll(getStyle().getInheritable(), priority);
             child.cascadeStyles(priority - 1);
         }
     }
