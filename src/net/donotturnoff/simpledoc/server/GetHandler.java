@@ -61,6 +61,7 @@ class GetHandler {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("type", "text/sdml");
 
+
         StringBuilder sb = new StringBuilder();
         sb.append("doc(version=\"SDML/1.0\", charset=\"UTF-8\") {\n");
         sb.append(" head {\n");
@@ -85,6 +86,8 @@ class GetHandler {
         sb.append(" }\n");
         sb.append("}\n");
 
+        headers.put("length", Integer.toString(sb.length()));
+
         return new Response(protocol, status, headers, sb.toString().getBytes());
     }
 
@@ -96,6 +99,7 @@ class GetHandler {
         String mime = FileUtils.getMime(p);
         mime = (mime == null) ? SDTPServer.config.getProperty("default_mime") : mime;
         headers.put("type", mime);
+        headers.put("length", Integer.toString(body.length));
         return new Response(protocol, status, headers, body);
     }
 }

@@ -27,7 +27,6 @@ class RequestHandler {
     // Add headers which apply to all responses
     private static void addDefaultHeaders(Response response) {
         byte[] body = response.getBody();
-        response.putHeader("length", Integer.toString(body.length));
         response.putHeader("server", SDTPServer.config.getProperty("server"));
     }
 }

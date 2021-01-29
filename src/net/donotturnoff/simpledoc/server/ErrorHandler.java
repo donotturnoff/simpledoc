@@ -26,6 +26,7 @@ class ErrorHandler {
                 "\"}\n" +
                 " }\n" +
                 "}\n";
+        headers.put("length", Integer.toString(body.length()));
         return new Response(protocol, e.getStatus(), headers, body.getBytes());
     }
 }
